@@ -9,7 +9,12 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login');
+    // otomatis logout kalau buka halaman login
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return view('auth.login');
     }
 
     public function login(Request $request)
@@ -45,4 +50,6 @@ class AuthController extends Controller
         
         return redirect('/login');
     }
+
+    
 }
