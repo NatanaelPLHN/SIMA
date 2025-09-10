@@ -25,7 +25,7 @@
 <body>
     <div style="width: 1280px; height: 720px; position: relative; background: white; overflow: hidden">
         <img style="width: 426px; height: 426px; left: 108px; top: 147px; position: absolute" src="./assets/img/login.svg" />
-        <div style="width: 651px; height: 77px; left: 128px; top: 41px; position: absolute; color: #3E267C; font-size: 28px; font-family: Inter; font-weight: 700; word-wrap: break-word">SIMA (Sistem Informasi Manajemen Aset)<br />DISKOMINFO Kota Samarinda</div>
+           <div style="width: 651px; height: 77px; left: 128px; top: 41px; position: absolute; color: #3E267C; font-size: 28px; font-family: Inter; font-weight: 700; word-wrap: break-word">SIMA (Sistem Informasi Manajemen Aset)<br />DISKOMINFO Kota Samarinda</div>
         <div style="left: 900px; top: 203px; position: absolute; text-align: right; color: #3E267C; font-size: 32px; font-family: Inter; font-weight: 700; word-wrap: break-word">Login</div>
         <img style="width: 77px; height: 77px; left: 31px; top: 34px; position: absolute" src="./assets/img/logo.svg" />
         <div style="width: 365px; height: 66px; left: 761px; top: 445px; position: absolute">
