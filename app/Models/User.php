@@ -35,6 +35,11 @@ class User extends Authenticatable
      * @return bool
      */
     // Method untuk mengecek role
+
+    public function isSuperAdmin()
+    {
+    return $this->role === 'superadmin';
+    }
     public function isAdmin()
     {
         return $this->role === 'admin';

@@ -5,29 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Laravel Multi Auth')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
 </head>
 <body>
-    {{-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Laravel Multi Auth</a>
-            
-            @auth
-                <div class="navbar-nav ms-auto">
-                    <span class="navbar-text me-3">
-                        Hello, {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})
-                    </span>
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-                    </form>
-                </div>
-            @endauth
-        </div>
-    </nav> --}}
+    <div class="d-flex" id="wrapper">
 
-    <main class="container mt-4">
-        @yield('content')
-    </main>
+        {{-- Sidebar --}}
+        @auth
+            @include('layouts.sidebar')
+        @endauth
+
+        <div id="page-content-wrapper" class="w-100">
+
+            {{-- Topbar --}}
+            @auth
+                @include('layouts.header')
+            @endauth
+
+            <main class="container-fluid mt-4">
+                @yield('content')
+            </main>
+
+            {{-- Footer --}}
+            @auth
+                @include('layouts.footer')
+            @endauth
+
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

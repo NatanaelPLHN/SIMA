@@ -1,17 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+
 
 
 class AuthController extends Controller
 {
     public function showLoginForm()
     {
-    // otomatis logout kalau buka halaman login
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
@@ -30,13 +29,13 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
-
-            // Redirect berdasarkan role
-            if ($user->isAdmin()) {
-                return redirect()->intended('/admin/dashboard');
-            } else {
-                return redirect()->intended('/user/dashboard');
-            }
+             if ($user->isSuperAdmin()) {
+                    return redirect()->intended('/superadmin/dashboard');
+                } elseif ($user->isAdmin()) {
+                    return redirect()->intended('/admin/dashboard');
+                } else {
+                    return redirect()->intended('/user/dashboard');
+                }
         }
 
         return back()->withErrors([
