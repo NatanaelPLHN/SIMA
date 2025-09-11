@@ -9,15 +9,18 @@ use App\Http\Controllers\AdminDashboardController;
 Route::get('/', function () {
     return redirect('/login');
 });
+Route::get('/ayam', function () {
+    return view('ayam');
+});
 
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logogout', [AuthController::class, 'logout'])->name('logout');
 
 // User dashboard routes
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/in', [AuthController::class, 'login']);
+Route::post('/luser/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
 });
 
 // Admin dashboard routes
