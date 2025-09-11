@@ -10,6 +10,7 @@ use App\Http\Controllers\SuperAdminDashboardController;
 Route::get('/', function () {
     return redirect('/login');
 });
+
 Route::get('/ayam', function () {
     return view('ayam');
 });
@@ -30,6 +31,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 });
 
+// Superadmin dashboard routes
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/superadmin/dashboard', [SuperAdminDashboardController::class, 'index'])->name('superadmin.dashboard');
 });
