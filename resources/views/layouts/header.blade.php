@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom px-3">
     <div class="container-fluid">
-        <button class="btn btn-sm btn-outline-secondary" id="menu-toggle">
+        {{-- <button class="btn btn-sm btn-outline-secondary" id="menu-toggle">
             <i class="fas fa-bars"></i>
-        </button>
+        </button> --}}
 
         <div class="ms-auto d-flex align-items-center">
             <span class="me-3 fw-bold text-primary">

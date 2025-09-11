@@ -12,7 +12,7 @@ Route::get('/', function () {
 });
 
 Route::get('/ayam', function () {
-    return view('ayam');
+    return view('aset');
 });
 
 // Auth routes
