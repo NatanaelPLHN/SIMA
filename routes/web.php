@@ -14,6 +14,9 @@ Route::get('/', function () {
 Route::get('/ayam', function () {
     return view('aset');
 });
+Route::get('/create', function () {
+    return view('form');
+});
 
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -29,6 +32,8 @@ Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('
 // Admin dashboard routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    // Route::get('/admin/asset', [AdminDashboardController::class, 'asset'])->name('admin.asset');
+    Route::get('/admin/create', [AdminDashboardController::class, 'create_gerak'])->name('admin.create_gerak');
 });
 
 // Superadmin dashboard routes
