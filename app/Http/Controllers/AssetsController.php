@@ -13,7 +13,7 @@ class AssetsController extends Controller
     public function index()
     {
         $assets = Asset::with(['bergerak', 'tidakBergerak', 'habisPakai'])->paginate(10);
-        return view('assets.index', compact('assets'));
+        return view('admin.asset', compact('assets'));
     }
 
     public function create()

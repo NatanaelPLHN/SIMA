@@ -5,25 +5,22 @@
 @section('content')
     <div class="max-w-6xl mx-auto">
         <!-- Asset Tabs -->
-            {{-- <div class="space-x-2 mb-4">
-    <button onclick="showTable('bergerak')" class="px-4 py-2 bg-indigo-600 text-white rounded">Aset Bergerak</button>
-    <button onclick="showTable('tetap')" class="px-4 py-2 bg-green-600 text-white rounded">Aset Tidak Bergerak</button>
-    <button onclick="showTable('lainnya')" class="px-4 py-2 bg-gray-600 text-white rounded">Aset Lainnya</button>
-</div> --}}
-
-     <div class="mb-6">
-    <div class="flex space-x-1 bg-white rounded-lg shadow-sm">
-        <button id="btn-bergerak" onclick="setActive('bergerak')" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg">
-            Bergerak
-        </button>
-        <button id="btn-tetap" onclick="setActive('tetap')" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg">
-            Tidak Bergerak
-        </button>
-        <button id="btn-habis" onclick="setActive('habis')" class="tab-btn px-4 py-2 text-sm font-medium rounded-lg">
-            Habis Pakai
-        </button>
-    </div>
-</div>
+        <div class="mb-6">
+            <div class="flex space-x-1 bg-white rounded-lg shadow-sm">
+                <button id="tab-bergerak"
+                    class="tab-button px-4 py-2 text-sm font-medium text-white bg-indigo-800 rounded-lg active">
+                    Bergerak
+                </button>
+                <button id="tab-tidak-bergerak"
+                    class="tab-button px-4 py-2 text-sm font-medium text-indigo-800 hover:text-indigo-900 hover:bg-indigo-100 rounded-lg">
+                    Tidak Bergerak
+                </button>
+                <button id="tab-habis-pakai"
+                    class="tab-button px-4 py-2 text-sm font-medium text-indigo-800 hover:text-indigo-900 hover:bg-indigo-100 rounded-lg">
+                    Habis Pakai
+                </button>
+            </div>
+        </div>
 
         <!-- Table 1 - Bergerak -->
         <div id="table-bergerak" class="table-content">
@@ -41,493 +38,314 @@
                         <span class="text-sm text-gray-700">entri</span>
                     </div>
 
-                <div class="flex items-center space-x-2">
-                    <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
-                    <input type="text" id="search"
-                        class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    {{-- <button
-                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                        Tambah
-                    </button> --}}
-                    <a href="{{ route('admin.create_gerak') }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                        Tambah
-                    </a>
+                    <div class="flex items-center space-x-2">
+                        <label for="search-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
+                        <input type="text" id="search-bergerak"
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <a href="{{ route('admin.create_gerak') }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Tambah
+                        </a>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Data Table Bergerak -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-indigo-800">
+                        <tr>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                                Number</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                                Aset</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Register
+                            </th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Satuan
+                                Produksi</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
+                            </th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">1</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">KB001</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">2</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">KB002</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Komputer Laptop</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG002</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Data Table -->
-        <div id="table-bergerak" class="hidden bg-indigo-50 rounded-lg shadow-md overflow-hidden">
+        <!-- Table 2 - Tidak Bergerak -->
+        <div id="table-tidak-bergerak" class="table-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex items-center space-x-2">
+                        <label for="entries-tidak-bergerak" class="text-sm font-medium text-gray-700">Tampilkan</label>
+                        <select id="entries-tidak-bergerak"
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option>10</option>
+                            <option>25</option>
+                            <option>50</option>
+                            <option>100</option>
+                        </select>
+                        <span class="text-sm text-gray-700">entri</span>
+                    </div>
 
-            <table class="min-w-full divide-y divide-gray==-200 bg-indigo-800">
-                <thead class="bg-indigo-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama Aset
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Serial
-                            Number</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Merk/Type
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tahun
-                            Produksi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kondisi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <div class="flex items-center space-x-2">
+                        <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
+                        <input type="text" id="search-tidak-bergerak"
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        {{-- <a href="{{ route('admin.create_tidak_bergerak') }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Tambah
+                        </a> --}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table Tidak Bergerak -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
+                    <thead class="bg-indigo-800">
+                        <tr>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                                Number</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                                Aset</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Register
+                            </th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Satuan
+                                Produksi</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
+                            </th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">1</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">TB001</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Gedung Kantor</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG100</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">2</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">TB002</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Tanah Kavling</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG101</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">M²</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-     <div id="table-tetap" class="hidden" class="bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="min-w-full divide-y divide-gray==-200 bg-indigo-800">
-                <thead class="bg-indigo-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama Aset
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Serial
-                            Numssssssber</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Merk/Type
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tahun
-                            Produksi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kondisi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Table 3 - Habis Pakai -->
+        <div id="table-habis-pakai" class="table-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex items-center space-x-2">
+                        <label for="entries-habis-pakai" class="text-sm font-medium text-gray-700">Tampilkan</label>
+                        <select id="entries-habis-pakai"
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option>10</option>
+                            <option>25</option>
+                            <option>50</option>
+                            <option>100</option>
+                        </select>
+                        <span class="text-sm text-gray-700">entri</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
+                        <input type="text" id="search-habis-pakai"
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        {{-- <a href="{{ route('admin.create_habis_pakai') }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Tambah
+                        </a> --}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table Habis Pakai -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
+                    <thead class="bg-indigo-800">
+                        <tr>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs fongit-medium text-white uppercase tracking-wider">No</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                                Number</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                                Aset</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Register</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Satuan
+                                Produksi</th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
+                            </th>
+                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">1</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">HP001</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Kertas A4</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG200</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Rim</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Tersedia</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">2</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">HP002</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Tinta Printer</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG201</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Cartridge</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Habis</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-
-
-         <div id="table-habis" class="hidden" class="bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="min-w-full divide-y divide-gray==-200 bg-indigo-800">
-                <thead class="bg-indigo-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama Aset
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Serial
-                            Nuaaaaaamber</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Merk/Type
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tahun
-                            Produksi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kondisi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-<!-- Tabel Bergerak -->
-{{-- <div id="table-bergerak" class="hidden">
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-indigo-800">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">No</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">Nama Aset</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">Serial Number</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td class="px-4 py-3">1</td><td class="px-4 py-3">Motor</td><td class="px-4 py-3">SN-001</td></tr>
-            </tbody>
-        </table>
     </div>
-</div> --}}
 
-<!-- Tabel Tidak Bergerak -->
-{{-- <div id="table-tetap" class="hidden">
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-green-800">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">No</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">Nama Aset</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">Lokasi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td class="px-4 py-3">1</td><td class="px-4 py-3">Gedung</td><td class="px-4 py-3">Jl. Merdeka</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function switchTab(targetTab) {
+                console.log('switchTab ->', targetTab);
+                document.querySelectorAll('.table-content').forEach(c => {
+                    c.classList.add('hidden');
+                    c.classList.remove('block');
+                });
 
-<!-- Tabel Lainnya -->
-<div id="table-lainnya" class="hidden">
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-800">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">No</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white">Keterangan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td class="px-4 py-3">1</td><td class="px-4 py-3">Lain-lain</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div> --}}
+                document.querySelectorAll('.tab-button').forEach(b => {
+                    b.classList.remove('bg-indigo-800', 'text-white'); // contoh reset style
+                });
 
-<script>
-    function showTable(type) {
-        // sembunyikan semua tabel
-        document.querySelectorAll('[id^="table-"]').forEach(el => el.classList.add('hidden'));
+                const tabBtn = document.getElementById(`tab-${targetTab}`);
+                if (tabBtn) tabBtn.classList.add('bg-indigo-800', 'text-white');
 
-        // tampilkan tabel sesuai tombol yang diklik
-        document.getElementById('table-' + type).classList.remove('hidden');
-    }
+                const table = document.getElementById(`table-${targetTab}`);
+                if (table) {
+                    table.classList.remove('hidden');
+                    table.classList.add('block');
+                } else {
+                    console.warn('table element not found:', `table-${targetTab}`);
+                }
+            }
 
-    // default: tampilkan tabel bergerak
-    showTable('bergerak');
-</script>
+            // pasang event listener
+            ['bergerak', 'tidak-bergerak', 'habis-pakai'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (el) el.addEventListener('click', () => switchTab(t));
+            });
 
-<script>
-    function setActive(type) {
-        // reset semua tombol ke default
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('bg-indigo-800', 'text-white');
-            btn.classList.add('text-indigo-800', 'hover:text-indigo-900', 'hover:bg-indigo-100');
+            // set default aktif
+            switchTab('bergerak');
         });
+    </script>
 
-        // aktifkan tombol yang diklik
-        const activeBtn = document.getElementById('btn-' + type);
-        activeBtn.classList.remove('text-indigo-800', 'hover:text-indigo-900', 'hover:bg-indigo-100');
-        activeBtn.classList.add('bg-indigo-800', 'text-white');
-
-        // tampilkan tabel sesuai tombol
-        showTable(type);
-    }
-
-    // default: aktifkan bergerak
-    setActive('bergerak');
-</script>
-
-    </div>
 
 @endsection
