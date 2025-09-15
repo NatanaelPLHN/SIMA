@@ -76,7 +76,7 @@
                     <input type="text" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div> --}}
 
-                {{-- gada , status mungkin , enum --}}
+                {{-- dropdown --}}
                 <div>
                     <label for="kondisi" class="block text-sm font-medium text-gray-700 mb-1">Kondisi</label>
                     <input type="text" id="kondisi"

@@ -37,4 +37,14 @@ class AdminDashboardController extends Controller
         // return view('admin.dashboard');
         return view('admin.Forms.create_gerak');
     }
+    public function create_tidak()
+    {
+        // return view('admin.dashboard');
+        return view('admin.Forms.create_tidak_bergerak');
+    }
+    public function create_habis()
+    {
+        // return view('admin.dashboard');
+        return view('admin.Forms.create_habis');
+    }
 }

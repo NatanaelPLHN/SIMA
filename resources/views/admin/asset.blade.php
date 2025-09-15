@@ -138,10 +138,10 @@
                         <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-tidak-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        {{-- <a href="{{ route('admin.create_tidak_bergerak') }}"
+                        <a href="{{ route('admin.create_tidak_bergerak') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
-                        </a> --}}
+                        </a>
                     </div>
                 </div>
             </div>
@@ -234,10 +234,10 @@
                         <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-habis-pakai"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        {{-- <a href="{{ route('admin.create_habis_pakai') }}"
+                        <a href="{{ route('admin.create_habis') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
-                        </a> --}}
+                        </a>
                     </div>
                 </div>
             </div>
