@@ -83,7 +83,7 @@
             cells.forEach(cell => {
                 if (cell.textContent.toLowerCase().includes(searchTerm)) {
                     found = true;
-                }
+                }   
             });
             row.style.display = found ? '' : 'none';
         });

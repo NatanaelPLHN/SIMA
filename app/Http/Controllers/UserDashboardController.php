@@ -11,6 +11,6 @@ class UserDashboardController extends Controller
         // Pegawai hanya bisa melihat daftar aset
         $assets = Asset::paginate(10);
 
-        return view('dashboards.user', compact('assets'));
+        return view('user.dashboard', compact('assets'));
     }
 }

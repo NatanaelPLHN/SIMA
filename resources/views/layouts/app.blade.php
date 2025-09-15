@@ -21,7 +21,7 @@
         {{-- Sidebar --}}
         @auth
             {{-- @include('layouts.sidebar') --}}
-            @include('layouts.sidebar-admin')
+            @include('layouts.sidebar')
         @endauth
 
         {{-- <div id="page-content-wrapper" class="w-100"> --}}
