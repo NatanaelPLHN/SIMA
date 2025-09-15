@@ -124,8 +124,10 @@
         <!-- Buttons -->
         <div class="mt-6 flex justify-end space-x-3">
             <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
-                Batal
+               <a href="{{ route('admin.dashboard') }}">
+             Batal</a>
             </button>
+                    
             <button type="button"
                 class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
                 Simpan
