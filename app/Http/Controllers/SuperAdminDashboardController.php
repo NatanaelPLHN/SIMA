@@ -13,13 +13,17 @@ class SuperadminDashboardController extends Controller
         $totalAssets = Asset::count();
         $rusak = Asset::where('status', 'rusak')->count();
         $hilang = Asset::where('status', 'hilang')->count();
-
         $totalUsers = User::count();
-        $admins = User::where('role','admin')->count();
-        $pegawai = User::where('role','pegawai')->count();
+        $admins = User::where('role', 'admin')->count();
+        $pegawai = User::where('role', 'pegawai')->count();
 
         return view('superadmin.dashboard', compact(
-            'totalAssets','rusak','hilang','totalUsers','admins','pegawai'
+            'totalAssets',
+            'rusak',
+            'hilang',
+            'totalUsers',
+            'admins',
+            'pegawai'
         ));
     }
 }
