@@ -1,3 +1,8 @@
+@extends('layouts.app')
+
+@section('title', 'Admin Dashboard')
+
+@section('content')
 <!-- Main Content -->
 <div class="flex-1 flex flex-col">
     <!-- Header -->
@@ -86,3 +91,5 @@
         <p>2025 Dinas Komunikasi dan Informatika, Allright Reserved</p>
     </footer>
 </div>
+
+@endsection

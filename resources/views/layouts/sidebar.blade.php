@@ -33,7 +33,7 @@
             <li>
                 <a href="{{ route('admin.peminjaman') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
-                    {{-- icon  --}} 
+                    {{-- icon  --}}
                     {{-- <i class="fas fa-clipboard-list mr-2"></i> --}}
                     Penggunaan Aset
                 </a>
@@ -71,7 +71,7 @@
                 </a>
             </li>
         @endif
-        
+
         {{-- Khusus SUPERADMIN --}}
         @if(auth()->user()->role == 'superadmin')
             <li>
@@ -147,7 +147,7 @@
                 </a>
             </li>
             <li>
-                <a href="#"
+                <a href="{{ route('superadmin.qr') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Label Barcode
@@ -159,7 +159,7 @@
                     <i class="fas fa-cube mr-2"></i>
                     Kartu Inventaris
                 </a>
-            </li>    
+            </li>
         @endif
         </ul>
     </nav>

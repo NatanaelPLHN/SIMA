@@ -11,13 +11,13 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/ayam', function () {
-    return view('aset');
-});
+// Route::get('/profil', function () {
+//     return view('profil');
+// });
 
-Route::get('/create', function () {
-    return view('form');
-});
+// Route::get('/create', function () {
+//     return view('form');
+// });
 
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -42,9 +42,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/asset/habis/1', [AdminDashboardController::class, 'habis'])->name('admin.habis');
     Route::get('/admin/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('admin.peminjaman');
     Route::get('/admin/peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('admin.pinjam');
+    Route::get('/admin/profil', [AdminDashboardController::class, 'profil'])->name('profil');
 });
 
 // Superadmin dashboard routes
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
-    Route::get('/superadmin/dashboard', [SuperAdminDashboardController::class, 'index'])->name('superadmin.dashboard');
+    Route::get('/superadmin/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::get('/superadmin/qr', [SuperAdminDashboardController::class, 'qr'])->name('superadmin.qr');
 });

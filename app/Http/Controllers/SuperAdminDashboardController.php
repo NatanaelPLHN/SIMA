@@ -7,7 +7,7 @@ use App\Models\User;
 
 class SuperadminDashboardController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
         // Superadmin bisa lihat statistik semua
         $totalAssets = Asset::count();
@@ -25,5 +25,9 @@ class SuperadminDashboardController extends Controller
             'admins',
             'pegawai'
         ));
+    }
+    public function qr()
+    {
+        return view('superadmin.qr');
     }
 }
