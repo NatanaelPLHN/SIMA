@@ -12,7 +12,7 @@
             <div class="card-body">
                 <h1 class="display-4">Ini Dashboard Admin</h1>
                 <p class="lead">Selamat datang di dashboard admin, {{ auth()->user()->name }}!</p>
-                
+
                 <div class="alert alert-warning">
                     <strong>Role:</strong> {{ ucfirst(auth()->user()->role) }}<br>
                     <strong>Email:</strong> {{ auth()->user()->email }}<br>

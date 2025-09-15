@@ -13,18 +13,20 @@
     <!-- Navigation -->
     <nav class="flex-1 p-4">
         <ul class="space-y-2">
-            <li class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-indigo-700">
+            <li class="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-indigo-700 cursor-pointer">
                 <i class="fas fa-home mr-2"></i>
-                DASHBOARD
+                <a href="{{ route('admin.dashboard') }}">DASHBOARD</a>
             </li>
             <li class="flex items-center px-3 py-2 text-sm font-medium hover:bg-indigo-700 cursor-pointer">
                 <i class="fas fa-cube mr-2"></i>
-                Aset
+                <a href="{{ route('admin.asset') }}">Aset</a>
             </li>
             <li class="flex items-center px-3 py-2 text-sm font-medium hover:bg-indigo-700 cursor-pointer">
+                {{-- <a href="{{ route('admin.create_gerak') }}">Aset</a> --}}
                 Penggunaan Aset
             </li>
             <li class="flex items-center px-3 py-2 text-sm font-medium hover:bg-indigo-700 cursor-pointer">
+                {{-- <a href="{{ route('admin.create_gerak') }}">Aset</a> --}}
                 Peminjaman Aset
             </li>
             <li class="flex items-center px-3 py-2 text-sm font-medium hover:bg-indigo-700 cursor-pointer">

@@ -6,10 +6,13 @@ use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
+    public function dashboard()
+    {
+        return view('admin.dashboard');
+    }
+    public function asset()
     {
         return view('admin.asset');
-        // return view('admin.dashboard');
     }
     public function create_gerak()
     {
