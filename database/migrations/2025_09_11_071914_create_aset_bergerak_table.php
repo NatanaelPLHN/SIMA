@@ -11,11 +11,12 @@ return new class extends Migration
      */
 public function up(): void
 {
-    Schema::create('assets_bergerak', function (Blueprint $table) {
-        $table->id('asset_id'); 
-        $table->foreign('asset_id')->references('id')->on('assets')->cascadeOnDelete();
+    Schema::create('aset_bergerak', function (Blueprint $table) {
+        $table->id('aset_id');
+        $table->foreign('aset_id')->references('id')->on('aset')->cascadeOnDelete();
         $table->string('merk')->nullable();
         $table->string('tipe')->nullable();
+        $table->date('tahun_produksi')->nullable();
     });
 }
 
@@ -25,6 +26,6 @@ public function up(): void
      */
     public function down(): void
     {
-        Schema::dropIfExists('assets_bergerak');
+        Schema::dropIfExists('aset_bergerak');
     }
 };

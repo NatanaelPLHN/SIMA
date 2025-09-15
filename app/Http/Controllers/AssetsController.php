@@ -2,66 +2,126 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\assets;
+use App\Models\Asset;
+use App\Models\AsetBergerak;
+use App\Models\AsetTidakBergerak;
+use App\Models\AsetHabisPakai;
 use Illuminate\Http\Request;
 
 class AssetsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $assets = assets::all();
-
+        $assets = Asset::with(['bergerak', 'tidakBergerak', 'habisPakai'])->paginate(10);
         return view('assets.index', compact('assets'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('assets.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'kode' => 'required|unique:aset,kode',
+            'nama_aset' => 'required',
+            'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
+            'kategori' => 'nullable|string',
+            'group_kategori' => 'nullable|string',
+            'jumlah' => 'required|integer|min:1',
+            'tgl_pembelian' => 'nullable|date',
+            'nilai_pembelian' => 'nullable|numeric',
+            'lokasi_terakhir' => 'nullable|string',
+            'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
+        ]);
+
+        $asset = Asset::create($validated);
+
+        // handle detail table
+        if ($validated['jenis_aset'] === 'bergerak') {
+            AsetBergerak::create([
+                'aset_id' => $asset->id,
+                'merk' => $request->merk,
+                'tipe' => $request->tipe,
+                'tahun_produksi' => $request->tahun_produksi,
+            ]);
+        }
+
+        if ($validated['jenis_aset'] === 'tidak_bergerak') {
+            AsetTidakBergerak::create([
+                'aset_id' => $asset->id,
+                'ukuran' => $request->ukuran,
+                'bahan' => $request->bahan,
+            ]);
+        }
+
+        if ($validated['jenis_aset'] === 'habis_pakai') {
+            AsetHabisPakai::create([
+                'aset_id' => $asset->id,
+                'register' => $request->register,
+                'satuan' => $request->satuan,
+            ]);
+        }
+
+        return redirect()->route('assets.index')->with('success', 'Aset berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(assets $assets)
+    public function show(Asset $asset)
     {
-        //
+        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
+        return view('assets.show', compact('asset'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(assets $assets)
+    public function edit(Asset $asset)
     {
-        //
+        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
+        return view('assets.edit', compact('asset'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, assets $assets)
+    public function update(Request $request, Asset $asset)
     {
-        //
+        $validated = $request->validate([
+            'nama_aset' => 'required',
+            'kategori' => 'nullable|string',
+            'group_kategori' => 'nullable|string',
+            'jumlah' => 'required|integer|min:1',
+            'tgl_pembelian' => 'nullable|date',
+            'nilai_pembelian' => 'nullable|numeric',
+            'lokasi_terakhir' => 'nullable|string',
+            'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
+        ]);
+
+        $asset->update($validated);
+
+        if ($asset->jenis_aset === 'bergerak') {
+            $asset->bergerak()->update([
+                'merk' => $request->merk,
+                'tipe' => $request->tipe,
+                'tahun_produksi' => $request->tahun_produksi,
+            ]);
+        }
+
+        if ($asset->jenis_aset === 'tidak_bergerak') {
+            $asset->tidakBergerak()->update([
+                'ukuran' => $request->ukuran,
+                'bahan' => $request->bahan,
+            ]);
+        }
+
+        if ($asset->jenis_aset === 'habis_pakai') {
+            $asset->habisPakai()->update([
+                'register' => $request->register,
+                'satuan' => $request->satuan,
+            ]);
+        }
+
+        return redirect()->route('assets.index')->with('success', 'Aset berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(assets $assets)
+    public function destroy(Asset $asset)
     {
-        //
+        $asset->delete();
+        return redirect()->route('assets.index')->with('success', 'Aset berhasil dihapus.');
     }
 }

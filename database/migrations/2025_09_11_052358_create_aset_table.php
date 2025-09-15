@@ -11,11 +11,11 @@ return new class extends Migration
      */
 public function up(): void
 {
-    Schema::create('assets', function (Blueprint $table) {
+    Schema::create('aset', function (Blueprint $table) {
         $table->id();
-        $table->string('kode')->unique(); // kode unik aset
+        $table->string('kode')->unique();
         $table->string('nama_aset');
-        $table->enum('tipe', ['bergerak', 'tidak_bergerak', 'habis_pakai']);
+        $table->enum('jenis_aset', ['bergerak', 'tidak_bergerak', 'habis_pakai']);
         $table->string('kategori')->nullable();
         $table->string('group_kategori')->nullable();
         $table->integer('jumlah')->default(1);
@@ -32,6 +32,6 @@ public function up(): void
      */
     public function down(): void
     {
-        Schema::dropIfExists('assets');
+        Schema::dropIfExists('aset');
     }
 };

@@ -14,6 +14,7 @@ Route::get('/', function () {
 Route::get('/ayam', function () {
     return view('aset');
 });
+
 Route::get('/create', function () {
     return view('form');
 });
@@ -26,7 +27,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // User dashboard routes
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/in', [AuthController::class, 'login']);
-Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
 });
 
 // Admin dashboard routes

@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class AsetHabisPakai extends Model
+{
+    protected $table = 'aset_habis_pakai';
+    protected $primaryKey = 'aset_id';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'register',
+        'satuan',
+    ];
+
+    public function asset()
+    {
+        return $this->belongsTo(Asset::class, 'aset_id');
+    }
+}
