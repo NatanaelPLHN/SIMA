@@ -25,13 +25,13 @@
         @endauth
 
         {{-- <div id="page-content-wrapper" class="w-100"> --}}
-            <div class="flex-1 flex flex-col">
+            <div class="flex-1 flex flex-col overflow-hidden">
             {{-- Topbar --}}
             @auth
                 @include('layouts.header')
             @endauth
 
-            <main class="container-fluid mt-4">
+            <main class="flex-1 overflow-y-auto p-4">
                 @yield('content')
             </main>
 
