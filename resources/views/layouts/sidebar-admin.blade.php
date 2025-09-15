@@ -23,7 +23,7 @@
             </li>
             <li class="flex items-center px-3 py-2 text-sm font-medium hover:bg-indigo-700 cursor-pointer">
                 {{-- <a href="{{ route('admin.create_gerak') }}">Aset</a> --}}
-                Penggunaan Aset
+                <a href="{{ route('admin.peminjaman') }}">Penggunaan Aset</a>
             </li>
             <li class="flex items-center px-3 py-2 text-sm font-medium hover:bg-indigo-700 cursor-pointer">
                 {{-- <a href="{{ route('admin.create_gerak') }}">Aset</a> --}}

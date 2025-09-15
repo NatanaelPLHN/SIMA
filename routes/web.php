@@ -37,6 +37,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/bergerak', [AdminDashboardController::class, 'create_gerak'])->name('admin.create_gerak');
     Route::get('/admin/tidak_bergerak', [AdminDashboardController::class, 'create_tidak'])->name('admin.create_tidak_bergerak');
     Route::get('/admin/habis', [AdminDashboardController::class, 'create_habis'])->name('admin.create_habis');
+    Route::get('/admin/asset/bergerak/1', [AdminDashboardController::class, 'bergerak'])->name('admin.bergerak');
+    Route::get('/admin/asset/tidak_bergerak/1', [AdminDashboardController::class, 'tidak_bergerak'])->name('admin.tidak_bergerak');
+    Route::get('/admin/asset/habis/1', [AdminDashboardController::class, 'habis'])->name('admin.habis');
+    Route::get('/admin/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('admin.peminjaman');
 });
 
 // Superadmin dashboard routes
