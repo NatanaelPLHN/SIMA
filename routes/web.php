@@ -32,8 +32,8 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
 // Admin dashboard routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-    // Route::get('/admin/asset', [AdminDashboardController::class, 'asset'])->name('admin.asset');
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/asset', [AdminDashboardController::class, 'asset'])->name('admin.asset');
     Route::get('/admin/create', [AdminDashboardController::class, 'create_gerak'])->name('admin.create_gerak');
 });
 

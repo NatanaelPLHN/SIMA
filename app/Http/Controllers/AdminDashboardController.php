@@ -6,7 +6,11 @@ use App\Models\Asset;
 
 class AdminDashboardController extends Controller
 {
-    public function index()
+    public function dashboard()
+    {
+        return view('admin.dashboard');
+    }
+    public function asset()
     {
         // Admin bisa lihat ringkasan + manage aset
         $totalAssets = Asset::count();
