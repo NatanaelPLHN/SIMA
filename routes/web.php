@@ -41,6 +41,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/asset/tidak_bergerak/1', [AdminDashboardController::class, 'tidak_bergerak'])->name('admin.tidak_bergerak');
     Route::get('/admin/asset/habis/1', [AdminDashboardController::class, 'habis'])->name('admin.habis');
     Route::get('/admin/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('admin.peminjaman');
+    Route::get('/admin/peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('admin.pinjam');
 });
 
 // Superadmin dashboard routes

@@ -59,4 +59,8 @@ class AdminDashboardController extends Controller
     {
         return view('admin.peminjaman');
     }
+    public function pinjam()
+    {
+        return view('admin.Forms.pinjam');
+    }
 }
