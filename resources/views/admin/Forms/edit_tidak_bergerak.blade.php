@@ -9,7 +9,7 @@
             <!-- Left Column -->
 
             @include('admin.Forms._form')
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols gap-4">
                 <div>
                     <label for="ukuran" class="block text-sm font-medium text-gray-700 mb-1">Ukuran</label>
                     <input type="text" id="ukuran"

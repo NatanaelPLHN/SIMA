@@ -8,7 +8,7 @@
         <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Form Groups -->
             @include('admin.Forms._form')
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols gap-4">
                 <div>
                     <label for="merk" class="block text-sm font-medium text-gray-700 mb-1">Merk</label>
                     <input type="text" id="merk"
