@@ -10,15 +10,30 @@ use Illuminate\Http\Request;
 
 class AssetsController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Asset::class, 'asset');
+    }
     public function index()
     {
-        $assets = Asset::with(['bergerak', 'tidakBergerak', 'habisPakai'])->paginate(10);
-        return view('admin.asset', compact('assets'));
+        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->with('bergerak')->paginate(10, ['*'], 'bergerak_page');
+        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with('tidakBergerak')->paginate(10, ['*'], 'tidak_bergerak_page');
+        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with('habisPakai')->paginate(10, ['*'], 'habis_pakai_page');
+
+        return view('admin.asset', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
 
-    public function create()
+    public function create_gerak()
     {
-        return view('assets.create');
+        return view('admin.Forms.create_gerak');
+    }
+    public function create_tidak()
+    {
+        return view('admin.Forms.create_tidak_bergerak');
+    }
+    public function create_habis()
+    {
+        return view('admin.Forms.create_habis');
     }
 
     public function store(Request $request)
@@ -64,13 +79,13 @@ class AssetsController extends Controller
             ]);
         }
 
-        return redirect()->route('assets.index')->with('success', 'Aset berhasil ditambahkan.');
+        return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.');
     }
 
     public function show(Asset $asset)
     {
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
-        return view('assets.show', compact('asset'));
+        // return view('assets.show', compact('asset'));
     }
 
     public function edit(Asset $asset)
@@ -124,4 +139,7 @@ class AssetsController extends Controller
         $asset->delete();
         return redirect()->route('assets.index')->with('success', 'Aset berhasil dihapus.');
     }
+
 }
+
+

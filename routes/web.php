@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssetsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
@@ -31,19 +32,28 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 });
 
 // Admin dashboard routes
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/admin/asset', [AdminDashboardController::class, 'asset'])->name('admin.asset');
-    Route::get('/admin/bergerak', [AdminDashboardController::class, 'create_gerak'])->name('admin.create_gerak');
-    Route::get('/admin/tidak_bergerak', [AdminDashboardController::class, 'create_tidak'])->name('admin.create_tidak_bergerak');
-    Route::get('/admin/habis', [AdminDashboardController::class, 'create_habis'])->name('admin.create_habis');
-    Route::get('/admin/asset/bergerak/1', [AdminDashboardController::class, 'bergerak'])->name('admin.bergerak');
-    Route::get('/admin/asset/tidak_bergerak/1', [AdminDashboardController::class, 'tidak_bergerak'])->name('admin.tidak_bergerak');
-    Route::get('/admin/asset/habis/1', [AdminDashboardController::class, 'habis'])->name('admin.habis');
-    Route::get('/admin/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('admin.peminjaman');
-    Route::get('/admin/peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('admin.pinjam');
-    Route::get('/admin/profil', [AdminDashboardController::class, 'profil'])->name('profil');
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+
+    // Assets (resource route)
+    Route::resource('assets', AssetsController::class);
+
+    // Custom create forms for each jenis_aset (optional — if you still want them separated)
+    Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
+    Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
+    Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
+
+    // Other pages from AdminDashboardController
+    Route::get('/asset/bergerak/{id}', [AdminDashboardController::class, 'bergerak'])->name('asset.bergerak');
+    Route::get('/asset/tidak-bergerak/{id}', [AdminDashboardController::class, 'tidak_bergerak'])->name('asset.tidak_bergerak');
+    Route::get('/asset/habis/{id}', [AdminDashboardController::class, 'habis'])->name('asset.habis');
+
+    Route::get('/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
+    Route::get('/peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
+    Route::get('/profil', [AdminDashboardController::class, 'profil'])->name('profil');
 });
+
 
 // Superadmin dashboard routes
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
