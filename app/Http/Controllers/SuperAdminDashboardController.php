@@ -30,4 +30,8 @@ class SuperadminDashboardController extends Controller
     {
         return view('superadmin.qr');
     }
+    public function instansi()
+    {
+        return view('superadmin.instansi');
+    }
 }

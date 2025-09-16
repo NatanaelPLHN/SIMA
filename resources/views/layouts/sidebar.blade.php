@@ -3,15 +3,15 @@
     <!-- Logo and Title -->
     <div class="p-4 border-b border-indigo-700">
         <div class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <i class="fas fa-key text-white"></i>
+            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center border-2 border-indigo-700 shadow">
+                   <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo SIM ASET" class="w-9 h-9 object-contain" >
             </div>
             <span class="text-xl font-bold">SIM ASET</span>
         </div>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 p-4">
+    <nav class="flex-1 p-4 overflow-y-auto">
         <ul class="space-y-2">
 
         {{-- Khusus ADMIN --}}
@@ -82,7 +82,7 @@
                 </a>
             </li>
             <li>
-                <a href="#"
+                <a href="{{ route('superadmin.instansi') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Instansi
@@ -165,7 +165,7 @@
     </nav>
 
     <!-- Logout -->
-    <div class="p-4 border-t border-indigo-700">
+    <div class="p-4 border-t border-indigo-700 mt-auto">
 
         <form action="{{ route('logout') }}" method="POST" class="d-inline">
             @csrf
