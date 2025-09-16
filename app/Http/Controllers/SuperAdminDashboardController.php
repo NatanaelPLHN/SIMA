@@ -34,4 +34,8 @@ class SuperadminDashboardController extends Controller
     {
         return view('superadmin.instansi');
     }
+    public function profil()
+    {
+        return view('layouts.profil');
+    }
 }
