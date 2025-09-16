@@ -63,4 +63,8 @@ class AdminDashboardController extends Controller
     {
         return view('admin.Forms.pinjam');
     }
+    public function profil()
+    {
+        return view('layouts.profil');
+    }
 }
