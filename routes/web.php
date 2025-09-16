@@ -49,4 +49,5 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/superadmin/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('superadmin.dashboard');
     Route::get('/superadmin/qr', [SuperAdminDashboardController::class, 'qr'])->name('superadmin.qr');
+    Route::get('/superadmin/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('superadmin.instansi');
 });
