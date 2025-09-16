@@ -42,7 +42,7 @@
                         <label for="search-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('admin.create_gerak') }}"
+                        <a href="{{ route('admin.assets.create_gerak') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
                         </a>
@@ -55,65 +55,57 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-indigo-800">
                         <tr>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                No</th>
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Kode
                                 Number</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Nama
                                 Aset</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Register
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Register
                             </th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Satuan
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Satuan
                                 Produksi</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Status
                             </th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Aksi
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">KB001</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="text-yellow-600 hover:text-yellow-800">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">KB002</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Komputer Laptop</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">REG002</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="text-yellow-600 hover:text-yellow-800">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                    <tbody>
+                        @foreach ($assetsBergerak as $index => $asset)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $asset->kode }}</td>
+                                <td>{{ $asset->nama_aset }}</td>
+                                <td>{{ $asset->bergerak->merk ?? '-' }}</td>
+                                <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
+                                <td>{{ ucfirst($asset->status) }}</td>
+                                <td>
+                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="{{ route('admin.assets.index', $asset->id) }}"></a>
+                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800" href="{{ route('admin.assets.index', $asset->id) }}"></a>
+                                    <form method="POST" action="{{ route('admin.assets.index', $asset->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
+                    {{ $assetsBergerak->links() }}
                 </table>
             </div>
         </div>
@@ -138,7 +130,7 @@
                         <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-tidak-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('admin.create_tidak_bergerak') }}"
+                        <a href="{{ route('admin.assets.create_tidak_bergerak') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
                         </a>
@@ -151,18 +143,32 @@
                 <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
                     <thead class="bg-indigo-800">
                         <tr>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                No</th>
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Kode
                                 Number</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Nama
                                 Aset</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Register
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Register
                             </th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Satuan
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Satuan
                                 Produksi</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Status
                             </th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Aksi
                             </th>
                         </tr>
                     </thead>
@@ -234,7 +240,7 @@
                         <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-habis-pakai"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('admin.create_habis') }}"
+                        <a href="{{ route('admin.assets.create_habis') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
                         </a>
@@ -247,18 +253,31 @@
                 <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
                     <thead class="bg-indigo-800">
                         <tr>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs fongit-medium text-white uppercase tracking-wider">No</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs fongit-medium text-white uppercase tracking-wider">
+                                No</th>
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Kode
                                 Number</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Nama
                                 Aset</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Register</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Satuan
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Satuan
                                 Produksi</th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Status
                             </th>
-                            <th class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Aksi
                             </th>
                         </tr>
                     </thead>

@@ -9,9 +9,10 @@
             <!-- Form Groups -->
             @include('admin.Forms._form')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                 <div>
                     <label for="merk" class="block text-sm font-medium text-gray-700 mb-1">Merk</label>
-                    <input type="text" id="merk"
+                    <input type="text" id="merk" name="merk"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
@@ -26,6 +27,12 @@
                     <label for="serialNumber" class="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
                     <input type="text" id="serialNumber"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="tersedia">Tersedia</option>
+                        <option value="dipakai">Dipakai</option>
+                        <option value="rusak">Rusak</option>
+                        <option value="hilang">Hilang</option>
+                        <option value="habis">Habis</option>
+                    </select>
                 </div>
 
                 <div>

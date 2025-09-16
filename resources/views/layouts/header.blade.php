@@ -10,7 +10,7 @@
             <div class="flex items-center">
                 {{-- <i class="fas fa-user text-indigo-600 mr-2"></i> --}}
                 <span class="me-3 fw-bold text-primary">
-                    <a href="{{ route('profil') }}"><i class="fas fa-user-circle"></i></a>
+                    <a href="{{ route('admin.profil') }}"><i class="fas fa-user-circle"></i></a>
 
                     {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})
                 </span>

@@ -21,7 +21,7 @@ class AdminDashboardController extends Controller
         // $tersedia = Asset::where('status', 'tersedia')->count();
         // $dipakai = Asset::where('status', 'dipakai')->count();
 
-        return view('admin.asset');
+        return view('admin.assets.index');
     }
 
     // old
@@ -31,18 +31,6 @@ class AdminDashboardController extends Controller
     //     // return view('admin.dashboard');
     // }
 
-    public function create_gerak()
-    {
-        return view('admin.Forms.create_gerak');
-    }
-    public function create_tidak()
-    {
-        return view('admin.Forms.create_tidak_bergerak');
-    }
-    public function create_habis()
-    {
-        return view('admin.Forms.create_habis');
-    }
     public function bergerak()
     {
         return view('admin.Detail.bergerak');
