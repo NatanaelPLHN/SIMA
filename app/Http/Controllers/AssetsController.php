@@ -7,6 +7,7 @@ use App\Models\AsetBergerak;
 use App\Models\AsetTidakBergerak;
 use App\Models\AsetHabisPakai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AssetsController extends Controller
 {
@@ -38,50 +39,67 @@ class AssetsController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'kode' => 'required|unique:aset,kode',
-            'nama_aset' => 'required',
-            'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
-            'kategori' => 'nullable|string',
-            'group_kategori' => 'nullable|string',
-            'jumlah' => 'required|integer|min:1',
-            'tgl_pembelian' => 'nullable|date',
-            'nilai_pembelian' => 'nullable|numeric',
-            'lokasi_terakhir' => 'nullable|string',
-            'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
-        ]);
-
-        $asset = Asset::create($validated);
-
-        // handle detail table
-        if ($validated['jenis_aset'] === 'bergerak') {
-            AsetBergerak::create([
-                'aset_id' => $asset->id,
-                'merk' => $request->merk,
-                'tipe' => $request->tipe,
-                'nomor_serial' => $request->nomor_serial,
-                'tahun_produksi' => $request->tahun_produksi,
+        try {
+            $validated = $request->validate([
+                'kode' => 'required|unique:aset,kode',
+                'nama_aset' => 'required',
+                'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
+                'kategori' => 'nullable|string',
+                'group_kategori' => 'nullable|string',
+                'jumlah' => 'required|integer|min:1',
+                'tgl_pembelian' => 'nullable|date|before_or_equal:today',
+                'nilai_pembelian' => 'nullable|numeric|min:0',
+                'lokasi_terakhir' => 'nullable|string',
+                'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
+            ], [
+                // Custom error messages
+                'kode.unique' => 'Kode aset sudah digunakan.',
+                'kode.required' => 'Kode aset wajib diisi.',
+                'nama_aset.required' => 'Nama aset wajib diisi.',
+                'jenis_aset.required' => 'Jenis aset wajib dipilih.',
+                'jumlah.min' => 'Jumlah minimal 1.',
+                'tgl_pembelian.before_or_equal' => 'Tanggal pembelian tidak boleh melebihi tanggal hari ini.',
+                'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
             ]);
+
+            $asset = Asset::create($validated);
+
+            // handle detail table
+            if ($validated['jenis_aset'] === 'bergerak') {
+                AsetBergerak::create([
+                    'aset_id' => $asset->id,
+                    'merk' => $request->merk,
+                    'tipe' => $request->tipe,
+                    'nomor_serial' => $request->nomor_serial,
+                    'tahun_produksi' => $request->tahun_produksi,
+                ]);
+            }
+
+            if ($validated['jenis_aset'] === 'tidak_bergerak') {
+                AsetTidakBergerak::create([
+                    'aset_id' => $asset->id,
+                    'ukuran' => $request->ukuran,
+                    'bahan' => $request->bahan,
+                ]);
+            }
+
+            if ($validated['jenis_aset'] === 'habis_pakai') {
+                AsetHabisPakai::create([
+                    'aset_id' => $asset->id,
+                    'register' => $request->register,
+                    'satuan' => $request->satuan,
+                ]);
+            }
+
+            return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('Database error in asset creation: ' . $e->getMessage());
+            return redirect()->back()->withInput()->withErrors(['database' => 'Gagal menyimpan data ke database. Silakan coba lagi.']);
+        } catch (\Exception $e) {
+            Log::error('Error in asset creation: ' . $e->getMessage());
+            return redirect()->back()->withInput()->withErrors(['error' => 'Terjadi kesalahan sistem. Silakan coba lagi.']);
         }
-
-        if ($validated['jenis_aset'] === 'tidak_bergerak') {
-            AsetTidakBergerak::create([
-                'aset_id' => $asset->id,
-                'ukuran' => $request->ukuran,
-                'bahan' => $request->bahan,
-            ]);
-        }
-
-        if ($validated['jenis_aset'] === 'habis_pakai') {
-            AsetHabisPakai::create([
-                'aset_id' => $asset->id,
-                'register' => $request->register,
-                'satuan' => $request->satuan,
-            ]);
-        }
-
-        return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.');
-
     }
 
     public function show(Asset $asset)
