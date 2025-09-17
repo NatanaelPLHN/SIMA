@@ -11,6 +11,7 @@ class AsetTidakBergerak extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'aset_id',
         'ukuran',
         'bahan',
     ];

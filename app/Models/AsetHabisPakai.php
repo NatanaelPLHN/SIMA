@@ -11,6 +11,7 @@ class AsetHabisPakai extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'aset_id',
         'register',
         'satuan',
     ];

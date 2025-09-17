@@ -37,7 +37,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
 
     // Assets (resource route)
-    Route::resource('assets', AssetsController::class);
+    Route::resource('assets', controller: AssetsController::class);
 
     // Custom create forms for each jenis_aset (optional — if you still want them separated)
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');

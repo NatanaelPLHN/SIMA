@@ -27,7 +27,7 @@ class AssetSeeder extends Seeder
             'aset_id' => $asset->id,
             'merk' => 'Toyota',
             'tipe' => 'Avanza',
-            'tahun_produksi' => '2024-05-15',
+            'tahun_produksi' => '2024',
         ]);
     }
 }

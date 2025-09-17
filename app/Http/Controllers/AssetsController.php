@@ -59,6 +59,7 @@ class AssetsController extends Controller
                 'aset_id' => $asset->id,
                 'merk' => $request->merk,
                 'tipe' => $request->tipe,
+                'nomor_serial' => $request->nomor_serial,
                 'tahun_produksi' => $request->tahun_produksi,
             ]);
         }
@@ -80,6 +81,7 @@ class AssetsController extends Controller
         }
 
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.');
+
     }
 
     public function show(Asset $asset)
