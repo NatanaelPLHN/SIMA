@@ -34,6 +34,10 @@ class SuperadminDashboardController extends Controller
     {
         return view('superadmin.instansi');
     }
+    public function profil()
+    {
+        return view('layouts.profil');
+    }
     public function create_instansi()
     {
         return view('superadmin.Forms.create_instansi');
