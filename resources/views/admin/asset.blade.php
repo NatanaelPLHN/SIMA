@@ -177,7 +177,7 @@
                     </thead>
                     <tbody>
                         @foreach ($assetsTidakBergerak as $index => $asset)
-                        <tr>
+                            <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $asset->kode }}</td>
                                 <td>{{ $asset->nama_aset }}</td>
@@ -200,8 +200,8 @@
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"
                                             type="submit"></button>
                                     </form>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                     {{ $assetsTidakBergerak->links() }}
@@ -269,6 +269,7 @@
                             </th>
                         </tr>
                     </thead>
+<<<<<<< HEAD
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr>
                             <td class="px-4 py-3 text-sm text-gray-900">2</td>
@@ -322,6 +323,7 @@
                         @endforeach
 >>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                     </tbody>
+                    {{ $assetsHabisPakai->links() }}
                 </table>
             </div>
         </div>
