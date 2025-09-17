@@ -96,7 +96,7 @@
                                     <a class="fas fa-eye text-blue-600 hover:text-blue-800"
                                         href="{{ route('admin.assets.index', $asset->id) }}"></a>
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('admin.assets.index', $asset->id) }}"></a>
+                                        href="{{ route('admin.assets.edit', $asset->id) }}"></a>
                                     <form method="POST" action="{{ route('admin.assets.index', $asset->id) }}">
                                         @csrf
                                         @method('DELETE')
