@@ -87,9 +87,12 @@
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $asset->nama_aset }}</td>
-                                <td>{{ $asset->bergerak->nomor_serial }}</td>
-                                <td>{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+<<<<<<< HEAD
+=======
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">>{{ $asset->bergerak->nomor_serial }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+>>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                                 <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td>{{ ucfirst($asset->status) }}</td>
                                 <td>
@@ -236,7 +239,7 @@
 
             <!-- Data Table Habis Pakai -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
                     <thead class="bg-indigo-800">
                         <tr>
                             <th
@@ -266,6 +269,30 @@
                             </th>
                         </tr>
                     </thead>
+<<<<<<< HEAD
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">2</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">HP002</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Tinta Printer</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">REG201</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Cartridge</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">Habis</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-yellow-600 hover:text-yellow-800">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+=======
                     <tbody>
                         @foreach ($assetsHabisPakai as $index => $asset)
                             <tr>
@@ -294,6 +321,7 @@
                                 </td>
                             </tr>
                         @endforeach
+>>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                     </tbody>
                     {{ $assetsHabisPakai->links() }}
                 </table>

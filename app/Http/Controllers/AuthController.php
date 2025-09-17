@@ -12,8 +12,8 @@ class AuthController extends Controller
     public function showLoginForm()
     {
     Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
+    // request()->session()->invalidate();
+    // request()->session()->regenerateToken();
 
     return view('auth.login');
     }
@@ -36,11 +36,12 @@ class AuthController extends Controller
                 } else {
                     return redirect()->intended('/user/dashboard');
                 }
+                
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        return redirect()->back()->with('loginError', 'Email atau password salah!');
+
+
     }
 
     public function logout(Request $request)
@@ -48,7 +49,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
+        
         return redirect('/login');
     }
 
