@@ -129,7 +129,7 @@ class AssetsController extends Controller
             $asset->bergerak()->update([
                 'merk' => $request->merk,
                 'tipe' => $request->tipe,
-                'serial_number' => $request->serial_number,
+                'nomor_serial' => $request->nomor_serial,
                 'tahun_produksi' => $request->tahun_produksi,
             ]);
         }
@@ -148,13 +148,13 @@ class AssetsController extends Controller
             ]);
         }
 
-        return redirect()->route('assets.index')->with('success', 'Aset berhasil diperbarui.');
+        return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil diperbarui.');
     }
 
     public function destroy(Asset $asset)
     {
         $asset->delete();
-        return redirect()->route('assets.index')->with('success', 'Aset berhasil dihapus.');
+        return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil dihapus.');
     }
 
 }

@@ -13,17 +13,20 @@
             @include('admin.Forms._form')
             <div class="grid grid-cols-1 md:grid-cols gap-4">
                 <div>
-                    <label for="merk" class="block text-sm font-medium text-gray-700 mb-1">Register</label>
-                    <input type="text" id="merk"
+                    <label for="register" class="block text-sm font-medium text-gray-700 mb-1">Register</label>
+                    <input type="text" id="register" name="register"
+                        value="{{ old('register', $asset->habisPakai->register ?? '') }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
                 <div>
                     <label for="satuan" class="block text-sm font-medium text-gray-700 mb-1">Satuan</label>
-                    <input type="text" id="satuan"
+                    <input type="text" id="satuan" name="satuan"
+                        value="{{ old('satuan', $asset->habisPakai->satuan ?? '') }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
             </div>
+
             <!-- Generate Code Section -->
             <div class="mt-6 pt-6 border-t border-gray-200">
                 <div class="flex items-center space-x-4">

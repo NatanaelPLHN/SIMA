@@ -29,9 +29,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="serial_number" class="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
-                    <input type="text" id="serial_number" name="serial_number"
-                        value="{{ old('serial_number', $asset->bergerak->serial_number ?? '') }}"
+                    <label for="nomor_serial" class="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
+                    <input type="text" id="nomor_serial" name="nomor_serial"
+                        value="{{ old('nomor_serial', $asset->bergerak->nomor_serial ?? '') }}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
