@@ -100,6 +100,7 @@ class AssetsController extends Controller
             Log::error('Error in asset creation: ' . $e->getMessage());
             return redirect()->back()->withInput()->withErrors(['error' => 'Terjadi kesalahan sistem. Silakan coba lagi.']);
         }
+
     }
 
     public function show(Asset $asset)

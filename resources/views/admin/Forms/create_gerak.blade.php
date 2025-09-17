@@ -6,16 +6,6 @@
     <h1 class="text-lg font-semibold text-indigo-800">Tambah Aset Bergerak</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
           {{-- Menampilkan error validasi --}}
-          @if ($errors->any())
-          <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-              <strong>Terjadi kesalahan:</strong>
-              <ul class="list-disc list-inside mt-2">
-                  @foreach ($errors->all() as $error)
-                      <li>{{ $error }}</li>
-                  @endforeach
-              </ul>
-          </div>
-      @endif
 
       {{-- Menampilkan error session --}}
       @if (session('error'))
