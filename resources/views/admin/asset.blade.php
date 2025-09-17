@@ -60,19 +60,18 @@
                                 No</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Kode
-                                Number</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
                                 Aset</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Register
+                                Serial Number</th>
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Merk/Type
                             </th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Satuan
+                                Tahun
                                 Produksi</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
@@ -88,18 +87,24 @@
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->kode }}</td>
+<<<<<<< HEAD
+=======
                                 <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->bergerak->merk ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">>{{ $asset->bergerak->nomor_serial }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+>>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                                 <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td>{{ ucfirst($asset->status) }}</td>
                                 <td>
-                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="{{ route('admin.assets.index', $asset->id) }}"></a>
-                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800" href="{{ route('admin.assets.index', $asset->id) }}"></a>
+                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                        href="{{ route('admin.assets.index', $asset->id) }}"></a>
+                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                        href="{{ route('admin.assets.edit', $asset->id) }}"></a>
                                     <form method="POST" action="{{ route('admin.assets.index', $asset->id) }}">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
+                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                            type="submit"></button>
                                     </form>
                                 </td>
                             </tr>
@@ -140,7 +145,7 @@
 
             <!-- Data Table Tidak Bergerak -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
+                <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-indigo-800">
                         <tr>
                             <th
@@ -148,20 +153,18 @@
                                 No</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Kode
-                                Number</th>
+                                Kode</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
                                 Aset</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Register
+                                Ukuran
                             </th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Satuan
-                                Produksi</th>
+                                Bahan</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Status
@@ -172,50 +175,36 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody>
+                        @foreach ($assetsTidakBergerak as $index => $asset)
                         <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">TB001</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Gedung Kantor</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">REG100</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="text-yellow-600 hover:text-yellow-800">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $asset->kode }}</td>
+                                <td>{{ $asset->nama_aset }}</td>
+                                <td>{{ $asset->tidakBergerak->ukuran }}</td>
+                                <td>{{ $asset->tidakBergerak->bahan ?? '-' }}</td>
+                                <td>{{ ucfirst($asset->status) }}</td>
+                                <td class="flex space-x-2">
+                                    <!-- Show -->
+                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                        href="{{ route('admin.assets.show', $asset->id) }}"></a>
+
+                                    <!-- Edit -->
+                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                        href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+
+                                    <!-- Delete -->
+                                    <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                            type="submit"></button>
+                                    </form>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">TB002</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Tanah Kavling</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">REG101</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">M²</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="text-yellow-600 hover:text-yellow-800">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @endforeach
                     </tbody>
+                    {{ $assetsTidakBergerak->links() }}
                 </table>
             </div>
         </div>
@@ -258,8 +247,7 @@
                                 No</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Kode
-                                Number</th>
+                                Kode</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
@@ -303,6 +291,36 @@
                                 </div>
                             </td>
                         </tr>
+=======
+                    <tbody>
+                        @foreach ($assetsHabisPakai as $index => $asset)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $asset->kode }}</td>
+                                <td>{{ $asset->nama_aset }}</td>
+                                <td>{{ $asset->habisPakai->register }}</td>
+                                <td>{{ $asset->habisPakai->satuan ?? '-' }}</td>
+                                <td>{{ ucfirst($asset->status) }}</td>
+                                <td class="flex space-x-2">
+                                    <!-- Show -->
+                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                        href="{{ route('admin.assets.show', $asset->id) }}"></a>
+
+                                    <!-- Edit -->
+                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                        href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+
+                                    <!-- Delete -->
+                                    <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                            type="submit"></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+>>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                     </tbody>
                 </table>
             </div>

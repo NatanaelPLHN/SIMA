@@ -38,7 +38,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
 
     // Assets (resource route)
-    Route::resource('assets', AssetsController::class);
+    Route::resource('assets', controller: AssetsController::class);
 
     // Custom create forms for each jenis_aset (optional — if you still want them separated)
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
@@ -61,13 +61,13 @@ Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('sup
     Route::get('/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
     // instansi
-    Route::get('/superadmin/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('instansi');
+    Route::get('/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('instansi');
     Route::get('/profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
-    Route::get('/superadmin/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('superadmin.create_instansi');
-    Route::get('/superadmin/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('superadmin.edit_instansi');
+    Route::get('/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('create_instansi');
+    Route::get('/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('edit_instansi');
 
 // bidang
-    Route::get('/superadmin/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('superadmin.bidang');
-    Route::get('/superadmin/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('superadmin.create_bidang');
-    Route::get('/superadmin/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('superadmin.edit_bidang');
+    Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
+    Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
+    Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
 });

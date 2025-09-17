@@ -1,3 +1,4 @@
+@csrf
 <div>
     <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
     <input type="text" id="nama"

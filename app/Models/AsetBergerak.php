@@ -10,7 +10,13 @@ class AsetBergerak extends Model
     protected $primaryKey = 'aset_id';
     public $timestamps = false;
 
-    protected $fillable = ['merk', 'tipe', 'tahun_produksi'];
+    protected $fillable = [
+        'aset_id',
+        'merk',
+        'tipe',
+        'nomor_serial',
+        'tahun_produksi'
+    ];
 
     public function asset()
     {

@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->foreign('aset_id')->references('id')->on('aset')->cascadeOnDelete();
             $table->string('merk')->nullable();
             $table->string('tipe')->nullable();
-            $table->date('tahun_produksi')->nullable();
+            $table->string('nomor_serial')->nullable();
+            $table->year('tahun_produksi')->nullable();
         });
     }
 
