@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Asset;
 
 class UserDashboardController extends Controller
 {
     public function index()
     {
-        return view('user.dashboard');
+        // Pegawai hanya bisa melihat daftar aset
+        $assets = Asset::paginate(10);
+
+        return view('user.dashboard', compact('assets'));
+    }
+    public function profil()
+    {
+        return view('layouts.profil');
     }
 }

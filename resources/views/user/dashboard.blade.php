@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.app')
 
 @section('title', 'User Dashboard')
 @section('menu-dashboard-active', 'active')

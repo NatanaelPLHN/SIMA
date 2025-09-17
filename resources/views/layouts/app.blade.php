@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Laravel Multi Auth')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    {{-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Laravel Multi Auth</a>
-            
-            @auth
-                <div class="navbar-nav ms-auto">
-                    <span class="navbar-text me-3">
-                        Hello, {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})
-                    </span>
-                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-                    </form>
-                </div>
-            @endauth
-        </div>
-    </nav> --}}
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> --}}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <main class="container mt-4">
-        @yield('content')
-    </main>
+</head>
+{{-- <body> --}}
+
+<body class="bg-gray-100">
+    {{-- <div class="d-flex" id="wrapper"> --}}
+
+    <div class="flex h-screen">
+        {{-- Sidebar --}}
+        @auth
+            {{-- @include('layouts.sidebar') --}}
+            @include('layouts.sidebar')
+            
+        @endauth
+
+        {{-- <div id="page-content-wrapper" class="w-100"> --}}
+            <div class="flex-1 flex flex-col overflow-hidden">
+            {{-- Topbar --}}
+            @auth
+                @include('layouts.header')
+            @endauth
+
+            <main class="flex-1 overflow-y-auto p-4">
+                @yield('content')
+            </main>
+
+            {{-- Footer --}}
+            @auth
+                @include('layouts.footer')
+            @endauth
+
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
