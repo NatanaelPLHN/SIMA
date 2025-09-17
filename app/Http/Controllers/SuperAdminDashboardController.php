@@ -34,4 +34,24 @@ class SuperadminDashboardController extends Controller
     {
         return view('superadmin.instansi');
     }
+    public function create_instansi()
+    {
+        return view('superadmin.Forms.create_instansi');
+    }
+    public function edit_instansi()
+    {
+        return view('superadmin.Forms.edit_instansi');
+    }
+    public function bidang()
+    {
+        return view('superadmin.bidang');
+    }
+    public function create_bidang()
+    {
+        return view('superadmin.Forms.create_bidang');
+    }
+    public function edit_bidang()
+    {
+        return view('superadmin.Forms.edit_bidang');
+    }
 }

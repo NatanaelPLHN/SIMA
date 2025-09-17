@@ -59,5 +59,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/superadmin/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('superadmin.dashboard');
     Route::get('/superadmin/qr', [SuperAdminDashboardController::class, 'qr'])->name('superadmin.qr');
+    // instansi
     Route::get('/superadmin/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('superadmin.instansi');
+    Route::get('/superadmin/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('superadmin.create_instansi');
+    Route::get('/superadmin/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('superadmin.edit_instansi');
+
+// bidang
+    Route::get('/superadmin/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('superadmin.bidang');
+    Route::get('/superadmin/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('superadmin.create_bidang');
+    Route::get('/superadmin/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('superadmin.edit_bidang');
 });
