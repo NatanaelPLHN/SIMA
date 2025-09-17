@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssetsController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
@@ -11,6 +12,9 @@ use App\Http\Controllers\SuperAdminDashboardController;
 Route::get('/', function () {
     return redirect('/login');
 });
+// Route::get('/detail', function () {
+//     return redirect('');
+// });
 
 // Route::get('/profil', function () {
 //     return view('profil');
@@ -53,6 +57,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
     Route::get('/peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('/profil', [AdminDashboardController::class, 'profil'])->name('profil');
+    Route::get('/bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
 });
 
 
@@ -70,4 +75,9 @@ Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('sup
     Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
     Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
     Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
+
+    // pegawai
+    Route::resource('assets', controller: AssetsController::class);
+// Tambahkan route untuk employees
+    Route::resource('employees', controller: EmployeeController::class);
 });

@@ -5,16 +5,19 @@
 @section('content')
     <h1 class="text-lg font-semibold text-indigo-800">Ubah Pegawai</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <form class="grid grid-cols-1 md:grid-cols gap-6">
+        <form action="{{ route('superadmin.employees.update', $employee->id) }}" method="POST"
+            class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
-            @include('superadmin.Forms._instansi')
+
+            @method('PUT')
+            @include('superadmin.Forms._pegawai')
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                <button type="button"
+                <a href="{{ route('superadmin.employees.index') }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
                     Batal
-                </button>
-                <button type="button"
+                </a>
+                <button type="submit"
                     class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
                     Simpan
                 </button>

@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('superadmin.create_instansi') }}"
+                        <a href="{{ route('superadmin.employees.create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
@@ -54,102 +54,28 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach ($employees as $index => $pegawai)
                     <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">00000</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{$pegawai->nip}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{$pegawai->nama}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{$pegawai->email}}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{$pegawai->alamat ?? '-' }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{$pegawai->telepon ?? '-' }}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">bidang 4</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                        href="{{ route('superadmin.employees.edit', $pegawai->id) }}"></a>
                                 <button class="text-red-600 hover:text-red-800">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
+                {{ $employees->links() }}
             </table>
         </div>
     </div>
