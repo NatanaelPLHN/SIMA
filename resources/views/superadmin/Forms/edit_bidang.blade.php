@@ -3,7 +3,7 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-    <h1 class="text-lg font-semibold text-indigo-800">Tambah Aset Bergerak</h1>
+    <h1 class="text-lg font-semibold text-indigo-800">Ubah Bidang</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
         <form class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->

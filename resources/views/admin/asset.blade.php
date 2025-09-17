@@ -60,19 +60,18 @@
                                 No</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Kode
-                                Number</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
                                 Aset</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Register
+                                Serial Number</th>
+                            <th
+                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                Merk/Type
                             </th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Satuan
+                                Tahun
                                 Produksi</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
@@ -88,9 +87,9 @@
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $asset->kode }}</td>
                                 <td>{{ $asset->nama_aset }}</td>
-                                <td>{{ $asset->bergerak->merk ?? '-' }}</td>
+                                <td>{{ $asset->bergerak->nomor_serial }}</td>
+                                <td>{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
                                 <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td>{{ ucfirst($asset->status) }}</td>
                                 <td>
@@ -151,8 +150,7 @@
                                 No</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Kode
-                                Number</th>
+                                Kode</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
@@ -246,8 +244,7 @@
                                 No</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Kode
-                                Number</th>
+                                Kode</th>
                             <th
                                 class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                 Nama

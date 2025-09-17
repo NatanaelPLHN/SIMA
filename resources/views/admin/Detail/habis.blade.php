@@ -3,7 +3,7 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<h1 class="text-lg font-semibold text-gray-800">Detail Aset Habis Pakai</h1>
+<h1 class="text-lg font-semibold text-indigo-800">Detail Aset Habis Pakai</h1>
 <div class="max-w-6xl mx-auto">
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
