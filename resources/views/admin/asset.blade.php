@@ -87,12 +87,9 @@
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-<<<<<<< HEAD
-=======
                                 <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">>{{ $asset->bergerak->nomor_serial }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
->>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                                 <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td>{{ ucfirst($asset->status) }}</td>
                                 <td>
@@ -269,7 +266,6 @@
                             </th>
                         </tr>
                     </thead>
-<<<<<<< HEAD
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr>
                             <td class="px-4 py-3 text-sm text-gray-900">2</td>
@@ -292,7 +288,6 @@
                                 </div>
                             </td>
                         </tr>
-=======
                     <tbody>
                         @foreach ($assetsHabisPakai as $index => $asset)
                             <tr>
@@ -321,7 +316,6 @@
                                 </td>
                             </tr>
                         @endforeach
->>>>>>> 3c51c27f41130a79e9e0ec97c04d53b133f971e1
                     </tbody>
                     {{ $assetsHabisPakai->links() }}
                 </table>

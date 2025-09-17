@@ -67,9 +67,12 @@
                             <div class="flex space-x-2">
                                 <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                         href="{{ route('superadmin.employees.edit', $pegawai->id) }}"></a>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                        <form method="POST" action="{{ route('superadmin.employees.destroy', $pegawai->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                type="submit"></button>
+                                        </form>
                             </div>
                         </td>
                     </tr>
