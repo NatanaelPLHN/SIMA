@@ -93,8 +93,22 @@ class AssetsController extends Controller
     public function edit(Asset $asset)
     {
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
-        return view('assets.edit', compact('asset'));
+
+        if ($asset->jenis_aset === 'bergerak') {
+            return view('admin.Forms.edit_gerak', compact('asset'));
+        }
+
+        if ($asset->jenis_aset === 'tidak_bergerak') {
+            return view('admin.Forms.edit_tidak_bergerak', compact('asset'));
+        }
+
+        if ($asset->jenis_aset === 'habis_pakai') {
+            return view('admin.Forms.edit_habis', compact('asset'));
+        }
+
+        abort(404);
     }
+
 
     public function update(Request $request, Asset $asset)
     {
@@ -115,6 +129,7 @@ class AssetsController extends Controller
             $asset->bergerak()->update([
                 'merk' => $request->merk,
                 'tipe' => $request->tipe,
+                'serial_number' => $request->serial_number,
                 'tahun_produksi' => $request->tahun_produksi,
             ]);
         }
