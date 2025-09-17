@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<div class="w-64 bg-indigo-800 text-white flex flex-col h-screen">
+<div class="w-64 bg-indigo-800 text-white flex flex-col h-full  ">
     <!-- Logo and Title -->
     <div class="p-4 border-b border-indigo-700">
         <div class="flex items-center space-x-2">

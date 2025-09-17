@@ -53,8 +53,8 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     <tr>
                         <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
+                        <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">Audrey Mckinney</td>
+                        <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">Audrey Mckinney</td>
                         <td class="px-4 py-3 text-sm text-gray-900">1</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
