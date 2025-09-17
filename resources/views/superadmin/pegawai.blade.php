@@ -38,15 +38,17 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             No</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Nama Instansi</th>
+                            NIP</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Pemerintah</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Telepon</th>
+                            Nama Pegawai</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Email</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Alamat</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                            Telepon</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                            Bidang</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Aksi</th>
                     </tr>
@@ -58,7 +60,8 @@
                         <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
                         <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">00000</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">bidang 4</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-2">
                                 <button class="text-yellow-600 hover:text-yellow-800">
@@ -77,23 +80,6 @@
                         <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-2">
@@ -112,6 +98,26 @@
                         <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
                         <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
+                        <td class="px-4 py-3 text-sm">
+                            <div class="flex space-x-2">
+                                <button class="text-yellow-600 hover:text-yellow-800">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-2">
@@ -130,6 +136,7 @@
                         <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
                         <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Unit</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
                         <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex space-x-2">

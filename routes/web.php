@@ -26,9 +26,10 @@ Route::post('/login', [AuthController::class, 'login']); //
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // User dashboard routes
-Route::middleware(['auth', 'role:user'])->group(function () {
+Route::middleware(['auth', 'role:user']) ->prefix('user')->name('user.')->group(function () {
     Route::get('/in', [AuthController::class, 'login']);
-    Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profil', [UserDashboardController::class, 'profil'])->name('profil');
 });
 
 // Admin dashboard routes
@@ -56,8 +57,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 // Superadmin dashboard routes
-Route::middleware(['auth', 'role:superadmin'])->group(function () {
-    Route::get('/superadmin/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('superadmin.dashboard');
-    Route::get('/superadmin/qr', [SuperAdminDashboardController::class, 'qr'])->name('superadmin.qr');
-    Route::get('/superadmin/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('superadmin.instansi');
+Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
+    // instansi
+    Route::get('/superadmin/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('instansi');
+    Route::get('/profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
+    Route::get('/superadmin/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('superadmin.create_instansi');
+    Route::get('/superadmin/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('superadmin.edit_instansi');
+
+// bidang
+    Route::get('/superadmin/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('superadmin.bidang');
+    Route::get('/superadmin/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('superadmin.create_bidang');
+    Route::get('/superadmin/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('superadmin.edit_bidang');
 });

@@ -13,4 +13,8 @@ class UserDashboardController extends Controller
 
         return view('user.dashboard', compact('assets'));
     }
+    public function profil()
+    {
+        return view('layouts.profil');
+    }
 }

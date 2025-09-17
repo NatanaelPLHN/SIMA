@@ -8,12 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <!-- LEFT -->
+
         <div class="left-side">
             <img src="{{ asset('assets/img/login.svg') }}" alt="Login Illustration" class="illustration">
         </div>
 
-        <!-- RIGHT -->
         <div class="right-side">
             <div class="logo-container">
                 <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" class="logo">
