@@ -35,4 +35,10 @@ class Asset extends Model
     {
         return $this->hasOne(AsetHabisPakai::class, 'aset_id');
     }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman::class, 'aset_id');
+    }
+
 }

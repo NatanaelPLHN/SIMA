@@ -56,29 +56,29 @@
                     <thead class="bg-indigo-800">
                         <tr>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 No</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
                                 Aset</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Serial Number</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Merk/Type
                             </th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Tahun
                                 Produksi</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Status
                             </th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-32">
                                 Aksi
                             </th>
                         </tr>
@@ -86,24 +86,27 @@
                     <tbody>
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $asset->nama_aset }}</td>
-                                <td>{{ $asset->bergerak->nomor_serial ?? '-' }}</td>
-                                <td>{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
-                                <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
-                                <td>{{ ucfirst($asset->status) }}</td>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">>{{ $asset->bergerak->nomor_serial ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+                                <td class="text-center">{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
+                                <td class="text-center">{{ ucfirst($asset->status) }}</td>
 
                                 <td>
-                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                        href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                    <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                            type="submit"></button>
-                                    </form>
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                            href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                            href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                type="submit">
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -147,28 +150,28 @@
                     <thead class="bg-indigo-800">
                         <tr>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 No</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Kode</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
                                 Aset</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Ukuran
                             </th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Bahan</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Status
                             </th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Aksi
                             </th>
                         </tr>
@@ -176,28 +179,30 @@
                     <tbody>
                         @foreach ($assetsTidakBergerak as $index => $asset)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $asset->kode }}</td>
-                                <td>{{ $asset->nama_aset }}</td>
-                                <td>{{ $asset->tidakBergerak->ukuran }}</td>
-                                <td>{{ $asset->tidakBergerak->bahan ?? '-' }}</td>
-                                <td>{{ ucfirst($asset->status) }}</td>
-                                <td class="flex space-x-2">
-                                    <!-- Show -->
-                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                        href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">{{ $asset->kode }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
+                                <td class="text-center">{{ $asset->tidakBergerak->ukuran }}</td>
+                                <td class="text-center">{{ $asset->tidakBergerak->bahan ?? '-' }}</td>
+                                <td class="text-center">{{ ucfirst($asset->status) }}</td>
+                                <td>
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <!-- Show -->
+                                        <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                            href="{{ route('admin.assets.show', $asset->id) }}"></a>
 
-                                    <!-- Edit -->
-                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                        <!-- Edit -->
+                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                            href="{{ route('admin.assets.edit', $asset->id) }}"></a>
 
-                                    <!-- Delete -->
-                                    <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                            type="submit"></button>
-                                    </form>
+                                        <!-- Delete -->
+                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                type="submit"></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -237,32 +242,32 @@
 
             <!-- Data Table Habis Pakai -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
                     <thead class="bg-indigo-800">
                         <tr>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs fongit-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs fongit-medium text-white uppercase tracking-wider">
                                 No</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Kode</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Nama
                                 Aset</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Register</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Satuan
                                 Produksi</th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Status
                             </th>
                             <th
-                                class="bg-indigo-800 px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                 Aksi
                             </th>
                         </tr>
@@ -270,13 +275,15 @@
                     <tbody>
                         @foreach ($assetsHabisPakai as $index => $asset)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $asset->kode }}</td>
-                                <td>{{ $asset->nama_aset }}</td>
-                                <td>{{ $asset->habisPakai->register }}</td>
-                                <td>{{ $asset->habisPakai->satuan ?? '-' }}</td>
-                                <td>{{ ucfirst($asset->status) }}</td>
-                                <td class="flex space-x-2">
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">{{ $asset->kode }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
+                                <td class="text-center">{{ $asset->habisPakai->register }}</td>
+                                <td class="text-center">{{ $asset->habisPakai->satuan ?? '-' }}</td>
+                                <td class="text-center">{{ ucfirst($asset->status) }}</td>
+                                <td>
+                                <div class="flex items-center justify-center space-x-3">
+
                                     <!-- Show -->
                                     <a class="fas fa-eye text-blue-600 hover:text-blue-800"
                                         href="{{ route('admin.assets.show', $asset->id) }}"></a>
@@ -292,9 +299,11 @@
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"
                                             type="submit"></button>
                                     </form>
+                                </div>
                                 </td>
                             </tr>
                         @endforeach
+
                     </tbody>
                     {{ $assetsHabisPakai->links() }}
                 </table>

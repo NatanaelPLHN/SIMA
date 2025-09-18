@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <a href="{{ route('superadmin.employees.create') }}"
+                        <a href="{{ route('instansi.create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
@@ -38,48 +38,46 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             No</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            NIP</th>
+                            Nama Instansi</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Nama Pegawai</th>
+                            Pemerintah</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                            Telepon</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Email</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Alamat</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Telepon</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Bidang</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($employees as $index => $pegawai)
-                        <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->nip }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->nama }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->email }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->alamat ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->telepon ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">bidang 4</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
-                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('superadmin.employees.edit', $pegawai->id) }}"></a>
-                                    <form method="POST" action="{{ route('superadmin.employees.destroy', $pegawai->id) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                            type="submit"></button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                    @forelse ($instansis as $index => $instansi)
+                    <tr>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $instansi->nama }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $instansi->pemerintah }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">">{{ $instansi->telepon ?? '-' }}</</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $instansi->email ?? '-' }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $instansi->alamat ?? '-' }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <div class="flex space-x-2">
+                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                    href="{{ route('instansi.edit', $instansi->id) }}"></a>
+                                <form method="POST" action="{{ route('instansi.destroy', $instansi->id) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                        type="submit"></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
-                {{ $employees->links() }}
             </table>
+            {{-- sebelumnya work aja tanpa ini --}}
+            {{ $instansis->links() }}
         </div>
     </div>
 @endsection

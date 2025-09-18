@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<div class="w-64 bg-indigo-800 text-white flex flex-col h-screen">
+<div class="w-64 bg-indigo-800 text-white flex flex-col h-full  ">
     <!-- Logo and Title -->
     <div class="p-4 border-b border-indigo-700">
         <div class="flex items-center space-x-2">
@@ -82,20 +82,20 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.instansi') }}"
+                <a href="{{ route('superadmin.instansi.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Instansi
                 </a>
             </li>
              <li>
-                <a href="{{ route('superadmin.bidang') }}"
+                <a href="{{ route('bidang.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Bidang
                 </a>
             </li> <li>
-                <a href="#"
+                <a href="{{ route('superadmin.employees.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Pegawai
