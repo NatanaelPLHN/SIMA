@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <a href="{{ route('superadmin.create_bidang') }}"
+                    <a href="{{ route('superadmin.bidang.create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
@@ -45,104 +45,34 @@
                             Lokasi</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Instansi</th>
-                        {{-- <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Alamat</th> --}}
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">sadbouabdqoubbdobobqswodbowqbdobqodbqdbowbouqbodoqwbogcgcgjjcjcccjcjcjcjcccjccccjcjcgcjcjcjgccjcgcjccjcjg</td>
-                        {{-- <td class="px-4 py-3 text-sm text-gray-900">Unit</td> --}}
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        {{-- <td class="px-4 py-3 text-sm text-gray-900">Unit</td> --}}
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        {{-- <td class="px-4 py-3 text-sm text-gray-900">Unit</td> --}}
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        {{-- <td class="px-4 py-3 text-sm text-gray-900">Unit</td> --}}
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Kendaraan Operasional</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">REG001</td>
-                        {{-- <td class="px-4 py-3 text-sm text-gray-900">Unit</td> --}}
-                        <td class="px-4 py-3 text-sm text-gray-900">Aktif</td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @foreach ($bidangs as $index => $bidang)
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->nama }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->kepala->nama ?? '-' }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->lokasi ?? '-' }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->instansi->nama ?? '-' }}</td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex space-x-2">
+                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                        href="{{ route('superadmin.bidang.edit', $bidang->id) }}"></a>
+                                    <form method="POST" action="{{ route('superadmin.bidang.destroy', $bidang->id) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                            type="submit"></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
+                {{ $bidangs->links() }}
             </table>
         </div>
     </div>

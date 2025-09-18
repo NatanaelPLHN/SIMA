@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AssetsController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\BidangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
@@ -72,12 +74,15 @@ Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('sup
     Route::get('/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('edit_instansi');
 
 // bidang
-    Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
-    Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
-    Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
+    // Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
+    // Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
+    // Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
+    Route::resource('bidang', controller: BidangController::class);
 
     // pegawai
     Route::resource('assets', controller: AssetsController::class);
 // Tambahkan route untuk employees
     Route::resource('employees', controller: EmployeeController::class);
+// Tambahkan route untuk instansi
+    Route::resource('instansi', InstansiController::class);
 });

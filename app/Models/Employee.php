@@ -16,11 +16,17 @@ class Employee extends Model
         'email',
         'alamat',
         'telepon',
+        'department_id',
     ];
 
     // Relasi dengan Peminjaman
     public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'borrowed_by');
+    }
+    // Relasi dengan Bidang (Department)
+    public function bidang()
+    {
+        return $this->belongsTo(Bidang::class, 'department_id');
     }
 }
