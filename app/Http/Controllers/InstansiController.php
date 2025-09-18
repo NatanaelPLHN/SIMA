@@ -13,7 +13,7 @@ class InstansiController extends Controller
     public function index()
     {
         $instansis = Instansi::latest()->paginate(10);
-        return view('superadmin.instansi', compact('instansis'));
+        return view('instansi.instansi', compact('instansis'));
     }
 
     /**
@@ -21,7 +21,7 @@ class InstansiController extends Controller
      */
     public function create()
     {
-        return view('superadmin.Forms.create_instansi');
+        return view('instansi.create_instansi');
     }
 
     /**
@@ -43,7 +43,7 @@ class InstansiController extends Controller
 
         Instansi::create($validated);
 
-        return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil ditambahkan.');
+        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil ditambahkan.');
     }
 
     /**
@@ -59,7 +59,7 @@ class InstansiController extends Controller
      */
     public function edit(Instansi $instansi)
     {
-        return view('superadmin.Forms.edit_instansi', compact('instansi'));
+        return view('instansi.edit_instansi', compact('instansi'));
     }
 
     /**
@@ -81,7 +81,7 @@ class InstansiController extends Controller
 
         $instansi->update($validated);
 
-        return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil diperbarui.');
+        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil diperbarui.');
     }
 
     /**
@@ -91,9 +91,9 @@ class InstansiController extends Controller
     {
         try {
             $instansi->delete();
-            return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil dihapus.');
+            return redirect()->route('instansi.index')->with('success', 'Instansi berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.instansi.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
+            return redirect()->route('instansi.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
         }
     }
 }

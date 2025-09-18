@@ -82,7 +82,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('superadmin.instansi.index') }}"
+                <a href="{{ route('instansi.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Instansi
@@ -95,7 +95,7 @@
                     Bidang
                 </a>
             </li> <li>
-                <a href="{{ route('superadmin.employees.index') }}"
+                <a href="{{ route('employees.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Pegawai

@@ -92,13 +92,7 @@ class AssetsController extends Controller
 
             return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.');
 
-        } catch (\Illuminate\Database\QueryException $e) {
-            Log::error('Database error in asset creation: ' . $e->getMessage());
-            return redirect()->back()->withInput()->withErrors(['database' => 'Gagal menyimpan data ke database. Silakan coba lagi.']);
-        } catch (\Exception $e) {
-            Log::error('Error in asset creation: ' . $e->getMessage());
-            return redirect()->back()->withInput()->withErrors(['error' => 'Terjadi kesalahan sistem. Silakan coba lagi.']);
-        }
+
 
     }
     public function show(Asset $asset)
