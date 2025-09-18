@@ -14,7 +14,7 @@ class BidangController extends Controller
     public function index()
     {
         $bidangs = Bidang::with(['instansi', 'kepala'])->paginate(10);
-        return view('superadmin.bidang', compact('bidangs'));
+        return view('bidang.bidang', compact('bidangs'));
     }
     /**
      * Show the form for creating a new resource.
@@ -23,7 +23,7 @@ class BidangController extends Controller
     {
         $instansis = Instansi::all();
         $employees = Employee::all();
-        return view('superadmin.Forms.create_bidang', compact('instansis', 'employees'));
+        return view('bidang.create_bidang', compact('instansis', 'employees'));
     }
 
     /**
@@ -45,7 +45,7 @@ class BidangController extends Controller
 
         Bidang::create($validated);
 
-        return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil ditambahkan.');
+        return redirect()->route('bidang.index')->with('success', 'Bidang berhasil ditambahkan.');
 
     }
 
@@ -65,7 +65,7 @@ class BidangController extends Controller
     {
         $instansis = Instansi::all();
         $employees = Employee::all();
-        return view('superadmin.Forms.edit_bidang', compact('bidang', 'instansis', 'employees'));
+        return view('bidang.edit_bidang', compact('bidang', 'instansis', 'employees'));
     }
 
     /**
@@ -87,7 +87,7 @@ class BidangController extends Controller
 
         $bidang->update($validated);
 
-        return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil diperbarui.');
+        return redirect()->route('bidang.index')->with('success', 'Bidang berhasil diperbarui.');
     }
 
     /**
@@ -97,9 +97,9 @@ class BidangController extends Controller
     {
         try {
             $bidang->delete();
-            return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil dihapus.');
+            return redirect()->route('bidang.index')->with('success', 'Bidang berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.bidang.index')->with('error', 'Gagal menghapus bidang. Bidang masih digunakan dalam data lain.');
+            return redirect()->route('bidang.index')->with('error', 'Gagal menghapus bidang. Bidang masih digunakan dalam data lain.');
         }
     }
 }

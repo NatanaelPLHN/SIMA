@@ -30,14 +30,15 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']); //
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::resource('bidang', controller: BidangController::class);
+
 
 // User dashboard routes
-Route::middleware(['auth', 'role:user']) ->prefix('user')->name('user.')->group(function () {
+Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/in', [AuthController::class, 'login']);
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profil', [UserDashboardController::class, 'profil'])->name('profil');
 });
-
 // Admin dashboard routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
@@ -64,7 +65,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 
 // Superadmin dashboard routes
-Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('superadmin.')->group(function () {
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
     // instansi
@@ -73,16 +74,15 @@ Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('sup
     Route::get('/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('create_instansi');
     Route::get('/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('edit_instansi');
 
-// bidang
+    // bidang
     // Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
     // Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
     // Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
-    Route::resource('bidang', controller: BidangController::class);
 
     // pegawai
     Route::resource('assets', controller: AssetsController::class);
-// Tambahkan route untuk employees
+    // Tambahkan route untuk employees
     Route::resource('employees', controller: EmployeeController::class);
-// Tambahkan route untuk instansi
+    // Tambahkan route untuk instansi
     Route::resource('instansi', InstansiController::class);
 });
