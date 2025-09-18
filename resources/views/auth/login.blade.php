@@ -5,33 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SIMA DISKOMINFO</title>
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .animate-fadeIn {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-    </style>
-
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="antialiased">
-
-
     <div class="flex min-h-screen">
-        <!-- Bagian kiri (Form Login) -->
+        <!-- Form Login -->
         <div class="w-full md:w-1/2 flex items-center justify-center bg-white px-8">
             <div class="max-w-md w-full">
                 <!-- Logo -->
@@ -85,51 +66,18 @@
                 class="w-3/4 h-auto object-contain drop-shadow-lg">
         </div>
     </div>
+
+    {{-- Pop up SweetAlert jika login gagal --}}
     @if(session('loginError'))
-        <div id="popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div
-                class="bg-white rounded-2xl shadow-xl p-8 w-96 text-center transform transition-all scale-95 animate-fadeIn">
-                <!-- Icon -->
-                <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-white-100 mb-4">
-                    <svg class="w-15 h-15 text-red-200" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 22 22">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 9v2m0 4h.01M12 5a7 7 0 100 14a7 7 0 000-14z" />
-                    </svg>
-                </div>
-
-                <!-- Title -->
-                <h2 class="text-xl font-bold text-gray-800 mb-2">Login Gagal</h2>
-                <p class="text-gray-600 mb-6">{{ session('loginError') }}</p>
-
-                <!-- Button -->
-                <button onclick="closePopup()"
-                    class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg shadow-md hover:bg-indigo-700 transition">
-                    OK
-                </button>
-            </div>
-        </div>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Gagal',
+                text: '{{ session('loginError') }}',
+                confirmButtonColor: '#6366F1'
+            });
+        </script>
     @endif
-
-
-    <script>
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-            // reload halaman login agar form muncul kembali
-            window.location.href = "{{ route('login') }}";
-        }
-    </script>
-    {{-- Debugging sementara --}}
-    {{--
-    <pre>{{ print_r(session()->all(), true) }}</pre> --}}
-    <script>
-        function closePopup() {
-            let popup = document.getElementById('popup');
-            if (popup) popup.remove();
-            window.location.href = "{{ route('login') }}";
-        }
-    </script>
-
 </body>
 
 </html>

@@ -1,8 +1,7 @@
 @extends('layouts.app')
-
 @section('title', 'Admin Dashboard')
-
 @section('content')
+@include()
     <div class="max-w-6xl mx-auto">
         <!-- Asset Tabs -->
         <div class="mb-6">

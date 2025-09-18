@@ -1,18 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Dashboard')
+@include('components.alert')
 
 @section('content')
     <h1 class="text-lg font-semibold text-indigo-800">Tambah Aset Bergerak</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        {{-- Menampilkan error validasi --}}
-
-        {{-- Menampilkan error session --}}
-        @if (session('error'))
-            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                {{ session('error') }}
-            </div>
-        @endif
         <form action="{{ route('admin.assets.store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
@@ -36,7 +29,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label for="nomor_serial" class="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
+                    <label for="nomor_serial" class="block text-sm font-medium text-gray-700 mb-1">Serial Number<span class="text-red-500">*</span></label>
                     <input type="text" id="nomor_serial" name="nomor_serial"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 

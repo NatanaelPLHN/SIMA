@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@include('components.alert')
 
 @section('title', 'Admin Dashboard')
 
