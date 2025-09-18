@@ -13,7 +13,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kode:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            AST-01
+                            {{ $asset->kode }}
                         </div>
                     </div>
 
@@ -21,28 +21,28 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nama
                             Aset:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            Laptop
+                            {{ $asset->nama_aset }}
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Merk:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            Acer
+                            {{ $asset->bergerak->merk ?? '?' }}
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Type:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            Nitro 5
+                            {{ $asset->bergerak->tipe ?? '?' }}
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kategori:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            Elektronik
+                            {{ $asset->kategori ?? '?' }}
                         </div>
                     </div>
 
@@ -50,7 +50,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Grup
                             Kategori:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            Elektronik
+                            {{ $asset->group_kategori ?? '?' }}
                         </div>
                     </div>
 
@@ -58,7 +58,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Serial
                             Number:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            8820-2016
+                            {{ $asset->bergerak->nomor_serial ?? '?' }}
                         </div>
                     </div>
 
@@ -66,21 +66,21 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tahun
                             Produksi:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            20029
+                            {{ $asset->bergerak->tahun_produksi ?? '?' }}
                         </div>
                     </div>
 
-                    <div>
+                    {{-- <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Kondisi:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                             Baik
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            5
+                            {{ $asset->jumlah ?? '?' }}
                         </div>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal
                             Pembelian:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            16/01/2004
+                            {{ $asset->tgl_pembelian ?? '?' }}
                         </div>
                     </div>
 
@@ -106,7 +106,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nilai
                             Pembelian:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            -
+                            {{ $asset->nilai_pembelian ?? '?' }}
                         </div>
                     </div>
 
@@ -114,14 +114,14 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi
                             Terakhir:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            Ruang Rapat
+                            {{ $asset->lokasi_terakhir ?? '?' }}
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                            -
+                            {{ $asset->status ?? '?' }}
                         </div>
                     </div>
                 </div>

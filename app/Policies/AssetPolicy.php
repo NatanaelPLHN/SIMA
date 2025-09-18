@@ -34,6 +34,6 @@ class AssetPolicy
     public function delete(User $user, Asset $asset)
     {
         // hanya superadmin
-        return $user->role === 'superadmin';
+        return in_array($user->role, ['admin','superadmin']);
     }
 }

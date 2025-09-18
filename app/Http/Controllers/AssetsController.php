@@ -22,7 +22,6 @@ class AssetsController extends Controller
 
         return view('admin.asset', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
-
     public function create_gerak()
     {
         return view('admin.Forms.create_gerak');
@@ -35,7 +34,6 @@ class AssetsController extends Controller
     {
         return view('admin.Forms.create_habis');
     }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -83,13 +81,31 @@ class AssetsController extends Controller
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.');
 
     }
-
     public function show(Asset $asset)
     {
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
-        // return view('assets.show', compact('asset'));
-    }
 
+        // Debug: Check what's loaded
+        // dd([
+        //     'asset' => $asset->toArray(),
+        //     'bergerak_exists' => $asset->bergerak !== null,
+        //     'bergerak_data' => $asset->bergerak?->toArray()
+        // ]);
+
+        if ($asset->jenis_aset === 'bergerak') {
+            return view('admin.Detail.bergerak', compact('asset'));
+        }
+
+        if ($asset->jenis_aset === 'tidak_bergerak') {
+            return view('admin.Detail.tidak_bergerak', compact('asset'));
+        }
+
+        if ($asset->jenis_aset === 'habis_pakai') {
+            return view('admin.Detail.habis', compact('asset'));
+        }
+
+        abort(404);
+    }
     public function edit(Asset $asset)
     {
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
@@ -108,8 +124,6 @@ class AssetsController extends Controller
 
         abort(404);
     }
-
-
     public function update(Request $request, Asset $asset)
     {
         $validated = $request->validate([
@@ -150,13 +164,9 @@ class AssetsController extends Controller
 
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil diperbarui.');
     }
-
     public function destroy(Asset $asset)
     {
         $asset->delete();
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil dihapus.');
     }
-
 }
-
-

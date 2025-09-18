@@ -26,7 +26,7 @@ Route::post('/login', [AuthController::class, 'login']); //
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // User dashboard routes
-Route::middleware(['auth', 'role:user']) ->prefix('user')->name('user.')->group(function () {
+Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/in', [AuthController::class, 'login']);
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profil', [UserDashboardController::class, 'profil'])->name('profil');
@@ -35,7 +35,7 @@ Route::middleware(['auth', 'role:user']) ->prefix('user')->name('user.')->group(
 // Admin dashboard routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
 
     // Assets (resource route)
     Route::resource('assets', controller: AssetsController::class);
@@ -46,18 +46,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
 
     // Other pages from AdminDashboardController
-    Route::get('/asset/bergerak/{id}', [AdminDashboardController::class, 'bergerak'])->name('asset.bergerak');
-    Route::get('/asset/tidak-bergerak/{id}', [AdminDashboardController::class, 'tidak_bergerak'])->name('asset.tidak_bergerak');
-    Route::get('/asset/habis/{id}', [AdminDashboardController::class, 'habis'])->name('asset.habis');
+    // Route::get('assets/bergerak/{id}', [AdminDashboardController::class, 'bergerak'])->name('assets.bergerak');
+    // Route::get('assets/tidak-bergerak/{id}', [AdminDashboardController::class, 'tidak_bergerak'])->name('assets.tidak_bergerak');
+    // Route::get('assets/habis/{id}', [AdminDashboardController::class, 'habis'])->name('assets.habis');
+    // Route::get('assets/{id}', [AssetsController::class, 'showAsset'])->name('assets.show');
 
-    Route::get('/peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
-    Route::get('/peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
-    Route::get('/profil', [AdminDashboardController::class, 'profil'])->name('profil');
+    Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
+    Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
+    Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
 });
 
 
 // Superadmin dashboard routes
-Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('superadmin.')->group(function () {
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('/qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
     // instansi
@@ -66,7 +67,7 @@ Route::middleware(['auth', 'role:superadmin']) ->prefix('superadmin')->name('sup
     Route::get('/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('create_instansi');
     Route::get('/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('edit_instansi');
 
-// bidang
+    // bidang
     Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
     Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
     Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');

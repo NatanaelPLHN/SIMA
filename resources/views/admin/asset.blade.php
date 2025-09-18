@@ -88,16 +88,17 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $asset->nama_aset }}</td>
-                                <td>{{ $asset->bergerak->nomor_serial }}</td>
+                                <td>{{ $asset->bergerak->nomor_serial ?? '-' }}</td>
                                 <td>{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
                                 <td>{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td>{{ ucfirst($asset->status) }}</td>
+
                                 <td>
                                     <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                        href="{{ route('admin.assets.index', $asset->id) }}"></a>
+                                        href="{{ route('admin.assets.show', $asset->id) }}"></a>
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                         href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                    <form method="POST" action="{{ route('admin.assets.index', $asset->id) }}">
+                                    <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"
