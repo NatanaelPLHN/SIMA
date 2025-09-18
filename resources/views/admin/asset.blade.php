@@ -1,8 +1,7 @@
 @extends('layouts.app')
-
 @section('title', 'Admin Dashboard')
-
 @section('content')
+@include()
     <div class="max-w-6xl mx-auto">
         <!-- Asset Tabs -->
         <div class="mb-6">
@@ -87,9 +86,12 @@
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $asset->nama_aset }}</td>
-                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">>{{ $asset->bergerak->nomor_serial }}</td>
-                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">{{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->nama_aset }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->bergerak->nomor_serial }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
                                 <td class="text-center">{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                 <td>
