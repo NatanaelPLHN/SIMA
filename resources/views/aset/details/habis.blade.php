@@ -10,7 +10,7 @@
                 <!-- Left Column -->
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
+                        <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kode:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                                 {{ $asset->kode }}
