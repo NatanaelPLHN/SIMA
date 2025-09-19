@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Admin Dashboard')
+@include('components.alert')
 @section('content')
     <div class="max-w-6xl mx-auto">
         <!-- Asset Tabs -->
@@ -91,6 +92,12 @@
                                     >{{ $asset->bergerak->nomor_serial ?? '-' }}</td>
                                 <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
                                     {{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->nama_aset }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    >{{ $asset->bergerak->nomor_serial ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
                                 <td class="text-center">{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
                                 <td class="text-center">{{ ucfirst($asset->status) }}</td>
 
@@ -103,6 +110,7 @@
                                         <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
                                             @csrf
                                             @method('DELETE')
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
                                             <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
                                             </button>
                                         </form>
@@ -184,6 +192,10 @@
                                     {{ $asset->kode }}</td>
                                 <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
                                     {{ $asset->nama_aset }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->kode }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->nama_aset }}</td>
                                 <td class="text-center">{{ $asset->tidakBergerak->ukuran }}</td>
                                 <td class="text-center">{{ $asset->tidakBergerak->bahan ?? '-' }}</td>
                                 <td class="text-center">{{ ucfirst($asset->status) }}</td>
@@ -201,8 +213,7 @@
                                         <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                type="submit"></button>
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
                                         </form>
                                     </div>
                                 </td>
@@ -282,16 +293,27 @@
                                     {{ $asset->kode }}</td>
                                 <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
                                     {{ $asset->nama_aset }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->kode }}</td>
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                    {{ $asset->nama_aset }}</td>
                                 <td class="text-center">{{ $asset->habisPakai->register }}</td>
                                 <td class="text-center">{{ $asset->habisPakai->satuan ?? '-' }}</td>
                                 <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                 <td>
                                     <div class="flex items-center justify-center space-x-3">
+                                    <div class="flex items-center justify-center space-x-3">
 
                                         <!-- Show -->
                                         <a class="fas fa-eye text-blue-600 hover:text-blue-800"
                                             href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                        <!-- Show -->
+                                        <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                            href="{{ route('admin.assets.show', $asset->id) }}"></a>
 
+                                        <!-- Edit -->
+                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                            href="{{ route('admin.assets.edit', $asset->id) }}"></a>
                                         <!-- Edit -->
                                         <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                             href="{{ route('admin.assets.edit', $asset->id) }}"></a>
@@ -300,8 +322,7 @@
                                         <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                type="submit"></button>
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
                                         </form>
                                     </div>
                                 </td>

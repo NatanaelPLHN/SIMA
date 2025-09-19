@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SIMA DISKOMINFO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="antialiased">
@@ -69,15 +67,18 @@
 
     {{-- Pop up SweetAlert jika login gagal --}}
     @if(session('loginError'))
-        <script>
-            Swal.fire({
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.Swal.fire({
                 icon: 'error',
                 title: 'Login Gagal',
                 text: '{{ session('loginError') }}',
                 confirmButtonColor: '#6366F1'
             });
-        </script>
-    @endif
+        });
+    </script>
+@endif
+
 </body>
 
 </html>
