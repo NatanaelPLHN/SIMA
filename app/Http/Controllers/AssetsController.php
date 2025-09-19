@@ -21,19 +21,19 @@ class AssetsController extends Controller
         $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with('tidakBergerak')->paginate(10, ['*'], 'tidak_bergerak_page');
         $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with('habisPakai')->paginate(10, ['*'], 'habis_pakai_page');
 
-        return view('admin.asset', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
+        return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
     public function create_gerak()
     {
-        return view('admin.Forms.create_gerak');
+        return view('aset.forms.create_gerak');
     }
     public function create_tidak()
     {
-        return view('admin.Forms.create_tidak_bergerak');
+        return view('aset.forms.create_tidak_bergerak');
     }
     public function create_habis()
     {
-        return view('admin.Forms.create_habis');
+        return view('aset.forms.create_habis');
     }
     public function store(Request $request)
 {
@@ -63,7 +63,7 @@ class AssetsController extends Controller
 
     $asset = Asset::create($validated);
 
-    // handle detail table
+    // handle details table
     if ($validated['jenis_aset'] === 'bergerak') {
         AsetBergerak::create([
             'aset_id' => $asset->id,
@@ -107,15 +107,15 @@ class AssetsController extends Controller
         // ]);
 
         if ($asset->jenis_aset === 'bergerak') {
-            return view('admin.Detail.bergerak', compact('asset'));
+            return view('aset.details.bergerak', compact('asset'));
         }
 
         if ($asset->jenis_aset === 'tidak_bergerak') {
-            return view('admin.Detail.tidak_bergerak', compact('asset'));
+            return view('aset.details.tidak_bergerak', compact('asset'));
         }
 
         if ($asset->jenis_aset === 'habis_pakai') {
-            return view('admin.Detail.habis', compact('asset'));
+            return view('aset.details.habis', compact('asset'));
         }
 
         abort(404);
@@ -125,15 +125,15 @@ class AssetsController extends Controller
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
 
         if ($asset->jenis_aset === 'bergerak') {
-            return view('admin.Forms.edit_gerak', compact('asset'));
+            return view('aset.forms.edit_gerak', compact('asset'));
         }
 
         if ($asset->jenis_aset === 'tidak_bergerak') {
-            return view('admin.Forms.edit_tidak_bergerak', compact('asset'));
+            return view('aset.forms.edit_tidak_bergerak', compact('asset'));
         }
 
         if ($asset->jenis_aset === 'habis_pakai') {
-            return view('admin.Forms.edit_habis', compact('asset'));
+            return view('aset.forms.edit_habis', compact('asset'));
         }
 
         abort(404);

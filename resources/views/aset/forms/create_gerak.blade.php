@@ -9,7 +9,7 @@
         <form action="{{ route('admin.assets.store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
-            @include('admin.Forms._form')
+            @include('aset.forms._form')
 
             <!-- Hidden field: jenis_aset -->
             <input type="hidden" name="jenis_aset" value="bergerak">

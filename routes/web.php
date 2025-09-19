@@ -14,6 +14,7 @@ use App\Http\Controllers\SuperAdminDashboardController;
 Route::get('/', function () {
     return redirect('/login');
 });
+
 // Route::get('/detail', function () {
 //     return redirect('');
 // });
@@ -36,12 +37,12 @@ Route::resource('employees', controller: EmployeeController::class);
 
 
 // User dashboard routes
-// Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/in', [AuthController::class, 'login']);
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profil', [UserDashboardController::class, 'profil'])->name('profil');
 });
+
 // Admin dashboard routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
