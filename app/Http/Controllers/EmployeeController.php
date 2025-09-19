@@ -13,7 +13,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $employees = Employee::paginate(10);
-        return view('superadmin.pegawai', compact('employees'));
+        return view('employee.employee', compact('employees'));
     }
 
     /**
@@ -21,7 +21,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        return view('superadmin.Forms.create_pegawai');
+        return view('employee.create_employee');
     }
 
     /**
@@ -46,7 +46,7 @@ class EmployeeController extends Controller
 
         Employee::create($validated);
 
-        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('employees.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -62,7 +62,7 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        return view('superadmin.Forms.edit_pegawai', compact('employee'));
+        return view('employee.edit_employee', compact('employee'));
     }
 
     /**
@@ -87,7 +87,7 @@ class EmployeeController extends Controller
 
         $employee->update($validated);
 
-        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect()->route('employees.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
@@ -97,9 +97,9 @@ class EmployeeController extends Controller
     {
         try {
             $employee->delete();
-            return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil dihapus.');
+            return redirect()->route('employees.index')->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.employees.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect()->route('employees.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
         }
     }
 }

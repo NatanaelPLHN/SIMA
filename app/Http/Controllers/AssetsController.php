@@ -92,6 +92,8 @@ class AssetsController extends Controller
 
             return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil ditambahkan.'); 
 
+
+
     }
     public function show(Asset $asset)
     {
