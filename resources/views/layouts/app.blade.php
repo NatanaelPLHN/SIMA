@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Laravel Multi Auth')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -13,14 +14,14 @@
     <div x-data="{ sidebarOpen: false }" class="flex h-screen">
 
         <!-- Overlay untuk mobile -->
-        <div 
+        <div
             x-show="sidebarOpen"
             @click="sidebarOpen = false"
             class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
         ></div>
 
         <!-- Sidebar Mobile -->
-        <div 
+        <div
             x-show="sidebarOpen"
             x-transition:enter="transition transform duration-200"
             x-transition:enter-start="-translate-x-full"

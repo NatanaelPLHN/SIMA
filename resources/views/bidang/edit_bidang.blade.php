@@ -5,7 +5,7 @@
 @section('content')
     <h1 class="text-lg font-semibold text-indigo-800">Ubah Bidang</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <form action="{{ route('bidang.update', $bidang->id) }}" method="POST"
+        <form action="{{ route('superadmin.bidang.update', $bidang->id) }}" method="POST"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
 
@@ -13,7 +13,7 @@
             @include('bidang._bidang')
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ route('bidang.index') }}"
+                <a href="{{ route('superadmin.bidang.index') }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
                     Batal
                 </a>

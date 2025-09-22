@@ -35,7 +35,11 @@ class Asset extends Model
     {
         return $this->hasOne(AsetHabisPakai::class, 'aset_id');
     }
-
+    // Relasi dengan category
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
     public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'aset_id');
