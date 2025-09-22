@@ -62,7 +62,7 @@
                             <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->email }}</td>
                             <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->alamat ?? '-' }}</td>
                             <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->telepon ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">bidang 4</td>
+                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->bidang->nama ?? '-' }}</td>
                             <td class="px-4 py-3 text-sm">
                                 <div class="flex space-x-2">
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"

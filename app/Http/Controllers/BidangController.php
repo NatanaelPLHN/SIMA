@@ -6,6 +6,7 @@ use App\Models\Bidang;
 use App\Models\Instansi;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+
 class BidangController extends Controller
 {
     /**
@@ -16,13 +17,15 @@ class BidangController extends Controller
         $bidangs = Bidang::with(['instansi', 'kepala'])->paginate(10);
         return view('bidang.bidang', compact('bidangs'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         $instansis = Instansi::all();
-        $employees = Employee::all();
+        // Untuk create, tidak ada employee karena bidang belum ada
+        $employees = collect();
         return view('bidang.create_bidang', compact('instansis', 'employees'));
     }
 
@@ -43,10 +46,16 @@ class BidangController extends Controller
             'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
 
-        Bidang::create($validated);
+        // Validasi: kepala_bidang harus null saat create karena bidang belum ada
+        if ($request->kepala_bidang) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['kepala_bidang' => 'Kepala bidang dapat dipilih setelah bidang dibuat.']);
+        }
+
+        $bidang = Bidang::create($validated);
 
         return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil ditambahkan.');
-
     }
 
     /**
@@ -54,8 +63,8 @@ class BidangController extends Controller
      */
     public function show(Bidang $bidang)
     {
+        $bidang->load(['instansi', 'kepala', 'employees']);
         return view('bidang.show', compact('bidang'));
-
     }
 
     /**
@@ -64,7 +73,8 @@ class BidangController extends Controller
     public function edit(Bidang $bidang)
     {
         $instansis = Instansi::all();
-        $employees = Employee::all();
+        // Hanya tampilkan employee yang ada di bidang ini
+        $employees = Employee::where('department_id', $bidang->id)->get();
         return view('bidang.edit_bidang', compact('bidang', 'instansis', 'employees'));
     }
 
@@ -84,6 +94,16 @@ class BidangController extends Controller
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
             'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
+
+        // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini
+        if ($request->kepala_bidang) {
+            $employee = Employee::find($request->kepala_bidang);
+            if ($employee && $employee->department_id != $bidang->id) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);
+            }
+        }
 
         $bidang->update($validated);
 

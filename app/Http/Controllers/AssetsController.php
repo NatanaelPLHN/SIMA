@@ -21,9 +21,7 @@ class AssetsController extends Controller
         $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with('tidakBergerak')->paginate(10, ['*'], 'tidak_bergerak_page');
         $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with('habisPakai')->paginate(10, ['*'], 'habis_pakai_page');
 
-        // return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
-        $view = $this->getViewPath('aset.index');
-        return view($view, compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
+        return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
     public function create_gerak()
     {

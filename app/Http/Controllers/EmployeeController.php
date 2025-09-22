@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Bidang;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -12,7 +13,9 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::paginate(10);
+        // $employees = Employee::paginate(10);
+        // return view('employee.employee', compact('employees'));
+        $employees = Employee::with('bidang')->paginate(10);
         return view('employee.employee', compact('employees'));
     }
 
@@ -21,7 +24,9 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        return view('employee.create_employee');
+        $bidangs = Bidang::all();
+        return view('employee.create_employee', compact('bidangs'));
+        // return view('employee.create_employee');
     }
 
     /**
@@ -35,6 +40,7 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees,email',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
+            'department_id' => 'nullable|exists:bidang,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
@@ -42,6 +48,7 @@ class EmployeeController extends Controller
             'email.required' => 'Email wajib diisi.',
             'email.unique' => 'Email sudah digunakan.',
             'email.email' => 'Format email tidak valid.',
+            'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
         Employee::create($validated);
@@ -54,7 +61,9 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
+        $employee->load('bidang'); // Tambahkan ini
         return view('employees.show', compact('employee'));
+        // return view('employees.show', compact('employee'));
     }
 
     /**
@@ -62,7 +71,11 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        return view('employee.edit_employee', compact('employee'));
+        $employee->load('bidang'); // Tambahkan ini
+        $bidangs = Bidang::all(); // Tambahkan ini
+        return view('employee.edit_employee', compact('employee', 'bidangs'));
+
+        // return view('employee.edit_employee', compact('employee'));
     }
 
     /**
@@ -76,6 +89,7 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:employees,email,' . $employee->id,
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
+            'department_id' => 'nullable|exists:bidang,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
@@ -83,6 +97,7 @@ class EmployeeController extends Controller
             'email.required' => 'Email wajib diisi.',
             'email.unique' => 'Email sudah digunakan.',
             'email.email' => 'Format email tidak valid.',
+            'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
         $employee->update($validated);
