@@ -153,6 +153,13 @@ class AssetsController extends Controller
             'lokasi_terakhir' => 'nullable|string',
             'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
         ]);
+        $original = $asset->replicate();
+        $asset->fill($validated);
+        if (!$asset->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data aset.');
+        }   
+
+    $asset->save();
 
         $asset->update($validated);
 
@@ -163,6 +170,9 @@ class AssetsController extends Controller
                 'nomor_serial' => $request->nomor_serial,
                 'tahun_produksi' => $request->tahun_produksi,
             ]);
+            if ($asset->bergerak->isDirty()) {
+            $asset->bergerak->save();
+            }
         }
 
         if ($asset->jenis_aset === 'tidak_bergerak') {
@@ -170,6 +180,9 @@ class AssetsController extends Controller
                 'ukuran' => $request->ukuran,
                 'bahan' => $request->bahan,
             ]);
+            if ($asset->tidakBergerak->isDirty()) {
+            $asset->tidakBergerak->save();
+            }
         }
 
         if ($asset->jenis_aset === 'habis_pakai') {
@@ -177,6 +190,9 @@ class AssetsController extends Controller
                 'register' => $request->register,
                 'satuan' => $request->satuan,
             ]);
+            if ($asset->habisPakai->isDirty()) {
+            $asset->habisPakai->save();
+            }
         }
 
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil diperbarui.');

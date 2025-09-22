@@ -36,36 +36,36 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-indigo-800">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama Aset
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">No</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Nama Aset
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Penanggung
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Penanggung
                             Jawab</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Jumlah</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Jumlah</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Tanggal
                             Pinjam</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Tanggal
                             Kembali</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                        <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
                         <td class="px-4 py-3 text-sm">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Dipinjam
                             </span>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
+                            <div class="flex items-center justify-center gap-x-3">
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -79,20 +79,20 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
                         <td class="px-4 py-3 text-sm">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Dipinjam
                             </span>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
+                            <div class="flex items-center justify-center gap-x-3">
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -106,20 +106,20 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
                         <td class="px-4 py-3 text-sm">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Dipinjam
                             </span>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
+                            <div class="flex items-center justify-center gap-x-3">
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -133,20 +133,20 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
                         <td class="px-4 py-3 text-sm">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Dipinjam
                             </span>
                         </td>
                         <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
+                            <div class="flex items-center justify-center gap-x-3">
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -160,20 +160,22 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
+                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
                         <td class="px-4 py-3 text-sm">
+                            {{-- <div class="flex items-center justify-center"> --}}
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                 Dipinjam
                             </span>
+                            {{-- </div> --}}
                         </td>
                         <td class="px-4 py-3 text-sm">
-                            <div class="flex space-x-2">
+                            <div class="flex items-center justify-center gap-x-3">
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <i class="fas fa-eye"></i>
                                 </button>

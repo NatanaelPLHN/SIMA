@@ -84,7 +84,12 @@ class BidangController extends Controller
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
             'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
-
+        $original = $bidang->replicate();
+        $bidang->fill($validated);
+        if (!$bidang->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data bidang.');
+        } 
+        $bidang->save();
         $bidang->update($validated);
 
         return redirect()->route('bidang.index')->with('success', 'Bidang berhasil diperbarui.');

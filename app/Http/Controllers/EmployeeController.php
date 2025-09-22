@@ -84,7 +84,12 @@ class EmployeeController extends Controller
             'email.unique' => 'Email sudah digunakan.',
             'email.email' => 'Format email tidak valid.',
         ]);
-
+         $original = $employee->replicate();
+          $employee->fill($validated);
+        if (!$employee->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data employee.');
+        } 
+        $employee->save();
         $employee->update($validated);
 
         return redirect()->route('employees.index')->with('success', 'Karyawan berhasil diperbarui.');
