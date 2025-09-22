@@ -30,9 +30,9 @@ class Peminjaman extends Model
         return $this->belongsTo(Asset::class, 'asset_id');
     }
 
-    // Relasi dengan Employee
-    public function employee()
+    // Relasi dengan Karyawan
+    public function karyawan()
     {
-        return $this->belongsTo(Employee::class, 'borrowed_by');
+        return $this->belongsTo(Karyawan::class, 'borrowed_by');
     }
 }

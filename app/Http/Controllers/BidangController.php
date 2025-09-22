@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bidang;
 use App\Models\Instansi;
-use App\Models\Employee;
+use App\Models\Karyawan;
 use Illuminate\Http\Request;
 
 class BidangController extends Controller
@@ -36,14 +36,14 @@ class BidangController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kepala_bidang' => 'nullable|exists:employees,id',
+            'kepala_bidang_id' => 'nullable|exists:karyawan,id',
             'lokasi' => 'nullable|string|max:255',
             'instansi_id' => 'required|exists:instansi,id',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
             'instansi_id.required' => 'Instansi wajib dipilih.',
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
-            'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
+            'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
 
         // Validasi: kepala_bidang harus null saat create karena bidang belum ada
@@ -74,7 +74,7 @@ class BidangController extends Controller
     {
         $instansis = Instansi::all();
         // Hanya tampilkan employee yang ada di bidang ini
-        $employees = Employee::where('department_id', $bidang->id)->get();
+        $employees = Karyawan::where('department_id', $bidang->id)->get();
         return view('bidang.edit_bidang', compact('bidang', 'instansis', 'employees'));
     }
 
@@ -85,14 +85,14 @@ class BidangController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kepala_bidang' => 'nullable|exists:employees,id',
+            'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
             'instansi_id' => 'required|exists:instansi,id',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
             'instansi_id.required' => 'Instansi wajib dipilih.',
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
-            'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
+            'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini

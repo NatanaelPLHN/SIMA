@@ -13,7 +13,7 @@ class Bidang extends Model
 
     protected $fillable = [
         'nama',
-        'kepala_bidang',
+        'kepala_bidang_id',
         'lokasi',
         'instansi_id',
     ];
@@ -24,15 +24,15 @@ class Bidang extends Model
         return $this->belongsTo(Instansi::class, 'instansi_id');
     }
 
-    // Relasi dengan Employee (Kepala Bidang)
+    // Relasi dengan Karyawan (Kepala Bidang)
     public function kepala()
     {
-        return $this->belongsTo(Employee::class, 'kepala_bidang');
+        return $this->belongsTo(Karyawan::class, 'kepala_bidang_id');
     }
 
-    // Relasi dengan Employee (Anggota Bidang)
-    public function employees()
+    // Relasi dengan Karyawan (Anggota Bidang)
+    public function karyawan()
     {
-        return $this->hasMany(Employee::class, 'department_id');
+        return $this->hasMany(Karyawan::class, 'department_id');
     }
 }

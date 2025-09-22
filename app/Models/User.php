@@ -15,6 +15,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'karyawan_id',
     ];
 
     protected $hidden = [
@@ -36,9 +37,14 @@ class User extends Authenticatable
      */
     // Method untuk mengecek role
 
+    public function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'karyawan_id');
+    }
+
     public function isSuperAdmin()
     {
-    return $this->role === 'superadmin';
+        return $this->role === 'superadmin';
     }
     public function isAdmin()
     {

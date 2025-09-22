@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
-use App\Models\Bidang;
+use App\Models\Karyawan;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller
+class KaryawanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,9 +34,9 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:employees,nip',
+            'nip' => 'required|unique:karyawan,nip',
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email',
+            'email' => 'required|email|unique:karyawan,email',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -51,15 +50,15 @@ class EmployeeController extends Controller
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
-        Employee::create($validated);
+        Karyawan::create($validated);
 
-        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Employee $employee)
+    public function show(Karyawan $employee)
     {
         $employee->load('bidang'); // Tambahkan ini
         return view('employees.show', compact('employee'));
@@ -69,7 +68,7 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Employee $employee)
+    public function edit(Karyawan $employee)
     {
         $employee->load('bidang'); // Tambahkan ini
         $bidangs = Bidang::all(); // Tambahkan ini
@@ -81,12 +80,12 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, Karyawan $employee)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:employees,nip,' . $employee->id,
+            'nip' => 'required|unique:karyawan,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $employee->id,
+            'email' => 'required|email|unique:karyawan,email,' . $employee->id,
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -103,23 +102,23 @@ class EmployeeController extends Controller
           $employee->fill($validated);
         if (!$employee->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data employee.');
-        } 
+        }
         $employee->save();
         $employee->update($validated);
 
-        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $employee)
+    public function destroy(Karyawan $employee)
     {
         try {
             $employee->delete();
-            return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil dihapus.');
+            return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.employees.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect()->route('superadmin.karyawan.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
         }
     }
 }

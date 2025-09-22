@@ -153,13 +153,14 @@ class AssetsController extends Controller
             'lokasi_terakhir' => 'nullable|string',
             'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
         ]);
-        $original = $asset->replicate();
-        $asset->fill($validated);
-        if (!$asset->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
-        }   
 
-    $asset->save();
+        $original = $asset->replicate();
+            $asset->fill($validated);
+            if (!$asset->isDirty()) {
+                return back()->with('info', 'Tidak ada perubahan pada data aset.');
+        }
+
+        $asset->save();
 
         $asset->update($validated);
 
