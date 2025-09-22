@@ -78,8 +78,14 @@ class InstansiController extends Controller
             'pemerintah.required' => 'Nama pemerintah wajib diisi.',
             'email.email' => 'Format email tidak valid.',
         ]);
+        $original = $instansi->replicate();
+        $instansi->fill($validated);
+        if (!$instansi->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data instansi.');
+        }   
 
-        $instansi->update($validated);
+    $instansi->save();
+    $instansi->update($validated);
 
         return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil diperbarui.');
     }

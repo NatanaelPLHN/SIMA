@@ -52,6 +52,7 @@
 
             <!-- Data Table Bergerak -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-indigo-800">
                         <tr>
@@ -87,7 +88,7 @@
                         @foreach ($assetsBergerak as $index => $asset)
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                <td class="px-4 py-3 text-sm text-gray-900 text-center whitespace-normal break-words">
                                     {{ $asset->nama_aset }}</td>
                                 <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
                                     {{ $asset->bergerak->nomor_serial ?? '-' }}</td>
@@ -101,7 +102,7 @@
                                             href="{{ route('admin.assets.show', $asset->id) }}"></a>
                                         <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                             href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }} " class="delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
@@ -114,6 +115,7 @@
                     </tbody>
                     {{ $assetsBergerak->links() }}
                 </table>
+                </div>
             </div>
         </div>
 
@@ -147,6 +149,7 @@
 
             <!-- Data Table Tidak Bergerak -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-indigo-800">
                         <tr>
@@ -181,7 +184,7 @@
                         @foreach ($assetsTidakBergerak as $index => $asset)
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
                                     {{ $asset->kode }}</td>
                                 <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
                                     {{ $asset->nama_aset }}</td>
@@ -199,7 +202,7 @@
                                             href="{{ route('admin.assets.edit', $asset->id) }}"></a>
 
                                         <!-- Delete -->
-                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}" class="delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
@@ -211,6 +214,7 @@
                     </tbody>
                     {{ $assetsTidakBergerak->links() }}
                 </table>
+                </div>
             </div>
         </div>
 
@@ -244,6 +248,7 @@
 
             <!-- Data Table Habis Pakai -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
                         <thead class="bg-indigo-800">
                             <tr>
@@ -297,7 +302,7 @@
                                             <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                                 href="{{ route('admin.assets.edit', $asset->id) }}"></a>
                                             <!-- Delete -->
-                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}">
+                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
@@ -310,6 +315,7 @@
                         </tbody>
                         {{ $assetsHabisPakai->links() }}
                     </table>
+                    </div>
                 </div>
             </div>
         </div>

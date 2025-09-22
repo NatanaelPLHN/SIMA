@@ -32,48 +32,50 @@
 
         <!-- Data Table -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-indigo-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Nama</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Kepala Bidang</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Lokasi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Instansi</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($bidangs as $index => $bidang)
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-indigo-800">
                         <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->nama }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->kepala->nama ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->lokasi ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $bidang->instansi->nama ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
-                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('superadmin.bidang.edit', $bidang->id) }}"></a>
-                                    <form method="POST" action="{{ route('superadmin.bidang.destroy', $bidang->id) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                            type="submit"></button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                No</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Nama</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Kepala Bidang</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Lokasi</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Instansi</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                {{ $bidangs->links() }}
-            </table>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($bidangs as $index => $bidang)
+                            <tr>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->nama }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->kepala->nama ?? '-' }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->lokasi ?? '-' }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->instansi->nama ?? '-' }}
+                                </td>
+                                <td class="text-center px-4 py-3 text-sm">
+                                    <div class="flex items-center justify-center gap-x-3">
+                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                            href="{{ route('superadmin.bidang.edit', $bidang->id) }}"></a>
+                                        <form method="POST" action="{{ route('superadmin.bidang.destroy', $bidang->id) }}" class="delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    {{ $bidangs->links() }}
+                </table>
+            </div>
         </div>
     </div>
 @endsection

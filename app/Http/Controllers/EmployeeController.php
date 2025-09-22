@@ -99,7 +99,12 @@ class EmployeeController extends Controller
             'email.email' => 'Format email tidak valid.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
-
+         $original = $employee->replicate();
+          $employee->fill($validated);
+        if (!$employee->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data employee.');
+        } 
+        $employee->save();
         $employee->update($validated);
 
         return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil diperbarui.');

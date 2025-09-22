@@ -104,7 +104,12 @@ class BidangController extends Controller
                     ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);
             }
         }
-
+        $original = $bidang->replicate();
+        $bidang->fill($validated);
+        if (!$bidang->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data bidang.');
+        }
+        $bidang->save();
         $bidang->update($validated);
 
         return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil diperbarui.');

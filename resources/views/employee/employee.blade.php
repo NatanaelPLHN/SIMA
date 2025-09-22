@@ -35,39 +35,39 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-indigo-800">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             NIP</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             Nama Pegawai</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             Email</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             Alamat</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             Telepon</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             Bidang</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                             Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($employees as $index => $pegawai)
                         <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->nip }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->nama }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->email }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->alamat ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->telepon ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $pegawai->bidang->nama ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm">
-                                <div class="flex space-x-2">
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $index + 1 }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->nip }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->nama }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->email }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->alamat ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->telepon ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->bidang->nama ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
+                                <div class="flex items-center justify-center gap-x-3">
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                         href="{{ route('superadmin.employees.edit', $pegawai->id) }}"></a>
-                                    <form method="POST" action="{{ route('superadmin.employees.destroy', $pegawai->id) }}">
+                                    <form method="POST" action="{{ route('superadmin.employees.destroy', $pegawai->id) }}" class="delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"

@@ -1,7 +1,7 @@
 <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
     <!-- Tombol menu hanya tampil di mobile -->
     <button @click="sidebarOpen = true" class="md:hidden p-2 text-indigo-800">
-        <i class="fas fa-bars text-xl"></i>
+        <i class="fa-solid fa-bars text-2xl"></i>
     </button>
 
     <div class="flex items-center">
