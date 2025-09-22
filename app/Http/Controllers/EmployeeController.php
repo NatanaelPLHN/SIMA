@@ -46,7 +46,7 @@ class EmployeeController extends Controller
 
         Employee::create($validated);
 
-        return redirect()->route('employees.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -87,7 +87,7 @@ class EmployeeController extends Controller
 
         $employee->update($validated);
 
-        return redirect()->route('employees.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
@@ -97,9 +97,9 @@ class EmployeeController extends Controller
     {
         try {
             $employee->delete();
-            return redirect()->route('employees.index')->with('success', 'Karyawan berhasil dihapus.');
+            return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('employees.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect()->route('superadmin.employees.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
         }
     }
 }

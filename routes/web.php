@@ -33,9 +33,7 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']); //
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::resource('bidang', controller: BidangController::class);
-Route::resource('instansi', controller: InstansiController::class);
-Route::resource('employees', controller: EmployeeController::class);
+
 // Tambahkan route untuk category groups
 
 
@@ -87,10 +85,15 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
     // Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
 
-    // pegawai
     Route::resource('assets', controller: AssetsController::class);
     // Tambahkan route untuk employees
+    Route::resource('employees', controller: EmployeeController::class);
     // Tambahkan route untuk instansi
+    Route::resource('instansi', controller: InstansiController::class);
+    // Tambahkan route untuk grup kategori
     Route::resource('category-groups', CategoryGroupController::class);
+    // Tambahkan route untuk categories
     Route::resource('categories', CategoryController::class);
+    // Tambahkan route untuk bidang
+    Route::resource('bidang', controller: BidangController::class);
 });

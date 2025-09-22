@@ -45,7 +45,7 @@ class BidangController extends Controller
 
         Bidang::create($validated);
 
-        return redirect()->route('bidang.index')->with('success', 'Bidang berhasil ditambahkan.');
+        return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil ditambahkan.');
 
     }
 
@@ -87,7 +87,7 @@ class BidangController extends Controller
 
         $bidang->update($validated);
 
-        return redirect()->route('bidang.index')->with('success', 'Bidang berhasil diperbarui.');
+        return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil diperbarui.');
     }
 
     /**
@@ -97,9 +97,9 @@ class BidangController extends Controller
     {
         try {
             $bidang->delete();
-            return redirect()->route('bidang.index')->with('success', 'Bidang berhasil dihapus.');
+            return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('bidang.index')->with('error', 'Gagal menghapus bidang. Bidang masih digunakan dalam data lain.');
+            return redirect()->route('superadmin.bidang.index')->with('error', 'Gagal menghapus bidang. Bidang masih digunakan dalam data lain.');
         }
     }
 }

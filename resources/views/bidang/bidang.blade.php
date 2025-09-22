@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <a href="{{ route('bidang.create') }}"
+                    <a href="{{ route('superadmin.bidang.create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
@@ -60,8 +60,8 @@
                             <td class="px-4 py-3 text-sm">
                                 <div class="flex space-x-2">
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('bidang.edit', $bidang->id) }}"></a>
-                                    <form method="POST" action="{{ route('bidang.destroy', $bidang->id) }}">
+                                        href="{{ route('superadmin.bidang.edit', $bidang->id) }}"></a>
+                                    <form method="POST" action="{{ route('superadmin.bidang.destroy', $bidang->id) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"

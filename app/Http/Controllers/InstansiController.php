@@ -43,7 +43,7 @@ class InstansiController extends Controller
 
         Instansi::create($validated);
 
-        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil ditambahkan.');
+        return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil ditambahkan.');
     }
 
     /**
@@ -81,7 +81,7 @@ class InstansiController extends Controller
 
         $instansi->update($validated);
 
-        return redirect()->route('instansi.index')->with('success', 'Instansi berhasil diperbarui.');
+        return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil diperbarui.');
     }
 
     /**
@@ -91,9 +91,9 @@ class InstansiController extends Controller
     {
         try {
             $instansi->delete();
-            return redirect()->route('instansi.index')->with('success', 'Instansi berhasil dihapus.');
+            return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('instansi.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
+            return redirect()->route('superadmin.instansi.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
         }
     }
 }

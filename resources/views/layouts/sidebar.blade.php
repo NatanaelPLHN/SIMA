@@ -82,20 +82,20 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('instansi.index') }}"
+                <a href="{{ route('superadmin.instansi.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Instansi
                 </a>
             </li>
              <li>
-                <a href="{{ route('bidang.index') }}"
+                <a href="{{ route('superadmin.bidang.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Bidang
                 </a>
             </li> <li>
-                <a href="{{ route('employees.index') }}"
+                <a href="{{ route('superadmin.employees.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Pegawai
@@ -119,7 +119,7 @@
                     Grup Kategori
                 </a>
             </li> <li>
-                <a href="#"
+                <a href="{{ route('admin.assets.index') }}"
                     class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                     <i class="fas fa-cube mr-2"></i>
                     Aset
