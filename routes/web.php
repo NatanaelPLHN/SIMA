@@ -4,6 +4,8 @@ use App\Http\Controllers\AssetsController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\BidangController;
+use App\Http\Controllers\CategoryGroupController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
@@ -34,6 +36,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::resource('bidang', controller: BidangController::class);
 Route::resource('instansi', controller: InstansiController::class);
 Route::resource('employees', controller: EmployeeController::class);
+// Tambahkan route untuk category groups
 
 
 // User dashboard routes
@@ -88,4 +91,6 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('assets', controller: AssetsController::class);
     // Tambahkan route untuk employees
     // Tambahkan route untuk instansi
+    Route::resource('category-groups', CategoryGroupController::class);
+    Route::resource('categories', CategoryController::class);
 });
