@@ -89,8 +89,9 @@ class AssetsController extends Controller
             'satuan' => $request->satuan,
         ]);
     }
+            $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
 
-            return redirect()->route('admin.assets.index')->with(
+            return redirect()->route("$prefix.assets.index")->with(
             'success',
             "Aset {$asset->nama_aset} ({$asset->jenis_aset}) berhasil ditambahkan."
             );

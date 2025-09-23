@@ -66,8 +66,8 @@
                             <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
                                 <div class="flex items-center justify-center gap-x-3">
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('superadmin.employees.edit', $pegawai->id) }}"></a>
-                                    <form method="POST" action="{{ route('superadmin.employees.destroy', $pegawai->id) }}" class="delete-form">
+                                        href="{{ route('superadmin.karyawan.edit', $pegawai->id) }}"></a>
+                                    <form method="POST" action="{{ route('superadmin.karyawan.destroy', $pegawai->id) }}" class="delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"

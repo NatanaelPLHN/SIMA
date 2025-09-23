@@ -97,8 +97,8 @@ class BidangController extends Controller
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini
         if ($request->kepala_bidang) {
-            $employee = Employee::find($request->kepala_bidang);
-            if ($employee && $employee->department_id != $bidang->id) {
+            $karyawan = Karyawan::find($request->kepala_bidang);
+            if ($karyawan && $karyawan->department_id != $bidang->id) {
                 return redirect()->back()
                     ->withInput()
                     ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);
