@@ -14,7 +14,6 @@ class KaryawanController extends Controller
     public function index()
     {
         // $employees = Employee::paginate(10);
-        // return view('employee.employee', compact('employees'));
         $employees = Karyawan::with('bidang')->paginate(10);
         return view('karyawan.index', compact('employees'));
     }
@@ -37,7 +36,6 @@ class KaryawanController extends Controller
         $validated = $request->validate([
             'nip' => 'required|unique:karyawan,nip',
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:karyawan,email',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -45,9 +43,6 @@ class KaryawanController extends Controller
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.unique' => 'Email sudah digunakan.',
-            'email.email' => 'Format email tidak valid.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
@@ -81,13 +76,11 @@ class KaryawanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Karyawan $employee)
     public function update(Request $request, Karyawan $karyawan)
     {
         $validated = $request->validate([
             'nip' => 'required|unique:karyawan,nip,' . $karyawan->id,
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:karyawan,email,' . $karyawan->id,
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -95,9 +88,6 @@ class KaryawanController extends Controller
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.unique' => 'Email sudah digunakan.',
-            'email.email' => 'Format email tidak valid.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
          $original = $karyawan->replicate();
@@ -106,6 +96,7 @@ class KaryawanController extends Controller
             return back()->with('info', 'Tidak ada perubahan pada data employee.');
         }
         $karyawan->save();
+        $karyawan->update($validated);
 
         return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil diperbarui.');
     }

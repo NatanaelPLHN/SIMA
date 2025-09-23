@@ -74,6 +74,13 @@ return new class extends Migration
 
             Schema::rename('karyawan', 'employees');
 
+            Schema::table('karyawan', function (Blueprint $table) {
+                $table->dropColumn('email');
+            });
+        
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('name');
+            });
         });
     }
 };

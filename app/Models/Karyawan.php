@@ -13,7 +13,6 @@ class Karyawan extends Model
     protected $fillable = [
         'nip',
         'nama',
-        'email',
         'alamat',
         'telepon',
         'department_id',
@@ -28,5 +27,10 @@ class Karyawan extends Model
     public function bidang()
     {
         return $this->belongsTo(Bidang::class, 'department_id');
+    }
+    // Relasi dengan user
+    public function user()
+    {
+        return $this->hasOne(User::class, 'karyawan_id');
     }
 }

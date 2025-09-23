@@ -13,8 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
-        // $this->call(AssetSeeder::class);
-        $this->call(UserSeeder::class);
+        $this->call([
+            InstansiSeeder::class,
+            BidangSeeder::class,
+            KaryawanSeeder::class,
+            UserSeeder::class,
+            // AssetSeeder::class, outdated
+        ]);
     }
 }
