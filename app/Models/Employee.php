@@ -26,7 +26,7 @@ class Employee extends Model
     // Relasi dengan Bidang (Department)
     public function bidang()
     {
-        return $this->belongsTo(Bidang::class, 'department_id');
+        return $this->belongsTo(Departement::class, 'department_id');
     }
     // Relasi dengan user
     public function user()

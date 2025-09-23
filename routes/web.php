@@ -5,7 +5,8 @@ use App\Http\Controllers\EmployeeController;
 // use App\Http\Controllers\KaryawanController;
 // use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\InstitutionController;
-use App\Http\Controllers\BidangController;
+// use App\Http\Controllers\BidangController;
+use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\CategoryGroupController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
@@ -99,5 +100,6 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Tambahkan route untuk categories
     Route::resource('categories', CategoryController::class);
     // Tambahkan route untuk bidang
-    Route::resource('bidang', controller: BidangController::class);
+    Route::resource('departement', controller: DepartementController::class);
+    // Route::resource('bidang', controller: BidangController::class);
 });

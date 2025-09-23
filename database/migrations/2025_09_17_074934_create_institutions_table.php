@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('telepon')->nullable();
             $table->string('email')->nullable();
             $table->text('alamat')->nullable();
+            $table->string('alias')->unique();
             $table->timestamps();
         });
     }

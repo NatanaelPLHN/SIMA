@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('employees', function (Blueprint $table) {
             $table->unsignedBigInteger('department_id')->nullable()->after('id');
-            $table->foreign('department_id')->references('id')->on('bidang')->onDelete('set null');
+            $table->foreign('department_id')->references('id')->on('departements')->onDelete('set null');
 
         });
     }

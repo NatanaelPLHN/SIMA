@@ -5,23 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Bidang extends Model
+class Departement extends Model
 {
     use HasFactory;
 
-    protected $table = 'bidang';
+    protected $table = 'departements';
 
     protected $fillable = [
         'nama',
         'kepala_bidang_id',
         'lokasi',
         'instansi_id',
+        'alias',
     ];
 
     // Relasi dengan Instansi
     public function instansi()
     {
-        return $this->belongsTo(Instansi::class, 'instansi_id');
+        return $this->belongsTo(Institution::class, 'instansi_id');
     }
 
     // Relasi dengan Karyawan (Kepala Bidang)

@@ -1,0 +1,12 @@
+saya mencoba mengakses file di direktori 
+
+D:\AGUNG\1_TOOLS\laravel\sima\SIMA\resources\views\departement
+dengan url superadmin/departement
+
+dari percobaan saya saya menemukan error saat mencoba fitur edit yaitu
+Missing required parameter for [Route: superadmin.departement.update] [URI: superadmin/departement/{departement}] [Missing parameter: departement].
+
+dan saat mencoba delete , memunculkan notifikasi hapus berhasil tetapi data gagal dihapus
+
+bantu saya menyelesaikan masalah nya
+sebelumnya masalah ini juga pernah muncul yang diakibatkan oleh nama variable yang tidak sesuai

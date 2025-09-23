@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\Bidang;
+use App\Models\Departement;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -13,7 +13,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::with('bidang')->paginate(10);
+        $employees = Employee::with('departements')->paginate(10);
         return view('employee.index', compact('employees'));
     }
 
@@ -22,7 +22,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        $bidangs = Bidang::all();
+        $bidangs = Departement::all();
         return view('employee.create_employee', compact('bidangs'));
     }
 
@@ -36,7 +36,7 @@ class EmployeeController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
-            'department_id' => 'nullable|exists:bidang,id',
+            'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
@@ -65,7 +65,7 @@ class EmployeeController extends Controller
     public function edit(Employee $employee)
     {
         $employee->load('bidang'); // Tambahkan ini
-        $bidangs = Bidang::all(); // Tambahkan ini
+        $bidangs = Departement::all(); // Tambahkan ini
         return view('employee.edit_employee', compact('employee', 'bidangs'));
 
         // return view('employee.edit_employee', compact('employee'));
@@ -81,7 +81,7 @@ class EmployeeController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
-            'department_id' => 'nullable|exists:bidang,id',
+            'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
