@@ -13,10 +13,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // $employees = Employee::paginate(10);
-        // return view('employee.employee', compact('employees'));
         $employees = Employee::with('bidang')->paginate(10);
-        return view('employee.employee', compact('employees'));
+        return view('employee.index', compact('employees'));
     }
 
     /**
@@ -26,7 +24,6 @@ class EmployeeController extends Controller
     {
         $bidangs = Bidang::all();
         return view('employee.create_employee', compact('bidangs'));
-        // return view('employee.create_employee');
     }
 
     /**
@@ -37,7 +34,6 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'nip' => 'required|unique:employees,nip',
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -45,9 +41,6 @@ class EmployeeController extends Controller
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.unique' => 'Email sudah digunakan.',
-            'email.email' => 'Format email tidak valid.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
@@ -86,7 +79,6 @@ class EmployeeController extends Controller
         $validated = $request->validate([
             'nip' => 'required|unique:employees,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $employee->id,
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -94,16 +86,13 @@ class EmployeeController extends Controller
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.unique' => 'Email sudah digunakan.',
-            'email.email' => 'Format email tidak valid.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
          $original = $employee->replicate();
           $employee->fill($validated);
         if (!$employee->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data employee.');
-        } 
+        }
         $employee->save();
         $employee->update($validated);
 

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AssetsController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\InstansiController;
+// use App\Http\Controllers\KaryawanController;
+// use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\BidangController;
 use App\Http\Controllers\CategoryGroupController;
 use App\Http\Controllers\CategoryController;
@@ -86,10 +88,12 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
 
     Route::resource('assets', controller: AssetsController::class);
-    // Tambahkan route untuk employees
+    // Tambahkan route untuk karyawan
+    // Route::resource('karyawan', controller: KaryawanController::class);
     Route::resource('employees', controller: EmployeeController::class);
     // Tambahkan route untuk instansi
-    Route::resource('instansi', controller: InstansiController::class);
+    // Route::resource('instansi', controller: InstansiController::class);
+    Route::resource('institution', controller: InstitutionController::class);
     // Tambahkan route untuk grup kategori
     Route::resource('category-groups', CategoryGroupController::class);
     // Tambahkan route untuk categories

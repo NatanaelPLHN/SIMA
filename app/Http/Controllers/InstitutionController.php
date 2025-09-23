@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Instansi;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 
-class InstansiController extends Controller
+class InstitutionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $instansis = Instansi::latest()->paginate(10);
-        return view('instansi.instansi', compact('instansis'));
+        $instansis = Institution::latest()->paginate(10);
+        return view('institution.index', compact('instansis'));
     }
 
     /**
@@ -21,7 +21,7 @@ class InstansiController extends Controller
      */
     public function create()
     {
-        return view('instansi.create_instansi');
+        return view('institution.create_institution');
     }
 
     /**
@@ -41,31 +41,31 @@ class InstansiController extends Controller
             'email.email' => 'Format email tidak valid.',
         ]);
 
-        Instansi::create($validated);
+        Institution::create($validated);
 
-        return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil ditambahkan.');
+        return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Instansi $instansi)
+    public function show(Institution $institution)
     {
-        return view('instansi.show', compact('instansi'));
+        return view('institution.show', compact('institution'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Instansi $instansi)
+    public function edit(Institution $institution)
     {
-        return view('instansi.edit_instansi', compact('instansi'));
+        return view('institution.edit_institution', compact('institution'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Instansi $instansi)
+    public function update(Request $request, Institution $institution)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
@@ -78,28 +78,28 @@ class InstansiController extends Controller
             'pemerintah.required' => 'Nama pemerintah wajib diisi.',
             'email.email' => 'Format email tidak valid.',
         ]);
-        $original = $instansi->replicate();
-        $instansi->fill($validated);
-        if (!$instansi->isDirty()) {
+        $original = $institution->replicate();
+        $institution->fill($validated);
+        if (!$institution->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data instansi.');
-        }   
+        }
 
-    $instansi->save();
-    $instansi->update($validated);
+    $institution->save();
+    $institution->update($validated);
 
-        return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil diperbarui.');
+        return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Instansi $instansi)
+    public function destroy(Institution $institution)
     {
         try {
-            $instansi->delete();
-            return redirect()->route('superadmin.instansi.index')->with('success', 'Instansi berhasil dihapus.');
+            $institution->delete();
+            return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.instansi.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
+            return redirect()->route('superadmin.institution.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
         }
     }
 }

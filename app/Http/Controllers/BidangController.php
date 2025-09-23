@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bidang;
 use App\Models\Instansi;
+// use App\Models\Karyawan;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
@@ -36,14 +37,14 @@ class BidangController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kepala_bidang' => 'nullable|exists:employees,id',
+            'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
             'instansi_id' => 'required|exists:instansi,id',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
             'instansi_id.required' => 'Instansi wajib dipilih.',
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
-            'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
+            'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
 
         // Validasi: kepala_bidang harus null saat create karena bidang belum ada
@@ -51,6 +52,16 @@ class BidangController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['kepala_bidang' => 'Kepala bidang dapat dipilih setelah bidang dibuat.']);
+        }
+        // Validasi custom: nama dan instansi harus unique bersama
+        $existing = Bidang::where('nama', $request->nama)
+            ->where('instansi_id', $request->instansi_id)
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
         }
 
         $bidang = Bidang::create($validated);
@@ -85,14 +96,14 @@ class BidangController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kepala_bidang' => 'nullable|exists:employees,id',
+            'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
             'instansi_id' => 'required|exists:instansi,id',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
             'instansi_id.required' => 'Instansi wajib dipilih.',
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
-            'kepala_bidang.exists' => 'Kepala bidang tidak ditemukan.',
+            'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini
@@ -103,6 +114,17 @@ class BidangController extends Controller
                     ->withInput()
                     ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);
             }
+        }
+        // Validasi custom: nama dan instansi harus unique bersama
+        $existing = Bidang::where('nama', $request->nama)
+            ->where('instansi_id', $request->instansi_id)
+            ->where('id', '!=', $bidang->id) // Kecualikan record yang sedang diupdate
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
         }
         $original = $bidang->replicate();
         $bidang->fill($validated);

@@ -89,8 +89,9 @@ class AssetsController extends Controller
             'satuan' => $request->satuan,
         ]);
     }
+            $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
 
-            return redirect()->route('admin.assets.index')->with(
+            return redirect()->route("$prefix.assets.index")->with(
             'success',
             "Aset {$asset->nama_aset} ({$asset->jenis_aset}) berhasil ditambahkan."
             );
@@ -153,13 +154,14 @@ class AssetsController extends Controller
             'lokasi_terakhir' => 'nullable|string',
             'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
         ]);
-        $original = $asset->replicate();
-        $asset->fill($validated);
-        if (!$asset->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
-        }   
 
-    $asset->save();
+        $original = $asset->replicate();
+            $asset->fill($validated);
+            if (!$asset->isDirty()) {
+                return back()->with('info', 'Tidak ada perubahan pada data aset.');
+        }
+
+        $asset->save();
 
         $asset->update($validated);
 

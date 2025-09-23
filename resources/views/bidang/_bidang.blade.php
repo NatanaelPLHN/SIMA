@@ -28,9 +28,9 @@
     @enderror
 </div>
 <div>
-    <label for="kepala_bidang" class="block text-sm font-medium text-gray-700">Kepala Bidang</label>
-    <select name="kepala_bidang" id="kepala_bidang"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_bidang') ? 'border-red-500' : '' }}">
+    <label for="kepala_bidang_id" class="block text-sm font-medium text-gray-700">Kepala Bidang</label>
+    <select name="kepala_bidang_id" id="kepala_bidang_id"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_bidang_id') ? 'border-red-500' : '' }}">
         <option value="">Pilih Kepala Bidang</option>
         @forelse ($employees as $employee)
             <option value="{{ $employee->id }}" {{ old('kepala_bidang', $bidang->kepala_bidang ?? '') == $employee->id ? 'selected' : '' }}>
@@ -57,12 +57,12 @@
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_bidang') ? 'border-red-500' : '' }}">
         <option value="">Pilih Kepala Bidang</option>
         @foreach ($employees as $employee)
-            <option value="{{ $employee->id }}" {{ old('kepala_bidang', $bidang->kepala_bidang ?? '') == $employee->id ? 'selected' : '' }}>
+            <option value="{{ $employee->id }}" {{ old('kepala_bidang_id', $bidang->kepala_bidang_id ?? '') == $employee->id ? 'selected' : '' }}>
                 {{ $employee->nama }} ({{ $employee->nip }})
             </option>
         @endforeach
     </select>
-    @error('kepala_bidang')
+    @error('kepala_bidang_id')
         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
     @enderror
 </div> --}}

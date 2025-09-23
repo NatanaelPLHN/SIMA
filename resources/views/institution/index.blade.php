@@ -22,7 +22,7 @@
                 <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                 <input type="text" id="search"
                     class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <a href="{{ route('superadmin.instansi.create') }}"
+                <a href="{{ route('superadmin.institution.create') }}"
                     class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                     Tambah
                 </a>
@@ -53,20 +53,20 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse ($instansis as $index => $instansi)
+                    @forelse ($instansis as $index => $institution)
                     <tr>
                         <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $index + 1 }}</td>
-                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $instansi->nama }}</td>
-                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $instansi->pemerintah }}</td>
-                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $instansi->telepon ?? '-' }}</< /td>
-                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $instansi->email ?? '-' }}</td>
+                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $institution->nama }}</td>
+                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $institution->pemerintah }}</td>
+                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $institution->telepon ?? '-' }}</< /td>
+                        <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $institution->email ?? '-' }}</td>
                         <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                            {{ $instansi->alamat ?? '-' }}</td>
+                            {{ $institution->alamat ?? '-' }}</td>
                         <td class="px-4 py-3 text-sm">
                             <div class="flex items-center justify-center gap-x-3">
                                 <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                    href="{{ route('superadmin.instansi.edit', $instansi->id) }}"></a>
-                                <form method="POST" action="{{ route('superadmin.instansi.destroy', $instansi->id) }}"
+                                    href="{{ route('superadmin.institution.edit', $institution->id) }}"></a>
+                                <form method="POST" action="{{ route('superadmin.institution.destroy', $institution->id) }}"
                                     class="delete-form">
                                     @csrf
                                     @method('DELETE')

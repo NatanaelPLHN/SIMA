@@ -11,16 +11,6 @@
     value="{{ old('nama', $employee->nama ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
-<div class="form-group">
-    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email<span class="text-red-500">*</span></label>
-    <input type="email" name="email" id="email" value="{{ old('email', $employee->email ?? '') }}" placeholder="Email" required
-        autofocus
-        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        @error('email') is-invalid @enderror">
-    @error('email')
-        <div style="color: red; font-size: 12px;">{{ $message }}</div>
-    @enderror
-</div>
 <div>
     <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
     <input type="text" id="alamat" name="alamat"
