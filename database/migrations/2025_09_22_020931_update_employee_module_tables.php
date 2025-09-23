@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::rename('employees', 'karyawan');
+        // Schema::rename('employees', 'karyawan');
 
         Schema::table('users', function (Blueprint $table) {
             // Add nullable relation so not every user must have karyawan
             $table->foreignId('karyawan_id')
                 ->nullable()
-                ->constrained('karyawan')
+                ->constrained('employees')
                 ->nullOnDelete();
         });
 
@@ -35,13 +35,10 @@ return new class extends Migration
             $table->dropColumn('kepala_bidang');
             $table->foreignId('kepala_bidang_id')
                   ->nullable()
-                  ->constrained('karyawan')
+                  ->constrained('employees')
                   ->nullOnDelete();
         });
 
-        Schema::table('karyawan', function (Blueprint $table) {
-            $table->dropColumn('email');
-        });
 
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('name');
@@ -72,12 +69,7 @@ return new class extends Migration
                   ->on('instansi')
                   ->onDelete('cascade');
 
-            Schema::rename('karyawan', 'employees');
 
-            Schema::table('karyawan', function (Blueprint $table) {
-                $table->dropColumn('email');
-            });
-        
             Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('name');
             });

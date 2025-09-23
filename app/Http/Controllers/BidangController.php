@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Bidang;
 use App\Models\Instansi;
-use App\Models\Karyawan;
+// use App\Models\Karyawan;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class BidangController extends Controller
@@ -36,7 +37,7 @@ class BidangController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'kepala_bidang_id' => 'nullable|exists:karyawan,id',
+            'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
             'instansi_id' => 'required|exists:instansi,id',
         ], [
@@ -84,7 +85,7 @@ class BidangController extends Controller
     {
         $instansis = Instansi::all();
         // Hanya tampilkan employee yang ada di bidang ini
-        $employees = Karyawan::where('department_id', $bidang->id)->get();
+        $employees = Employee::where('department_id', $bidang->id)->get();
         return view('bidang.edit_bidang', compact('bidang', 'instansis', 'employees'));
     }
 
@@ -107,8 +108,8 @@ class BidangController extends Controller
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini
         if ($request->kepala_bidang) {
-            $karyawan = Karyawan::find($request->kepala_bidang);
-            if ($karyawan && $karyawan->department_id != $bidang->id) {
+            $employee = Employee::find($request->kepala_bidang);
+            if ($employee && $employee->department_id != $bidang->id) {
                 return redirect()->back()
                     ->withInput()
                     ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);

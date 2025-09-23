@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('nip')->unique();
             $table->string('nama');
-            $table->string('email')->unique();
             $table->text('alamat')->nullable();
             $table->string('telepon')->nullable();
             $table->timestamps();
