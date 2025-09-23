@@ -97,7 +97,7 @@
                         <li><a href="{{ route('superadmin.employees.index') }}"
                                 class="block px-2 py-1 hover:text-indigo-200">Pegawai</a></li>
                         <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Akun</a></li>
-                        <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Kategori</a></li>
+                        <li><a href="{{ route('superadmin.categories.index') }}" class="block px-2 py-1 hover:text-indigo-200">Kategori</a></li>
                         <li><a href="{{ route('superadmin.category-groups.index') }}" class="block px-2 py-1 hover:text-indigo-200">Grup Kategori</a></li>
                         <li><a href="{{ route('superadmin.assets.index') }}" class="block px-2 py-1 hover:text-indigo-200">Aset</a></li>
                     </ul>

@@ -61,7 +61,7 @@
                                         data-deskripsi="{{ $categoryGroup->deskripsi }}">
                                     </button>
                                     <form method="POST"
-                                        action="{{ route('superadmin.category-groups.destroy', $categoryGroup) }}">
+                                        action="{{ route('superadmin.category-groups.destroy', $categoryGroup) }}"  class="delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"
