@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Instansi;
+use App\Models\Institution;
 
 class InstansiSeeder extends Seeder
 {
     public function run(): void
     {
-        Instansi::create([
+        Institution::create([
             'nama' => 'Dinas Pendidikan',
             'pemerintah' => 'Pemerintah Kota',
             'telepon' => '021-123456',
@@ -17,7 +17,7 @@ class InstansiSeeder extends Seeder
             'alamat' => 'Jl. Merdeka No. 1, Kota X',
         ]);
 
-        Instansi::create([
+        Institution::create([
             'nama' => 'Dinas Kesehatan',
             'pemerintah' => 'Pemerintah Kota',
             'telepon' => '021-654321',

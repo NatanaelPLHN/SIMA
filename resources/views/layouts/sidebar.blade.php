@@ -90,7 +90,7 @@
                         <i :class="masterOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
                     </button>
                     <ul x-show="masterOpen" x-transition class="ml-6 mt-1 space-y-1">
-                        <li><a href="{{ route('superadmin.instansi.index') }}"
+                        <li><a href="{{ route('superadmin.institution.index') }}"
                                 class="block px-2 py-1 hover:text-indigo-200">Instansi</a></li>
                         <li><a href="{{ route('superadmin.bidang.index') }}" class="block px-2 py-1 hover:text-indigo-200">Bidang</a>
                         </li>
