@@ -39,6 +39,13 @@ return new class extends Migration
                   ->nullOnDelete();
         });
 
+        Schema::table('karyawan', function (Blueprint $table) {
+            $table->dropColumn('email');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('name');
+        });
     }
 
     /**
@@ -47,7 +54,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bidang', function (Blueprint $table) {
-            
+
             // Rollback kepala_bidang_id
             $table->dropForeign(['kepala_bidang_id']);
             $table->dropColumn('kepala_bidang_id');

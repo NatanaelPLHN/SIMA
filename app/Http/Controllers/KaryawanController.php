@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
+use App\Models\Bidang;
 use Illuminate\Http\Request;
 
 class KaryawanController extends Controller
@@ -14,8 +15,8 @@ class KaryawanController extends Controller
     {
         // $employees = Employee::paginate(10);
         // return view('employee.employee', compact('employees'));
-        $employees = Employee::with('bidang')->paginate(10);
-        return view('employee.employee', compact('employees'));
+        $employees = Karyawan::with('bidang')->paginate(10);
+        return view('karyawan.index', compact('employees'));
     }
 
     /**
@@ -24,7 +25,7 @@ class KaryawanController extends Controller
     public function create()
     {
         $bidangs = Bidang::all();
-        return view('employee.create_employee', compact('bidangs'));
+        return view('karyawan.create_karyawan', compact('bidangs'));
         // return view('employee.create_employee');
     }
 
@@ -58,21 +59,21 @@ class KaryawanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Karyawan $employee)
+    public function show(Karyawan $karyawan)
     {
-        $employee->load('bidang'); // Tambahkan ini
-        return view('employees.show', compact('employee'));
+        $karyawan->load('bidang'); // Tambahkan ini
+        return view('karyawan.show', compact('karyawan'));
         // return view('employees.show', compact('employee'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Karyawan $employee)
+    public function edit(Karyawan $karyawan)
     {
-        $employee->load('bidang'); // Tambahkan ini
+        $karyawan->load('bidang'); // Tambahkan ini
         $bidangs = Bidang::all(); // Tambahkan ini
-        return view('employee.edit_employee', compact('employee', 'bidangs'));
+        return view('karyawan.edit_karyawan', compact('karyawan', 'bidangs'));
 
         // return view('employee.edit_employee', compact('employee'));
     }
@@ -80,12 +81,13 @@ class KaryawanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Karyawan $employee)
+    // public function update(Karyawan $employee)
+    public function update(Request $request, Karyawan $karyawan)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:karyawan,nip,' . $employee->id,
+            'nip' => 'required|unique:karyawan,nip,' . $karyawan->id,
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:karyawan,email,' . $employee->id,
+            'email' => 'required|email|unique:karyawan,email,' . $karyawan->id,
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
             'department_id' => 'nullable|exists:bidang,id',
@@ -98,13 +100,12 @@ class KaryawanController extends Controller
             'email.email' => 'Format email tidak valid.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
-         $original = $employee->replicate();
-          $employee->fill($validated);
-        if (!$employee->isDirty()) {
+         $original = $karyawan->replicate();
+          $karyawan->fill($validated);
+        if (!$karyawan->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data employee.');
         }
-        $employee->save();
-        $employee->update($validated);
+        $karyawan->save();
 
         return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
@@ -112,10 +113,10 @@ class KaryawanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Karyawan $employee)
+    public function destroy(Karyawan $karyawan)
     {
         try {
-            $employee->delete();
+            $karyawan->delete();
             return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect()->route('superadmin.karyawan.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');

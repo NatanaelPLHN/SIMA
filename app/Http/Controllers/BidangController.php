@@ -52,6 +52,16 @@ class BidangController extends Controller
                 ->withInput()
                 ->withErrors(['kepala_bidang' => 'Kepala bidang dapat dipilih setelah bidang dibuat.']);
         }
+        // Validasi custom: nama dan instansi harus unique bersama
+        $existing = Bidang::where('nama', $request->nama)
+            ->where('instansi_id', $request->instansi_id)
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
+        }
 
         $bidang = Bidang::create($validated);
 
@@ -97,12 +107,23 @@ class BidangController extends Controller
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini
         if ($request->kepala_bidang) {
-            $employee = Employee::find($request->kepala_bidang);
+            $employee = Karyawan::find($request->kepala_bidang);
             if ($employee && $employee->department_id != $bidang->id) {
                 return redirect()->back()
                     ->withInput()
                     ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);
             }
+        }
+        // Validasi custom: nama dan instansi harus unique bersama
+        $existing = Bidang::where('nama', $request->nama)
+            ->where('instansi_id', $request->instansi_id)
+            ->where('id', '!=', $bidang->id) // Kecualikan record yang sedang diupdate
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
         }
         $original = $bidang->replicate();
         $bidang->fill($validated);
