@@ -110,12 +110,12 @@ class DepartementController extends Controller
         ]);
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota departement ini
-        if ($request->kepala_bidang) {
-            $employee = Employee::find($request->kepala_bidang);
+        if ($request->kepala_bidang_id) {
+            $employee = Employee::find($request->kepala_bidang_id);
             if ($employee && $employee->department_id != $departement->id) {
                 return redirect()->back()
                     ->withInput()
-                    ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota departement ini.']);
+                    ->withErrors(['kepala_bidang_id' => 'Kepala bidang harus merupakan anggota departement ini.']);
             }
         }
         // Validasi custom: nama dan instansi harus unique bersama
