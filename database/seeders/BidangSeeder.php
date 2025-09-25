@@ -11,7 +11,7 @@ class BidangSeeder extends Seeder
     {
         Departement::create([
             'nama' => 'Bidang Kurikulum',
-            'kepala_bidang_id' => null, // nanti bisa diisi Karyawan
+            'kepala_bidang_id' => null, // nanti bisa diisi Karyawawan
             'lokasi' => 'Gedung A Lt.2',
             'instansi_id' => 1, // Dinas Pendidikan
             'alias' => 'BiKur',
