@@ -10,24 +10,12 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parent_id',
         'nama',
         'deskripsi',
         'category_group_id',
         'alias',
     ];
 
-    // Relasi dengan parent category (self-referencing)
-    public function parent()
-    {
-        return $this->belongsTo(Category::class, 'parent_id');
-    }
-
-    // Relasi dengan child categories
-    public function children()
-    {
-        return $this->hasMany(Category::class, 'parent_id');
-    }
 
     // Relasi dengan category group
     public function categoryGroup()
@@ -42,10 +30,7 @@ class Category extends Model
     }
 
     // Scope untuk mendapatkan kategori utama (tanpa parent)
-    public function scopeRoot($query)
-    {
-        return $query->whereNull('parent_id');
-    }
+
 
     // Scope untuk mendapatkan kategori berdasarkan group
     public function scopeByGroup($query, $groupId)
@@ -54,16 +39,16 @@ class Category extends Model
     }
 
     // Accessor untuk mendapatkan path kategori (breadcrumb)
-    public function getPathAttribute()
-    {
-        $path = collect([$this->nama]);
-        $parent = $this->parent;
+    // public function getPathAttribute()
+    // {
+    //     $path = collect([$this->nama]);
+    //     $parent = $this->parent;
 
-        while ($parent) {
-            $path->prepend($parent->nama);
-            $parent = $parent->parent;
-        }
+    //     while ($parent) {
+    //         $path->prepend($parent->nama);
+    //         $parent = $parent->parent;
+    //     }
 
-        return $path->implode(' > ');
-    }
+    //     return $path->implode(' > ');
+    // }
 }

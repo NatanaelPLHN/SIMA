@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <a href="{{ route('superadmin.bidang.create') }}"
+                    <a href="{{ route('superadmin.departement.create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
@@ -51,19 +51,19 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($bidangs as $index => $bidang)
+                        @foreach ($departements as $index => $departement)
                             <tr>
                                 <td class="text-center px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
-                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->nama }}</td>
-                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->kepala->nama ?? '-' }}</td>
-                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->lokasi ?? '-' }}</td>
-                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $bidang->instansi->nama ?? '-' }}
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->nama }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->kepala->nama ?? '-' }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->lokasi ?? '-' }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->instansi->nama ?? '-' }}
                                 </td>
                                 <td class="text-center px-4 py-3 text-sm">
                                     <div class="flex items-center justify-center gap-x-3">
                                         <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                            href="{{ route('superadmin.bidang.edit', $bidang->id) }}"></a>
-                                        <form method="POST" action="{{ route('superadmin.bidang.destroy', $bidang->id) }}" class="delete-form">
+                                            href="{{ route('superadmin.departement.edit', $departement->id) }}"></a>
+                                        <form method="POST" action="{{ route('superadmin.departement.destroy', $departement->id) }}" class="delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
@@ -73,7 +73,7 @@
                             </tr>
                         @endforeach
                     </tbody>
-                    {{ $bidangs->links() }}
+                    {{ $departements->links() }}
                 </table>
             </div>
         </div>

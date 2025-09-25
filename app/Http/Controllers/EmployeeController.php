@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Models\Bidang;
+use App\Models\Departement;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -13,7 +13,6 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // $employees = Employee::paginate(10);
         $employees = Employee::with('bidang')->paginate(10);
         return view('employee.index', compact('employees'));
     }
@@ -23,7 +22,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        $bidangs = Bidang::all();
+        $bidangs = Departement::all();
         return view('employee.create_employee', compact('bidangs'));
     }
 
@@ -33,11 +32,11 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:employee,nip',
+            'nip' => 'required|unique:employees,nip',
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
-            'department_id' => 'nullable|exists:bidang,id',
+            'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
@@ -47,7 +46,7 @@ class EmployeeController extends Controller
 
         Employee::create($validated);
 
-        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -55,8 +54,9 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        $employee->load('bidang');
+        $employee->load('bidang'); // Tambahkan ini
         return view('employees.show', compact('employee'));
+        // return view('employees.show', compact('employee'));
     }
 
     /**
@@ -64,9 +64,11 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        $employee->load('bidang');
-        $bidangs = Bidang::all();
+        $employee->load('bidang'); // Tambahkan ini
+        $bidangs = Departement::all(); // Tambahkan ini
         return view('employee.edit_employee', compact('employee', 'bidangs'));
+
+        // return view('employee.edit_employee', compact('employee'));
     }
 
     /**
@@ -75,11 +77,11 @@ class EmployeeController extends Controller
     public function update(Request $request, Employee $employee)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:employee,nip,' . $employee->id,
+            'nip' => 'required|unique:employees,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
-            'department_id' => 'nullable|exists:bidang,id',
+            'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
@@ -94,7 +96,7 @@ class EmployeeController extends Controller
         $employee->save();
         $employee->update($validated);
 
-        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
@@ -104,9 +106,9 @@ class EmployeeController extends Controller
     {
         try {
             $employee->delete();
-            return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil dihapus.');
+            return redirect()->route('superadmin.employees.index')->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.employee.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect()->route('superadmin.employees.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
         }
     }
 }

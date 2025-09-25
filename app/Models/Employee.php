@@ -8,7 +8,7 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $table = 'karyawan';
+    protected $table = 'employees';
 
     protected $fillable = [
         'nip',
@@ -26,11 +26,11 @@ class Employee extends Model
     // Relasi dengan Bidang (Department)
     public function bidang()
     {
-        return $this->belongsTo(Bidang::class, 'department_id');
+        return $this->belongsTo(Departement::class, 'department_id');
     }
     // Relasi dengan user
     public function user()
     {
-        return $this->hasOne(User::class, 'karyawan_id');
+        return $this->hasOne(User::class, 'employee_id');
     }
 }
