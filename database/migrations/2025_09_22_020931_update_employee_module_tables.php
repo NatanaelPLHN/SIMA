@@ -77,7 +77,7 @@ return new class extends Migration
             Schema::table('karyawan', function (Blueprint $table) {
                 $table->dropColumn('email');
             });
-        
+
             Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('name');
             });

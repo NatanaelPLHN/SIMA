@@ -27,12 +27,12 @@ class Bidang extends Model
     // Relasi dengan Karyawan (Kepala Bidang)
     public function kepala()
     {
-        return $this->belongsTo(Karyawan::class, 'kepala_bidang_id');
+        return $this->belongsTo(Employee::class, 'kepala_bidang_id');
     }
 
     // Relasi dengan Karyawan (Anggota Bidang)
     public function karyawan()
     {
-        return $this->hasMany(Karyawan::class, 'department_id');
+        return $this->hasMany(Employee::class, 'department_id');
     }
 }

@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\AssetsController;
-use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\BidangController;
 use App\Http\Controllers\CategoryGroupController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
@@ -87,7 +88,9 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
 
     Route::resource('assets', controller: AssetsController::class);
     // Tambahkan route untuk karyawan
-    Route::resource('karyawan', controller: KaryawanController::class);
+    Route::resource('karyawan', controller: EmployeeController::class);
+    // Tambahkan route untuk user
+    Route::resource('user', controller: UserController::class);
     // Tambahkan route untuk instansi
     Route::resource('instansi', controller: InstansiController::class);
     // Tambahkan route untuk grup kategori

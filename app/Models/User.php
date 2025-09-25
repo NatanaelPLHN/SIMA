@@ -38,7 +38,7 @@ class User extends Authenticatable
 
     public function karyawan()
     {
-        return $this->belongsTo(Karyawan::class, 'karyawan_id');
+        return $this->belongsTo(Employee::class, 'karyawan_id');
     }
 
     public function isSuperAdmin()

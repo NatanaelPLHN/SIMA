@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Karyawan;
+use App\Models\Employee;
 use App\Models\Bidang;
 use Illuminate\Http\Request;
 
-class KaryawanController extends Controller
+class EmployeeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,8 @@ class KaryawanController extends Controller
     public function index()
     {
         // $employees = Employee::paginate(10);
-        $employees = Karyawan::with('bidang')->paginate(10);
-        return view('karyawan.index', compact('employees'));
+        $employees = Employee::with('bidang')->paginate(10);
+        return view('employee.index', compact('employees'));
     }
 
     /**
@@ -24,8 +24,7 @@ class KaryawanController extends Controller
     public function create()
     {
         $bidangs = Bidang::all();
-        return view('karyawan.create_karyawan', compact('bidangs'));
-        // return view('employee.create_employee');
+        return view('employee.create_employee', compact('bidangs'));
     }
 
     /**
@@ -34,7 +33,7 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:karyawan,nip',
+            'nip' => 'required|unique:employee,nip',
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
@@ -46,37 +45,37 @@ class KaryawanController extends Controller
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
-        Karyawan::create($validated);
+        Employee::create($validated);
 
-        return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Karyawan $karyawan)
+    public function show(Employee $employee)
     {
-        $karyawan->load('bidang');
-        return view('employees.show', compact('karyawan'));
+        $employee->load('bidang');
+        return view('employees.show', compact('employee'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Karyawan $karyawan)
+    public function edit(Employee $employee)
     {
-        $karyawan->load('bidang');
+        $employee->load('bidang');
         $bidangs = Bidang::all();
-        return view('karyawan.edit_karyawan', compact('karyawan', 'bidangs'));
+        return view('employee.edit_employee', compact('employee', 'bidangs'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Karyawan $karyawan)
+    public function update(Request $request, Employee $employee)
     {
         $validated = $request->validate([
-            'nip' => 'required|unique:karyawan,nip,' . $karyawan->id,
+            'nip' => 'required|unique:employee,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
@@ -87,27 +86,27 @@ class KaryawanController extends Controller
             'nama.required' => 'Nama wajib diisi.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
-         $original = $karyawan->replicate();
-          $karyawan->fill($validated);
-        if (!$karyawan->isDirty()) {
+         $original = $employee->replicate();
+          $employee->fill($validated);
+        if (!$employee->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data employee.');
         }
-        $karyawan->save();
-        $karyawan->update($validated);
+        $employee->save();
+        $employee->update($validated);
 
-        return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Karyawan $karyawan)
+    public function destroy(Employee $employee)
     {
         try {
-            $karyawan->delete();
-            return redirect()->route('superadmin.karyawan.index')->with('success', 'Karyawan berhasil dihapus.');
+            $employee->delete();
+            return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.karyawan.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect()->route('superadmin.employee.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
         }
     }
 }
