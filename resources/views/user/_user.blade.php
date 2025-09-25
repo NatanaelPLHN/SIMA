@@ -56,19 +56,23 @@
 </div>
 
 {{-- nda tau ini apa --}}
-{{-- <div class="mb-4">
+<div class="mb-4">
     <label for="karyawan_id" class="block text-sm font-medium text-gray-700 mb-1">
         Karyawan
     </label>
     <select name="karyawan_id" id="karyawan_id"
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 @error('karyawan_id') border-red-500 @enderror">
         <option value="">Tidak ada</option>
-        @foreach($user as $users)
-            <option value="{{ $users->id }}" {{ old('karyawan_id', $users->karyawan_id ?? '') == $employees->id ? 'selected' : '' }}>
-                {{ $users->nama }}
+        {{-- proble di for each --}}
+        @foreach($employees as $employee)
+            <option value="{{ $employee->id }}" {{ old('karyawan_id', $user->karyawan_id ?? '') == $employee->id ? 'selected' : '' }}>
+                {{ $employee->nama }}
             </option>
+            {{-- <option >
+                asep
+            </option> --}}
         @endforeach
-    </select> --}}
+    </select>
 
     @error('karyawan_id')
         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
