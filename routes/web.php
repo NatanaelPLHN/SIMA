@@ -38,6 +38,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Tambahkan route untuk category groups
 
 
+// Route publik untuk verifikasi aset via QR Code
+Route::get('/verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
+
 // User dashboard routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/in', [AuthController::class, 'login']);

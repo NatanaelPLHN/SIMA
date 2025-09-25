@@ -8,6 +8,8 @@ use App\Models\AsetTidakBergerak;
 use App\Models\AsetHabisPakai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class AssetsController extends Controller
 {
@@ -36,68 +38,75 @@ class AssetsController extends Controller
         return view('aset.forms.create_habis');
     }
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'kode' => 'required|unique:aset,kode',
-        'nama_aset' => 'required',
-        'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
-        'kategori' => 'required|string',
-        'group_kategori' => 'required|string',
-        'jumlah' => 'required|integer|min:1',
-        'tgl_pembelian' => 'required|date|before_or_equal:today',
-        'nilai_pembelian' => 'required|numeric|min:0',
-        'lokasi_terakhir' => 'required|string',
-        'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
-        // bergerak
-        'nomor_serial' => 'nullable|required_if:jenis_aset,bergerak|unique:aset_bergerak,nomor_serial',
-    ], [
-        'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
-        'kode.unique' => 'Kode aset sudah digunakan.',
-        'kode.required' => 'Kode aset wajib diisi.',
-        'nama_aset.required' => 'Nama aset wajib diisi.',
-        'jenis_aset.required' => 'Jenis aset wajib dipilih.',
-        'jumlah.min' => 'Jumlah minimal 1.',
-        'tgl_pembelian.before_or_equal' => 'Tanggal pembelian tidak boleh melebihi tanggal hari ini.',
-        'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
-    ]);
-
-    $asset = Asset::create($validated);
-
-    // handle details table
-    if ($validated['jenis_aset'] === 'bergerak') {
-        AsetBergerak::create([
-            'aset_id' => $asset->id,
-            'merk' => $request->merk,
-            'tipe' => $request->tipe,
-            'nomor_serial' => $request->nomor_serial,
-            'tahun_produksi' => $request->tahun_produksi,
+    {
+        $validated = $request->validate([
+            'kode' => 'required|unique:aset,kode',
+            'nama_aset' => 'required',
+            'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
+            'kategori' => 'required|string',
+            'group_kategori' => 'required|string',
+            'jumlah' => 'required|integer|min:1',
+            'tgl_pembelian' => 'required|date|before_or_equal:today',
+            'nilai_pembelian' => 'required|numeric|min:0',
+            'lokasi_terakhir' => 'required|string',
+            'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
+            // bergerak
+            'nomor_serial' => 'nullable|required_if:jenis_aset,bergerak|unique:aset_bergerak,nomor_serial',
+        ], [
+            'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
+            'kode.unique' => 'Kode aset sudah digunakan.',
+            'kode.required' => 'Kode aset wajib diisi.',
+            'nama_aset.required' => 'Nama aset wajib diisi.',
+            'jenis_aset.required' => 'Jenis aset wajib dipilih.',
+            'jumlah.min' => 'Jumlah minimal 1.',
+            'tgl_pembelian.before_or_equal' => 'Tanggal pembelian tidak boleh melebihi tanggal hari ini.',
+            'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
         ]);
-    }
 
-    if ($validated['jenis_aset'] === 'tidak_bergerak') {
-        AsetTidakBergerak::create([
-            'aset_id' => $asset->id,
-            'ukuran' => $request->ukuran,
-            'bahan' => $request->bahan,
-        ]);
-    }
+        $asset = Asset::create($validated);
 
-    if ($validated['jenis_aset'] === 'habis_pakai') {
-        AsetHabisPakai::create([
-            'aset_id' => $asset->id,
-            'register' => $request->register,
-            'satuan' => $request->satuan,
-        ]);
-    }
-            $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
+        // handle details table
+        if ($validated['jenis_aset'] === 'bergerak') {
+            $assetBergerak = AsetBergerak::create([
+                'aset_id' => $asset->id,
+                'merk' => $request->merk,
+                'tipe' => $request->tipe,
+                'nomor_serial' => $request->nomor_serial,
+                'tahun_produksi' => $request->tahun_produksi,
+            ]);
+            $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
+            $fullPath = storage_path('app/public/' . $qrCodePath);
 
-            return redirect()->route("$prefix.assets.index")->with(
+            // if (!file_exists(dirname($fullPath))) {
+            //     mkdir(dirname($fullPath), 0755, true);
+            // }
+            // route('superadmin.assets.show', $assetBergerak->id)
+            QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
+            // QrCode::format('png')->size(200)->generate(route('certificates.verify', $assetBergerak->kode), $fullPath);
+            $assetBergerak->update(['qr_code_path' => $qrCodePath]);
+        }
+
+        if ($validated['jenis_aset'] === 'tidak_bergerak') {
+            AsetTidakBergerak::create([
+                'aset_id' => $asset->id,
+                'ukuran' => $request->ukuran,
+                'bahan' => $request->bahan,
+            ]);
+        }
+
+        if ($validated['jenis_aset'] === 'habis_pakai') {
+            AsetHabisPakai::create([
+                'aset_id' => $asset->id,
+                'register' => $request->register,
+                'satuan' => $request->satuan,
+            ]);
+        }
+        $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
+
+        return redirect()->route("$prefix.assets.index")->with(
             'success',
             "Aset {$asset->nama_aset} ({$asset->jenis_aset}) berhasil ditambahkan."
-            );
-
-
-
+        );
     }
     public function show(Asset $asset)
     {
@@ -156,9 +165,9 @@ class AssetsController extends Controller
         ]);
 
         $original = $asset->replicate();
-            $asset->fill($validated);
-            if (!$asset->isDirty()) {
-                return back()->with('info', 'Tidak ada perubahan pada data aset.');
+        $asset->fill($validated);
+        if (!$asset->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data aset.');
         }
 
         $asset->save();
@@ -173,7 +182,7 @@ class AssetsController extends Controller
                 'tahun_produksi' => $request->tahun_produksi,
             ]);
             if ($asset->bergerak->isDirty()) {
-            $asset->bergerak->save();
+                $asset->bergerak->save();
             }
         }
 
@@ -183,7 +192,7 @@ class AssetsController extends Controller
                 'bahan' => $request->bahan,
             ]);
             if ($asset->tidakBergerak->isDirty()) {
-            $asset->tidakBergerak->save();
+                $asset->tidakBergerak->save();
             }
         }
 
@@ -193,7 +202,7 @@ class AssetsController extends Controller
                 'satuan' => $request->satuan,
             ]);
             if ($asset->habisPakai->isDirty()) {
-            $asset->habisPakai->save();
+                $asset->habisPakai->save();
             }
         }
 
@@ -203,5 +212,17 @@ class AssetsController extends Controller
     {
         $asset->delete();
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil dihapus.');
+    }
+
+    /**
+     * Display a public verification page for the asset.
+     *
+     * @param  \App\Models\Asset  $asset
+     * @return \Illuminate\View\View
+     */
+    public function verifyAsset(Asset $asset)
+    {
+        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
+        return view('aset.public_verify', compact('asset'));
     }
 }
