@@ -33,6 +33,6 @@ class Peminjaman extends Model
     // Relasi dengan Karyawan
     public function karyawan()
     {
-        return $this->belongsTo(Karyawan::class, 'borrowed_by');
+        return $this->belongsTo(Employee::class, 'borrowed_by');
     }
 }
