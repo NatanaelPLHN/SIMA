@@ -25,8 +25,17 @@ class EmployeeSeeder extends Seeder
             'department_id' => 2, // Bidang Kesehatan Masyarakat
         ]);
 
+        $k3 = Employee::create([
+            'nip' => '19800203003',
+            'nama' => 'Anandita Agung',
+            'alamat' => 'Jl. Perjuangan',
+            'telepon' => '085865748901',
+            'department_id' => 2, // Bidang Kesehatan Masyarakat
+        ]);
+
         // Update Kepala Bidang
         $k1->bidang->update(['kepala_bidang_id' => $k1->id]);
         $k2->bidang->update(['kepala_bidang_id' => $k2->id]);
+        $k3->bidang->update(['kepala_bidang_id' => $k3->id]);
     }
 }

@@ -58,12 +58,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
 
-    // Other pages from AdminDashboardController
-    // Route::get('assets/bergerak/{id}', [AdminDashboardController::class, 'bergerak'])->name('assets.bergerak');
-    // Route::get('assets/tidak-bergerak/{id}', [AdminDashboardController::class, 'tidak_bergerak'])->name('assets.tidak_bergerak');
-    // Route::get('assets/habis/{id}', [AdminDashboardController::class, 'habis'])->name('assets.habis');
-    // Route::get('assets/{id}', [AssetsController::class, 'showAsset'])->name('assets.show');
-
     Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
@@ -87,9 +81,10 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
 
     Route::resource('assets', controller: AssetsController::class);
-    // Tambahkan route untuk karyawan
     // Tambahkan route untuk user
-    Route::resource('employees', controller: EmployeeController::class);
+    Route::resource('user', controller: UserController::class);
+    // Tambahkan route untuk karyawan
+    Route::resource('employee', controller: EmployeeController::class);
     // Tambahkan route untuk instansi
     // Route::resource('instansi', controller: InstansiController::class);
     Route::resource('institution', controller: InstitutionController::class);

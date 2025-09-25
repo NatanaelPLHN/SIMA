@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +23,7 @@ class UserController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     */
+    */
     public function create()
     {
         return view('user.create_user');
@@ -30,7 +31,7 @@ class UserController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     */
+    */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -47,12 +48,12 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('superadmin.user.index')->with('success', 'User created successfully.');
+        return redirect()->route('superadmin.employee.index')->with('success', 'User created successfully.');
     }
 
     /**
      * Display the specified resource.
-     */
+    */
     public function show(User $user)
     {
         $user->load('karyawan');
@@ -61,17 +62,18 @@ class UserController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     */
+    */
     public function edit(User $user)
     {
         $user->load('karyawan');
+        $employees = Employee::all(); // Tambahkan ini
 
-        return view('user.edit_user', compact('user'));
+        return view('user.edit_user', compact('user', 'employees'));
     }
 
     /**
      * Update the specified resource in storage.
-     */
+    */
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
@@ -106,7 +108,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('superadmin.user.index')->with('success', 'User updated successfully.');
+        return redirect()->route('superadmin.employee.index')->with('success', 'User updated successfully.');
     }
 
 
@@ -117,9 +119,9 @@ class UserController extends Controller
     {
         try{
             $user->delete();
-            return redirect()->route('superadmin.user.index')->with('success', 'Akun berhasil dihapus.');
+            return redirect()->route('superadmin.employee.index')->with('success', 'Akun berhasil dihapus.');
         } catch(\Exception $e){
-            return redirect()->route('superadmin.user.index')->with('error', 'Gagal menghapus akun. Akun masih memiliki data peminjaman.');
+            return redirect()->route('superadmin.employee.index')->with('error', 'Gagal menghapus akun. Akun masih memiliki data peminjaman.');
         }
     }
 }
