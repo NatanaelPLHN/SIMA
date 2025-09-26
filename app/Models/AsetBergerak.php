@@ -15,7 +15,8 @@ class AsetBergerak extends Model
         'merk',
         'tipe',
         'nomor_serial',
-        'tahun_produksi'
+        'tahun_produksi',
+        'qr_code_path',
     ];
 
     public function asset()

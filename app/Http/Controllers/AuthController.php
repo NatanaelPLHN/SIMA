@@ -36,7 +36,7 @@ class AuthController extends Controller
                 } else {
                     return redirect()->intended('/user/dashboard');
                 }
-                
+
         }
 
         return redirect()->back()->with('loginError', 'Email atau password salah!');
@@ -49,9 +49,9 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return redirect('/login');
     }
 
-    
+
 }

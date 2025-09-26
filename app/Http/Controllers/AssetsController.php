@@ -10,6 +10,8 @@ use App\Models\Category;
 use App\Models\CategoryGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class AssetsController extends Controller
 {
@@ -66,14 +68,24 @@ class AssetsController extends Controller
 
         $asset = Asset::create($validated);
 
-        if ($validated['jenis_aset'] === 'bergerak') {
-            AsetBergerak::create([
-                'aset_id' => $asset->id,
-                'merk' => $request->merk,
-                'tipe' => $request->tipe,
-                'nomor_serial' => $request->nomor_serial,
-                'tahun_produksi' => $request->tahun_produksi,
-            ]);
+                if ($validated['jenis_aset'] === 'bergerak') {
+                $assetBergerak = AsetBergerak::create([
+                    'aset_id' => $asset->id,
+                    'merk' => $request->merk,
+                    'tipe' => $request->tipe,
+                    'nomor_serial' => $request->nomor_serial,
+                    'tahun_produksi' => $request->tahun_produksi,
+                ]);
+                $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
+            $fullPath = storage_path('app/public/' . $qrCodePath);
+
+            // if (!file_exists(dirname($fullPath))) {
+            //     mkdir(dirname($fullPath), 0755, true);
+            // }
+            // route('superadmin.assets.show', $assetBergerak->id)
+            QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
+            // QrCode::format('png')->size(200)->generate(route('certificates.verify', $assetBergerak->kode), $fullPath);
+            $assetBergerak->update(['qr_code_path' => $qrCodePath]);
         }
 
         if ($validated['jenis_aset'] === 'tidak_bergerak') {
@@ -91,7 +103,6 @@ class AssetsController extends Controller
                 'satuan' => $request->satuan,
             ]);
         }
-
         $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
 
         return redirect()->route("$prefix.assets.index")->with(
@@ -165,7 +176,7 @@ class AssetsController extends Controller
                 'tahun_produksi' => $request->tahun_produksi,
             ]);
             if ($asset->bergerak->isDirty()) {
-            $asset->bergerak->save();
+                $asset->bergerak->save();
             }
         }
 
@@ -175,7 +186,7 @@ class AssetsController extends Controller
                 'bahan' => $request->bahan,
             ]);
             if ($asset->tidakBergerak->isDirty()) {
-            $asset->tidakBergerak->save();
+                $asset->tidakBergerak->save();
             }
         }
 
@@ -185,7 +196,7 @@ class AssetsController extends Controller
                 'satuan' => $request->satuan,
             ]);
             if ($asset->habisPakai->isDirty()) {
-            $asset->habisPakai->save();
+                $asset->habisPakai->save();
             }
         }
 
@@ -196,5 +207,17 @@ class AssetsController extends Controller
     {
         $asset->delete();
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil dihapus.');
+    }
+
+    /**
+     * Display a public verification page for the asset.
+     *
+     * @param  \App\Models\Asset  $asset
+     * @return \Illuminate\View\View
+     */
+    public function verifyAsset(Asset $asset)
+    {
+        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
+        return view('aset.public_verify', compact('asset'));
     }
 }

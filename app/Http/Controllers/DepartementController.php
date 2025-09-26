@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bidang;
-use App\Models\Instansi;
+use App\Models\Departement;
+use App\Models\Institution;
 // use App\Models\Karyawan;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
-class BidangController extends Controller
+class DepartementController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $bidangs = Bidang::with(['instansi', 'kepala'])->paginate(10);
-        return view('bidang.bidang', compact('bidangs'));
+        $departements = Departement::with(['instansi', 'kepala'])->paginate(10);
+        return view('departement.index', compact('departements'));
     }
 
     /**
@@ -24,10 +24,10 @@ class BidangController extends Controller
      */
     public function create()
     {
-        $instansis = Instansi::all();
+        $instansis = Institution::all();
         // Untuk create, tidak ada employee karena bidang belum ada
         $employees = collect();
-        return view('bidang.create_bidang', compact('instansis', 'employees'));
+        return view('departement.create_departement', compact('instansis', 'employees'));
     }
 
     /**
@@ -39,9 +39,11 @@ class BidangController extends Controller
             'nama' => 'required|string|max:255',
             'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
-            'instansi_id' => 'required|exists:instansi,id',
+            'instansi_id' => 'required|exists:institutions,id',
+            'alias' => 'required|string|max:255',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
+            'nama.required' => 'Alias bidang wajib diisi.',
             'instansi_id.required' => 'Instansi wajib dipilih.',
             'instansi_id.exists' => 'Instansi tidak ditemukan.',
             'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
@@ -54,7 +56,7 @@ class BidangController extends Controller
                 ->withErrors(['kepala_bidang' => 'Kepala bidang dapat dipilih setelah bidang dibuat.']);
         }
         // Validasi custom: nama dan instansi harus unique bersama
-        $existing = Bidang::where('nama', $request->nama)
+        $existing = Departement::where('nama', $request->nama)
             ->where('instansi_id', $request->instansi_id)
             ->first();
 
@@ -64,41 +66,42 @@ class BidangController extends Controller
                 ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
         }
 
-        $bidang = Bidang::create($validated);
+        $departement = Departement::create($validated);
 
-        return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil ditambahkan.');
+        return redirect()->route('superadmin.departement.index')->with('success', 'Departement berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Bidang $bidang)
+    public function show(Departement $departement)
     {
-        $bidang->load(['instansi', 'kepala', 'employees']);
-        return view('bidang.show', compact('bidang'));
+        $departement->load(['institution', 'kepala', 'employees']);
+        return view('departement.show', compact('departement'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Bidang $bidang)
+    public function edit(Departement $departement)
     {
-        $instansis = Instansi::all();
-        // Hanya tampilkan employee yang ada di bidang ini
-        $employees = Employee::where('department_id', $bidang->id)->get();
-        return view('bidang.edit_bidang', compact('bidang', 'instansis', 'employees'));
+        $instansis = Institution::all();
+        // Hanya tampilkan employee yang ada di departement ini
+        $employees = Employee::where('department_id', $departement->id)->get();
+        return view('departement.edit_departement', compact('departement', 'instansis', 'employees'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Bidang $bidang)
+    public function update(Request $request, Departement $departement)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
-            'instansi_id' => 'required|exists:instansi,id',
+            'instansi_id' => 'required|exists:institutions,id',
+            // 'Alias' => 'required|string|max:255',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
             'instansi_id.required' => 'Instansi wajib dipilih.',
@@ -106,47 +109,47 @@ class BidangController extends Controller
             'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
 
-        // Validasi tambahan: pastikan kepala_bidang adalah anggota bidang ini
-        if ($request->kepala_bidang) {
-            $employee = Employee::find($request->kepala_bidang);
-            if ($employee && $employee->department_id != $bidang->id) {
+        // Validasi tambahan: pastikan kepala_bidang adalah anggota departement ini
+        if ($request->kepala_bidang_id) {
+            $employee = Employee::find($request->kepala_bidang_id);
+            if ($employee && $employee->department_id != $departement->id) {
                 return redirect()->back()
                     ->withInput()
-                    ->withErrors(['kepala_bidang' => 'Kepala bidang harus merupakan anggota bidang ini.']);
+                    ->withErrors(['kepala_bidang_id' => 'Kepala bidang harus merupakan anggota departement ini.']);
             }
         }
         // Validasi custom: nama dan instansi harus unique bersama
-        $existing = Bidang::where('nama', $request->nama)
+        $existing = Departement::where('nama', $request->nama)
             ->where('instansi_id', $request->instansi_id)
-            ->where('id', '!=', $bidang->id) // Kecualikan record yang sedang diupdate
+            ->where('id', '!=', $departement->id) // Kecualikan record yang sedang diupdate
             ->first();
 
         if ($existing) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
+                ->withErrors(['nama' => 'Nama departement sudah ada untuk instansi ini.']);
         }
-        $original = $bidang->replicate();
-        $bidang->fill($validated);
-        if (!$bidang->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data bidang.');
+        $original = $departement->replicate();
+        $departement->fill($validated);
+        if (!$departement->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data departement.');
         }
-        $bidang->save();
-        $bidang->update($validated);
+        $departement->save();
+        $departement->update($validated);
 
-        return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil diperbarui.');
+        return redirect()->route('superadmin.departement.index')->with('success', 'Departement berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bidang $bidang)
+    public function destroy(Departement $departement)
     {
         try {
-            $bidang->delete();
-            return redirect()->route('superadmin.bidang.index')->with('success', 'Bidang berhasil dihapus.');
+            $departement->delete();
+            return redirect()->route('superadmin.departement.index')->with('success', 'Departement berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.bidang.index')->with('error', 'Gagal menghapus bidang. Bidang masih digunakan dalam data lain.');
+            return redirect()->route('superadmin.departement.index')->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
         }
     }
 }

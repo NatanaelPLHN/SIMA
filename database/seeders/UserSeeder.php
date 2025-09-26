@@ -24,5 +24,12 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'karyawan_id' => Employee::where('nama', 'Siti Aminah')->first()->id,
         ]);
+
+        User::create([
+            'email' => 'user@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+            'karyawan_id' => Employee::where('nama', 'Anandita Agung')->first()->id,
+        ]);
     }
 }

@@ -17,9 +17,10 @@ class Institution extends Model
         'telepon',
         'email',
         'alamat',
+        'alias',
     ];
-    public function bidang()
+    public function departements()
     {
-        return $this->hasMany(Bidang::class, 'instansi_id');
+        return $this->hasMany(Departement::class, 'instansi_id');
     }
 }
