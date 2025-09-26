@@ -57,7 +57,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        $employee->load('bidang'); // Tambahkan ini
+        $employee->load('department'); // Tambahkan ini
         return view('employees.show', compact('employee'));
     }
 

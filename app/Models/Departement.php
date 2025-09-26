@@ -20,7 +20,7 @@ class Departement extends Model
     ];
 
     // Relasi dengan Instansi
-    public function instansi()
+    public function institution()
     {
         return $this->belongsTo(Institution::class, 'instansi_id');
     }
@@ -32,7 +32,7 @@ class Departement extends Model
     }
 
     // Relasi dengan Karyawan (Anggota Bidang)
-    public function karyawan()
+    public function employees()
     {
         return $this->hasMany(Employee::class, 'department_id');
     }

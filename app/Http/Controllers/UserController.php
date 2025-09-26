@@ -57,7 +57,7 @@ class UserController extends Controller
     */
     public function show(User $user)
     {
-        $user->load('karyawan');
+        $user->load('employee');
         return view('user.show', compact('user'));
     }
 
@@ -66,7 +66,7 @@ class UserController extends Controller
     */
     public function edit(User $user)
     {
-        $user->load('karyawan');
+        $user->load('employee');
         $employees = Employee::all(); // Tambahkan ini
 
         return view('user.edit_user', compact('user', 'employees'));

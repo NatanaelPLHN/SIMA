@@ -46,17 +46,13 @@ class CategoryGroupController extends Controller
             $categoryGroup = CategoryGroup::create($validated);
 
             // Handle AJAX request (dari SweetAlert2)
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Group kategori berhasil ditambahkan.',
-                    'data' => $categoryGroup
-                ]);
-            }
+             session()->flash('success', ' grup Kategori berhasil ditambahkan!');
+
+            return response()->json(['success' => true]);
+    
 
             // Handle regular form submission
-            return redirect()->route('superadmin.category-groups.index')->with('success', 'Group kategori berhasil ditambahkan.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+            } catch (\Illuminate\Validation\ValidationException $e) {
             // Handle validation error untuk AJAX
             if ($request->ajax()) {
                 return response()->json([
@@ -119,17 +115,17 @@ class CategoryGroupController extends Controller
             'alias.unique' => 'Alias sudah digunakan.',
         ]);
 
-        $categoryGroup->update($validated);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Group kategori berhasil diperbarui.',
-                'data' => $categoryGroup
-            ]);
+        $categoryGroup->fill($validated);
+        if (!$categoryGroup->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data aset.');
         }
+        $categoryGroup->save();
 
-        return redirect()->route('superadmin.category-groups.index')->with('success', 'Group kategori berhasil diperbarui.');
+
+
+        // $category->update($validated);
+
+        session()->flash('success', ' Grup Kategori berhasil di ubah');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         if ($request->ajax()) {
