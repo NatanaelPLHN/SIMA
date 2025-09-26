@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             BidangSeeder::class,
             KaryawanSeeder::class,
             UserSeeder::class,
+            CategoryGroupSeeder::class,
+            CategorySeeder::class,
             // AssetSeeder::class, outdated
         ]);
     }

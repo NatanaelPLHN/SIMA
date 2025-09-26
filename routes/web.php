@@ -35,7 +35,9 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']); //
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
+Route::get('/categories/by-group', [CategoryController::class, 'getByGroup'])
+    ->name('categories.by-group')
+    ->middleware('auth'); // optional: biar tetap butuh login
 // Tambahkan route untuk category groups
 
 
@@ -97,6 +99,9 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // Tambahkan route untuk grup kategori
     Route::resource('category-groups', CategoryGroupController::class);
     // Tambahkan route untuk categories
+    Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])
+        ->name('categories.by-group');
+
     Route::resource('categories', CategoryController::class);
     // Tambahkan route untuk bidang
     Route::resource('bidang', controller: BidangController::class);

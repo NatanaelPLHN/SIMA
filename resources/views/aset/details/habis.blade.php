@@ -1,9 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Detail Aset Habis Pakai')
 
 @section('content')
-    <h1 class="text-lg font-semibold text-indigo-800">Detail Aset Habis Pakai</h1>
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -12,7 +11,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kode:</label>
-                            <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200 break-words whitespace-normal">
+                            <div
+                                class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200 break-words whitespace-normal">
                                 {{ $asset->kode }}
                             </div>
                         </div>
@@ -20,7 +20,8 @@
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nama
                                 Aset:</label>
-                            <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200 break-words whitespace-normal">
+                            <div
+                                class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200 break-words whitespace-normal">
                                 {{ $asset->nama_aset }}
                             </div>
                         </div>
@@ -42,19 +43,18 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kategori:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->kategori ?? '?' }}
+                                {{ $asset->category->nama ?? '?' }}
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Grup
-                                Kategori:</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Grup Kategori:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->group_kategori ?? '?' }}
+                                {{ $asset->category->CategoryGroup->nama ?? '?' }}
                             </div>
                         </div>
 
-                       <div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                                 {{ $asset->jumlah ?? '?' }}
@@ -66,8 +66,7 @@
                 <!-- Right Column -->
                 <div class="space-y-4">
                     <div class="flex justify-center">
-                        <img src="https://placehold.co/300x300?text=QR+Code" alt="QR Code"
-                            class="w-64 h-64 object-contain">
+                        <img src="https://placehold.co/300x300?text=QR+Code" alt="QR Code" class="w-64 h-64 object-contain">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">

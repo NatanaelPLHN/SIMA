@@ -1,9 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Ubah Aset Bergerak')
 
 @section('content')
-    <h1 class="text-lg font-semibold text-indigo-800">Ubah Aset Bergerak</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
         <form action="{{ route('admin.assets.update', $asset->id) }}" method="POST"
             class="grid grid-cols-1 md:grid-cols gap-6">
