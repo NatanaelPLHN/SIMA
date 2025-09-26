@@ -76,7 +76,7 @@ class DepartementController extends Controller
      */
     public function show(Departement $departement)
     {
-        $departement->load(['instansi', 'kepala', 'employees']);
+        $departement->load(['institution', 'kepala', 'employees']);
         return view('departement.show', compact('departement'));
     }
 

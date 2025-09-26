@@ -36,7 +36,7 @@ class User extends Authenticatable
      */
     // Method untuk mengecek role
 
-    public function karyawan()
+    public function employee()
     {
         return $this->belongsTo(Employee::class, 'karyawan_id');
     }
