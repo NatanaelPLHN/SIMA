@@ -14,6 +14,7 @@ class AsetTidakBergerak extends Model
         'aset_id',
         'ukuran',
         'bahan',
+        'qr_code_path',
     ];
 
     public function asset()

@@ -4,7 +4,7 @@
 @endphp
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {{-- Kode Aset --}}
-    <div>
+    {{-- <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Kode</label>
         @if(Route::is('admin.assets.edit'))
             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
@@ -15,7 +15,7 @@
             <input type="text" name="kode" value="{{ old('kode', $asset->kode ?? '') }}"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
         @endif
-    </div>
+    </div> --}}
 
     {{-- Nama Aset --}}
     <div>
@@ -23,8 +23,8 @@
             Nama Aset <span class="text-red-500">*</span>
         </label>
         <input type="text" id="nama_aset" name="nama_aset" value="{{ old('nama_aset', $asset->nama_aset ?? '') }}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md 
-            focus:outline-none focus:ring-2 focus:ring-indigo-500 
+            class="w-full px-3 py-2 border border-gray-300 rounded-md
+            focus:outline-none focus:ring-2 focus:ring-indigo-500
             {{ $errors->has('nama_aset') ? 'border-red-500' : '' }}">
         @error('nama_aset')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -77,15 +77,17 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-        <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">Jumlah <span
-                class="text-red-500">*</span></label>
-        <input type="number" id="jumlah" name="jumlah" min="1" value="{{ old('jumlah', $asset->jumlah ?? '') }}"
+    {{-- <div>
+        <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">Jumlah <span class="text-red-500">*</span></label>
+        <input type="number" id="jumlah" name="jumlah" min="1"
+            value="{{ old('jumlah', $asset->jumlah ?? '') }}"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('jumlah') ? 'border-red-500' : '' }}">
         @error('jumlah')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-    </div>
+    </div> --}}
+
+    <input type="hidden" name="jumlah" value="1">
 
     <div>
         <label for="nilai_pembelian" class="block text-sm font-medium text-gray-700 mb-1">Nilai Pembelian<span
@@ -142,6 +144,7 @@
         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
     @enderror
 </div>
+
 {{-- Script untuk filter kategori berdasarkan grup --}}
 <script>
     document.getElementById('category_group_id').addEventListener('change', function () {
