@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
+use Illuminate\Support\Facades\Storage;
 
 class AssetsController extends Controller
 {
@@ -77,7 +77,7 @@ class AssetsController extends Controller
         $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
         $categoryAlias       = $category->id; // category alias = ID
 
-        $kode = implode('-',[$institutionAlias, $departmentAlias,$categoryGroupAlias,$categoryAlias]);
+        $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias]);
 
         do {
             $kode = implode('-', [
@@ -126,7 +126,6 @@ class AssetsController extends Controller
 
             QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
             $assetTidak->update(['qr_code_path' => $qrCodePath]);
-
         }
 
         if ($validated['jenis_aset'] === 'habis_pakai') {
@@ -311,6 +310,14 @@ class AssetsController extends Controller
 
     public function destroy(Asset $asset)
     {
+        // Tentukan path file QR code berdasarkan kode aset.
+        // Pastikan path ini konsisten dengan cara Anda menyimpannya di method store().
+        $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
+
+        // Periksa apakah file QR ada di disk 'public' (storage/app/public) dan hapus jika ada.
+        if (Storage::disk('public')->exists($qrCodePath)) {
+            Storage::disk('public')->delete($qrCodePath);
+        }
         $asset->delete();
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil dihapus.');
     }
