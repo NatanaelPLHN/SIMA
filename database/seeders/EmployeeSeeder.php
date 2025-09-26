@@ -30,12 +30,12 @@ class EmployeeSeeder extends Seeder
             'nama' => 'Anandita Agung',
             'alamat' => 'Jl. Perjuangan',
             'telepon' => '085865748901',
-            'department_id' => 2, // Bidang Kesehatan Masyarakat
+            'department_id' => 1, // Bidang Kesehatan Masyarakat
         ]);
 
         // Update Kepala Bidang
-        $k1->bidang->update(['kepala_bidang_id' => $k1->id]);
-        $k2->bidang->update(['kepala_bidang_id' => $k2->id]);
-        $k3->bidang->update(['kepala_bidang_id' => $k3->id]);
+        $k1->department->update(['kepala_bidang_id' => $k1->id]);
+        $k2->department->update(['kepala_bidang_id' => $k2->id]);
+        $k3->department->update(['kepala_bidang_id' => $k3->id]);
     }
 }

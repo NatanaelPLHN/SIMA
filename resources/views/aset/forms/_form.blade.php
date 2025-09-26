@@ -1,6 +1,6 @@
 @csrf
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
+    {{-- <div>
         <label for="kode" class="block text-sm font-medium text-gray-700 mb-1">Kode <span class="text-red-500">*</span></label>
         <input type="text" id="kode" name="kode"
             value="{{ old('kode', $asset->kode ?? '') }}"
@@ -8,7 +8,7 @@
         @error('kode')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-    </div>
+    </div> --}}
 
     <div>
         <label for="nama_aset" class="block text-sm font-medium text-gray-700 mb-1">Nama Aset <span class="text-red-500">*</span></label>
@@ -44,7 +44,7 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
+    {{-- <div>
         <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">Jumlah <span class="text-red-500">*</span></label>
         <input type="number" id="jumlah" name="jumlah" min="1"
             value="{{ old('jumlah', $asset->jumlah ?? '') }}"
@@ -52,7 +52,9 @@
         @error('jumlah')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-    </div>
+    </div> --}}
+
+    <input type="hidden" name="jumlah" value="1">
 
     <div>
         <label for="nilai_pembelian" class="block text-sm font-medium text-gray-700 mb-1">Nilai Pembelian<span class="text-red-500">*</span></label>
