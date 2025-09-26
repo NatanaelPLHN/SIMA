@@ -46,20 +46,11 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Grup
-                                Kategori:</label>
-                            <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->group_kategori ?? '?' }}
-                            </div>
-                        </div>
-                        
-                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Bahan:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                                 {{ $asset->tidak_bergerak->bahan ?? '?' }}
                             </div>
                         </div>
-
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">

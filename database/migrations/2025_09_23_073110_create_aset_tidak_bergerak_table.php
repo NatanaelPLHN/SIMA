@@ -17,6 +17,7 @@ public function up(): void
 
         $table->string('ukuran')->nullable(); // contoh: 100m2
         $table->string('bahan')->nullable();  // contoh: beton, kayu, baja
+        $table->string('qr_code_path')->nullable();
     });
 }
 

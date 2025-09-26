@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('tipe')->nullable();
             $table->string('nomor_serial')->nullable();
             $table->year('tahun_produksi')->nullable();
+            $table->string('qr_code_path')->nullable();
         });
     }
 

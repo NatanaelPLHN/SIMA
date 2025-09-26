@@ -73,14 +73,20 @@ class AssetsController extends Controller
         $institutionAlias = $user->employee?->department?->institution?->alias;
         $departmentAlias = $user->employee?->department?->alias;
 
-        // $categoryGroupAlias = CategoryGroup::where('nama', $request->group_kategori)->value('id');
-        // $categoryAlias = Category::where('nama', $request->kategori)->value('id');
+        $category = Category::find($request->category_id);
+        $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
+        $categoryAlias       = $category->id; // category alias = ID
 
-        $kode = implode('-',[$institutionAlias, $departmentAlias, strtoupper(Str::random(5))]);
+        $kode = implode('-',[$institutionAlias, $departmentAlias,$categoryGroupAlias,$categoryAlias]);
 
-        while(Asset::where('kode', $kode)->exists()){
-            $kode = implode('-',[$institutionAlias, $departmentAlias, strtoupper(Str::random(5))]);
-        }
+        do {
+            $kode = implode('-', [
+                $institutionAlias,
+                $departmentAlias,
+                $categoryGroupAlias,
+                $categoryAlias
+            ]);
+        } while (Asset::where('kode', $kode)->exists());
 
         $validated['kode'] = $kode;
         $asset = Asset::create($validated);

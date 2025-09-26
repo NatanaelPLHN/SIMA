@@ -15,7 +15,7 @@ class DepartementController extends Controller
      */
     public function index()
     {
-        $departements = Departement::with(['instansi', 'kepala'])->paginate(10);
+        $departements = Departement::with(['institution', 'kepala'])->paginate(10);
         return view('departement.index', compact('departements'));
     }
 
