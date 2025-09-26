@@ -82,8 +82,7 @@
                 <!-- Kolom Kanan -->
                 <div class="space-y-6">
                     <div class="flex justify-center">
-                        <img src="https://placehold.co/300x300?text=QR+Code" alt="QR Code"
-                            class="w-48 h-48 sm:w-64 sm:h-64 object-contain">
+                        <img src="{{ asset('storage/' . $asset->bergerak->qr_code_path) }}" alt="QR Code" class="w-48 h-48 sm:w-64 sm:h-64 object-contain">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -114,6 +113,12 @@
                                 {{ $asset->status ?? '?' }}
                             </div>
                         </div>
+                        {{-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                            <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
+                                {{ $asset->bergerak->qr_code_path ?? '?' }}
+                            </div>
+                        </div> --}}
                     </div>
                 </div>
 

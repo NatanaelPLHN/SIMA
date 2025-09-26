@@ -103,21 +103,30 @@ class AssetsController extends Controller
             $qrCodePath = 'qrcodes\\' . $asset->kode . '.svg';
             $fullPath = storage_path("app\public\\" . $qrCodePath);
 
-            // if (!file_exists(dirname($fullPath))) {
-            //     mkdir(dirname($fullPath), 0755, true);
-            // }
+            if (!file_exists(dirname($fullPath))) {
+                mkdir(dirname($fullPath), 0755, true);
+            }
             // route('superadmin.assets.show', $assetBergerak->id)
             QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
-            // QrCode::format('png')->size(200)->generate(route('certificates.verify', $assetBergerak->kode), $fullPath);
             $assetBergerak->update(['qr_code_path' => $qrCodePath]);
         }
 
         if ($validated['jenis_aset'] === 'tidak_bergerak') {
-            AsetTidakBergerak::create([
+            $assetTidak = AsetTidakBergerak::create([
                 'aset_id' => $asset->id,
                 'ukuran' => $request->ukuran,
                 'bahan' => $request->bahan,
             ]);
+            $qrCodePath = 'qrcodes\\' . $asset->kode . '.svg';
+            $fullPath = storage_path("app\public\\" . $qrCodePath);
+
+            if (!file_exists(dirname($fullPath))) {
+                mkdir(dirname($fullPath), 0755, true);
+            }
+
+            QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
+            $assetTidak->update(['qr_code_path' => $qrCodePath]);
+
         }
 
         if ($validated['jenis_aset'] === 'habis_pakai') {
