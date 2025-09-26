@@ -6,6 +6,8 @@ use App\Models\Asset;
 use App\Models\AsetBergerak;
 use App\Models\AsetTidakBergerak;
 use App\Models\AsetHabisPakai;
+use App\Models\Category;
+use App\Models\CategoryGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -21,23 +23,26 @@ class AssetsController extends Controller
     }
     public function index()
     {
-        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->with('bergerak')->paginate(10, ['*'], 'bergerak_page');
-        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with('tidakBergerak')->paginate(10, ['*'], 'tidak_bergerak_page');
-        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with('habisPakai')->paginate(10, ['*'], 'habis_pakai_page');
+        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
+        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
+        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
 
         return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
     public function create_gerak()
     {
-        return view('aset.forms.create_gerak');
+        $groupCategories = CategoryGroup::with('categories')->get();
+        return view('aset.forms.create_gerak', compact('groupCategories'));
     }
     public function create_tidak()
     {
-        return view('aset.forms.create_tidak_bergerak');
+        $groupCategories = CategoryGroup::with('categories')->get();
+        return view('aset.forms.create_tidak_bergerak', compact('groupCategories'));
     }
     public function create_habis()
     {
-        return view('aset.forms.create_habis');
+        $groupCategories = CategoryGroup::with('categories')->get();
+        return view('aset.forms.create_habis', compact('groupCategories'));
     }
 
     public function store(Request $request)
@@ -45,17 +50,14 @@ class AssetsController extends Controller
         $validated = $request->validate([
             'nama_aset' => 'required',
             'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
-            'kategori' => 'required|string',
-            'group_kategori' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
             'jumlah' => 'required|integer|min:1',
             'tgl_pembelian' => 'required|date|before_or_equal:today',
             'nilai_pembelian' => 'required|numeric|min:0',
             'lokasi_terakhir' => 'required|string',
             'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
-            // bergerak
             'nomor_serial' => 'nullable|required_if:jenis_aset,bergerak|unique:aset_bergerak,nomor_serial',
         ], [
-            'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
             'kode.unique' => 'Kode aset sudah digunakan.',
             'kode.required' => 'Kode aset wajib diisi.',
             'nama_aset.required' => 'Nama aset wajib diisi.',
@@ -63,6 +65,7 @@ class AssetsController extends Controller
             'jumlah.min' => 'Jumlah minimal 1.',
             'tgl_pembelian.before_or_equal' => 'Tanggal pembelian tidak boleh melebihi tanggal hari ini.',
             'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
+            'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
         ]);
 
         $user = auth()->user();
@@ -200,14 +203,7 @@ class AssetsController extends Controller
     // }
     public function show(Asset $asset)
     {
-        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
-
-        // Debug: Check what's loaded
-        // dd([
-        //     'asset' => $asset->toArray(),
-        //     'bergerak_exists' => $asset->bergerak !== null,
-        //     'bergerak_data' => $asset->bergerak?->toArray()
-        // ]);
+        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
 
         if ($asset->jenis_aset === 'bergerak') {
             return view('aset.details.bergerak', compact('asset'));
@@ -225,28 +221,29 @@ class AssetsController extends Controller
     }
     public function edit(Asset $asset)
     {
-        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
+        $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
+        $groupCategories = CategoryGroup::with('categories')->get();
 
         if ($asset->jenis_aset === 'bergerak') {
-            return view('aset.forms.edit_gerak', compact('asset'));
+            return view('aset.forms.edit_gerak', compact('asset', 'groupCategories'));
         }
 
         if ($asset->jenis_aset === 'tidak_bergerak') {
-            return view('aset.forms.edit_tidak_bergerak', compact('asset'));
+            return view('aset.forms.edit_tidak_bergerak', compact('asset', 'groupCategories'));
         }
 
         if ($asset->jenis_aset === 'habis_pakai') {
-            return view('aset.forms.edit_habis', compact('asset'));
+            return view('aset.forms.edit_habis', compact('asset', 'groupCategories'));
         }
 
         abort(404);
     }
+
     public function update(Request $request, Asset $asset)
     {
         $validated = $request->validate([
             'nama_aset' => 'required',
-            'kategori' => 'nullable|string',
-            'group_kategori' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
             'jumlah' => 'required|integer|min:1',
             'tgl_pembelian' => 'nullable|date',
             'nilai_pembelian' => 'nullable|numeric',
@@ -261,8 +258,6 @@ class AssetsController extends Controller
         }
 
         $asset->save();
-
-        $asset->update($validated);
 
         if ($asset->jenis_aset === 'bergerak') {
             $asset->bergerak()->update([
@@ -298,6 +293,7 @@ class AssetsController extends Controller
 
         return redirect()->route('admin.assets.index')->with('success', 'Aset berhasil diperbarui.');
     }
+
     public function destroy(Asset $asset)
     {
         $asset->delete();

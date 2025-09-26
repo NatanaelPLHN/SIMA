@@ -13,7 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::with(['parent', 'categoryGroup'])->withCount('children')->latest()->paginate(15);
+        $categories = Category::with('categoryGroup')->latest()->paginate(15);
         $groupCategories = CategoryGroup::all();
         return view('categories.index', compact('categories', 'groupCategories'));
     }
@@ -23,9 +23,10 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = Category::whereNull('parent_id')->get();
+        
+        // $categories = Category::all(); // atau kosong dulu kalau mau AJAX
         $groupCategories = CategoryGroup::all();
-        return view('categories.create', compact('categories', 'groupCategories'));
+        return view('categories.create', compact( 'groupCategories'));
     }
 
     /**
@@ -33,41 +34,26 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
 {
-    try {
+
         $validated = $request->validate([
-            'parent_id' => 'nullable|exists:categories,id',
             'nama' => 'required|string|max:255|unique:categories,nama',
             'deskripsi' => 'nullable|string',
             'category_group_id' => 'required|exists:category_groups,id',
             'alias' => 'required|string|max:255|unique:categories,alias',
         ]);
 
-        $category = Category::create($validated);
+       Category::create($validated);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Kategori berhasil ditambahkan.',
-                'data' => $category
-            ]);
-        }
+    session()->flash('success', 'Kategori berhasil ditambahkan!');
 
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors()
-            ], 422);
-        }
-        throw $e;
-    }
+    return response()->json(['success' => true]);
+         
 } /**
-     * Display the specified resource.
+     * Display the   specified resource.
      */
     public function show(Category $category)
     {
-        $category->load(['parent', 'children', 'categoryGroup']);
+        $category->load(['categoryGroup']);
         return view('categories.show', compact('category'));
     }
 
@@ -76,9 +62,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $categories = Category::where('id', '!=', $category->id)->get();
         $categoryGroups = CategoryGroup::all();
-        return view('categories.edit', compact('category', 'categories', 'groupCategories'));
+        return view('categories.edit', compact('category', 'groupCategories'));
     }
 
     /**
@@ -88,7 +73,6 @@ class CategoryController extends Controller
     {
         try {
         $validated = $request->validate([
-            'parent_id' => 'nullable|exists:categories,id',
             'nama' => 'required|string|max:255|unique:categories,nama,' . $category->id,
             'deskripsi' => 'nullable|string',
             'category_group_id' => 'required|exists:category_groups,id',
@@ -100,12 +84,20 @@ class CategoryController extends Controller
             'alias.required' => 'Alias wajib diisi.',
             'alias.unique' => 'Alias sudah digunakan.',
         ]);
+        $category->fill($validated);
+        if (!$category->isDirty()) {
+            return back()->with('info', 'Tidak ada perubahan pada data aset.');
+        }
+        $category->save();
 
 
-        $category->update($validated);
 
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui.');
-    }   catch (\Illuminate\Validation\ValidationException $e) {
+        // $category->update($validated);
+
+        session()->flash('success', 'Kategori berhasil di ubah');
+
+    return response()->json(['success' => true]);}   
+    catch (\Illuminate\Validation\ValidationException $e) {
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => false,
@@ -124,13 +116,10 @@ class CategoryController extends Controller
     {
         try {
             // Cek apakah kategori memiliki child atau aset
-            if ($category->children()->count() > 0) {
-                return redirect()->route('superadmin.categories.index')->with('error', 'Tidak dapat menghapus kategori yang memiliki sub-kategori.');
-            }
 
-            // if ($category->assets()->count() > 0) {
-            //     return redirect()->route('superadmin.categories.index')->with('error', 'Tidak dapat menghapus kategori yang digunakan oleh aset.');
-            // }
+            if ($category->assets()->count() > 0) {
+                return redirect()->route('superadmin.categories.index')->with('error', 'Tidak dapat menghapus kategori yang digunakan oleh aset.');
+            }
             $category->delete();
             return redirect()->route('superadmin.categories.index')->with('success', 'Kategori berhasil dihapus.');
         } catch (\Exception $e) {
@@ -140,9 +129,7 @@ class CategoryController extends Controller
     public function getByGroup(Request $request)
     {
         $groupId = $request->get('group_id');
-        $categories = Category::where('category_group_id', $groupId)
-                             ->whereNull('parent_id')
-                             ->get();
+        $categories = Category::where('category_group_id', $groupId)->get();
 
         return response()->json($categories);
     }

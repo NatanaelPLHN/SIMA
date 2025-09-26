@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Admin Dashboard')
+@section('title', 'Manajemen Aset')
 @include('components.alert')
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @section('content')

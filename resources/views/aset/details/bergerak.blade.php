@@ -1,10 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Detail Aset Bergerak')
 
 @section('content')
-    <h1 class="text-lg font-semibold text-indigo-800 mb-4">Detail Aset Bergerak</h1>
-
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow-md p-6">
             <!-- Grid Utama -->
@@ -15,7 +13,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kode:</label>
-                            <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200 break-words whitespace-normal">
+                            <div
+                                class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200 break-words whitespace-normal">
                                 {{ $asset->kode }}
                             </div>
                         </div>
@@ -46,14 +45,14 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kategori:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->kategori ?? '?' }}
+                                {{ $asset->category->nama ?? '?' }}
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Grup Kategori:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->group_kategori ?? '?' }}
+                                {{ $asset->category->CategoryGroup->nama ?? '?' }}
                             </div>
                         </div>
 
