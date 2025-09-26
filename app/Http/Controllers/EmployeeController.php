@@ -6,6 +6,8 @@ use App\Models\Employee;
 use App\Models\Departement;
 use Illuminate\Http\Request;
 
+use App\Models\Institution;
+
 class EmployeeController extends Controller
 {
     /**
@@ -22,8 +24,9 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        $bidangs = Departement::all();
-        return view('employee.create_employee', compact('bidangs'));
+        $institutions = Institution::all();
+        $departements = Departement::all();
+        return view('employee.create_employee', compact('institutions', 'departements'));
     }
 
     /**
@@ -63,11 +66,10 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        $employee->load('bidang'); // Tambahkan ini
-        $bidangs = Departement::all(); // Tambahkan ini
-        return view('employee.edit_employee', compact('employee', 'bidangs'));
-
-        // return view('employee.edit_employee', compact('employee'));
+        $employee->load('bidang.institution');
+        $institutions = Institution::all();
+        $departements = Departement::all();
+        return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
     }
 
     /**
