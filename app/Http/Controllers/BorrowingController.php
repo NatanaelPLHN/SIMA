@@ -43,7 +43,9 @@ class BorrowingController extends Controller
             'jumlah' => 'required|integer|min:1',
             'tanggal_pinjam' => 'required|date|before_or_equal:today',
             'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
-            'status' => 'required|in:dipinjam,dikembalikan,terlambat',
+            // 'status' => 'required|in:dipinjam,dikembalikan,terlambat',
+            'tujuan_penggunaan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string|max:255',
         ], [
             'asset_id.exists' => 'Asset tidak ditemukan.',
             'borrowed_by.exists' => 'Karyawan tidak ditemukan.',
@@ -106,6 +108,7 @@ class BorrowingController extends Controller
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
             'status' => 'required|in:dipinjam,dikembalikan,terlambat',
+            'tujuan_penggunaan' => 'required|string|max:255',
         ], [
             'asset_id.exists' => 'Asset tidak ditemukan.',
             'borrowed_by.exists' => 'Karyawan tidak ditemukan.',

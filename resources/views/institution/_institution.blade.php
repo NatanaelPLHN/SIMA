@@ -6,6 +6,12 @@
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
 <div>
+    <label for="alias" class="block text-sm font-medium text-gray-700 mb-1">Alias</label>
+    <input type="text" id="alias" name="alias" value="{{ old('alias', $institution->alias ?? '') }}"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ isset($institution) && $institution->exists ? 'bg-gray-100' : '' }}"
+        {{ isset($institution) && $institution->exists ? 'disabled' : '' }} required>
+</div>
+<div>
     <label for="pemerintah" class="block text-sm font-medium text-gray-700 mb-1">Pemerintah <span class="text-red-500">*</span></label>
     <input type="text" id="pemerintah" name="pemerintah"
     value="{{ old('pemerintah', $institution->pemerintah ?? '') }}"

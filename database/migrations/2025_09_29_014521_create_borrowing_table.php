@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('asset_id')->nullable();
             $table->unsignedBigInteger('borrowed_by')->nullable();
-            $table->integer('jumlah');
+            // $table->integer('jumlah');
             $table->dateTime('tanggal_pinjam');
             $table->dateTime('tanggal_kembali')->nullable();
             $table->enum('status', ['dipakai','dikembalikan'])->default('dipakai');

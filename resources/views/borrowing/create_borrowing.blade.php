@@ -9,6 +9,8 @@
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
             @include('borrowing._borrowing')
+            <input type="hidden" name="jumlah" value="1">
+            {{-- <input type="hidden" name="status" value="dipinjam"> --}}
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
                 <a href="{{ route('admin.borrowing.index') }}"

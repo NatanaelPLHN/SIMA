@@ -35,6 +35,7 @@ class InstitutionController extends Controller
             'telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'alamat' => 'nullable|string',
+            'alias' => 'required|string|max:255',
         ], [
             'nama.required' => 'Nama instansi wajib diisi.',
             'pemerintah.required' => 'Nama pemerintah wajib diisi.',

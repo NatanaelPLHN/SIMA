@@ -36,159 +36,61 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-indigo-800">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Nama Aset
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            No</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Nama Aset
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Penanggung
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Penanggung
                             Jawab</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Jumlah</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Tanggal
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Jumlah</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Tanggal
                             Pinjam</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Tanggal
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Tanggal
                             Kembali</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">Aksi</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase text-center tracking-wider">
+                            Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <span
-                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Dipinjam
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center justify-center gap-x-3">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <span
-                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Dipinjam
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center justify-center gap-x-3">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <span
-                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Dipinjam
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center justify-center gap-x-3">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            <span
-                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Dipinjam
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center justify-center gap-x-3">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm text-center text-gray-900">Savannah Howard</td>
-                        <td class="px-4 py-3 text-sm">
-                            {{-- <div class="flex items-center justify-center"> --}}
-                            <span
-                                class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                Dipinjam
-                            </span>
-                            {{-- </div> --}}
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <div class="flex items-center justify-center gap-x-3">
-                                <button class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="text-yellow-600 hover:text-yellow-800">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="text-red-600 hover:text-red-800">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    @forelse ($borrowing as $index => $pinjam)
+                        <tr>
+                            <td class="px-4 py-3 text-sm text-center text-gray-900">{{ $index + 1 }}</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-900">{{ $pinjam->asset->nama_aset }}</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-900">{{ $pinjam->employee->nama }}</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-900">1</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-900">{{ $pinjam->tanggal_pinjam }}</td>
+                            <td class="px-4 py-3 text-sm text-center text-gray-900">{{ $pinjam->tanggal_kembali }}</td>
+                            <td class="px-4 py-3 text-sm">
+                                <span
+                                    class="flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    {{ $pinjam->status }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm">
+                                <div class="flex items-center justify-center gap-x-3">
+                                    {{-- YANG BAWAH INI DIPIKIRKAN , UNTUK EDIT APA YANG BISA DIEDIT --}}
+                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                        href="{{ route('admin.borrowing.show', $pinjam->id) }}"></a>
+                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                        href="{{ route('admin.borrowing.edit', $pinjam->id) }}"></a>
+
+
+                                    {{-- <button class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button> --}}
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
+                {{ $borrowing->links() }}
             </table>
         </div>
     </div>
