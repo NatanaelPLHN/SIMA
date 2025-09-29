@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AsetTidakBergerak extends Model
 {
+    use HasFactory;
+
     protected $table = 'aset_tidak_bergerak';
     protected $primaryKey = 'aset_id';
     public $timestamps = false;
