@@ -215,6 +215,7 @@ class AssetsController extends Controller
     //         "Aset {$asset->nama_aset} ({$asset->jenis_aset}) berhasil ditambahkan."
     //     );
     // }
+
     public function show(Asset $asset)
     {
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);

@@ -42,10 +42,21 @@
                         <label for="search-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('admin.assets.create_gerak') }}"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Tambah
-                        </a>
+
+                        @if (auth()->user()->role == 'superadmin')
+                            <a href="{{ route('superadmin.assets.create_gerak') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
+
+                        @if (auth()->user()->role == 'admin')
+                            <a href="{{ route('admin.assets.create_gerak') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
+
                     </div>
                 </div>
             </div>
@@ -53,68 +64,69 @@
             <!-- Data Table Bergerak -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-indigo-800">
-                        <tr>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                No</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Nama
-                                Aset</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Serial Number</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Merk/Type
-                            </th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Tahun
-                                Produksi</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-32">
-                                Aksi
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white">
-                        @foreach ($assetsBergerak as $index => $asset)
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-indigo-800">
                             <tr>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900 text-center whitespace-normal break-words">
-                                    {{ $asset->nama_aset }}</td>
-                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
-                                    {{ $asset->bergerak->nomor_serial ?? '-' }}</td>
-                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
-                                    {{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
-                                <td class="text-center">{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
-                                <td class="text-center">{{ ucfirst($asset->status) }}</td>
-                                <td>
-                                    <div class="flex items-center justify-center gap-x-3">
-                                        <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                            href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                            href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }} " class="delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    No</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Nama
+                                    Aset</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Serial Number</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Merk/Type
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Tahun
+                                    Produksi</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-32">
+                                    Aksi
+                                </th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                    {{ $assetsBergerak->links() }}
-                </table>
+                        </thead>
+                        <tbody class="bg-white">
+                            @foreach ($assetsBergerak as $index => $asset)
+                                <tr>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-900 text-center whitespace-normal break-words">
+                                        {{ $asset->nama_aset }}</td>
+                                    <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                        {{ $asset->bergerak->nomor_serial ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                        {{ $asset->bergerak->merk ?? '-' }}/{{ $asset->bergerak->tipe ?? '-' }}</td>
+                                    <td class="text-center">{{ $asset->bergerak->tahun_produksi ?? '-' }}</td>
+                                    <td class="text-center">{{ ucfirst($asset->status) }}</td>
+                                    <td>
+                                        <div class="flex items-center justify-center gap-x-3">
+                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }} "
+                                                class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        {{ $assetsBergerak->links() }}
+                    </table>
                 </div>
             </div>
         </div>
@@ -139,10 +151,19 @@
                         <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-tidak-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('admin.assets.create_tidak_bergerak') }}"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Tambah
-                        </a>
+                        @if (auth()->user()->role == 'superadmin')
+                            <a href="{{ route('superadmin.assets.create_tidak_bergerak') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
+
+                        @if (auth()->user()->role == 'admin')
+                            <a href="{{ route('admin.assets.create_tidak_bergerak') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -150,70 +171,72 @@
             <!-- Data Table Tidak Bergerak -->
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-indigo-800">
-                        <tr>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                No</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Kode</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Nama
-                                Aset</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Ukuran
-                            </th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Bahan</th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th
-                                class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Aksi
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white">
-                        @foreach ($assetsTidakBergerak as $index => $asset)
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-indigo-800">
                             <tr>
-                                <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
-                                    {{ $asset->kode }}</td>
-                                <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
-                                    {{ $asset->nama_aset }}</td>
-                                <td class="text-center">{{ $asset->tidakBergerak->ukuran }}</td>
-                                <td class="text-center">{{ $asset->tidakBergerak->bahan ?? '-' }}</td>
-                                <td class="text-center">{{ ucfirst($asset->status) }}</td>
-                                <td>
-                                    <div class="flex items-center justify-center gap-x-3">
-                                        <!-- Show -->
-                                        <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                            href="{{ route('admin.assets.show', $asset->id) }}"></a>
-
-                                        <!-- Edit -->
-                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                            href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-
-                                        <!-- Delete -->
-                                        <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}" class="delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    No</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Kode</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Nama
+                                    Aset</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Ukuran
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Bahan</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Aksi
+                                </th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                    {{ $assetsTidakBergerak->links() }}
-                </table>
+                        </thead>
+                        <tbody class="bg-white">
+                            @foreach ($assetsTidakBergerak as $index => $asset)
+                                <tr>
+                                    <td class="text-center">{{ $index + 1 }}</td>
+                                    <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                        {{ $asset->kode }}</td>
+                                    <td class="px-4 py-3 text-sm text-center text-gray-900 whitespace-normal break-words">
+                                        {{ $asset->nama_aset }}</td>
+                                    <td class="text-center">{{ $asset->tidakBergerak->ukuran }}</td>
+                                    <td class="text-center">{{ $asset->tidakBergerak->bahan ?? '-' }}</td>
+                                    <td class="text-center">{{ ucfirst($asset->status) }}</td>
+                                    <td>
+                                        <div class="flex items-center justify-center gap-x-3">
+                                            <!-- Show -->
+                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                href="{{ route('admin.assets.show', $asset->id) }}"></a>
+
+                                            <!-- Edit -->
+                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+
+                                            <!-- Delete -->
+                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}"
+                                                class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                    type="submit"></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        {{ $assetsTidakBergerak->links() }}
+                    </table>
                 </div>
             </div>
         </div>
@@ -238,17 +261,26 @@
                         <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-habis-pakai"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        <a href="{{ route('admin.assets.create_habis') }}"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Tambah
-                        </a>
+                        @if (auth()->user()->role == 'superadmin')
+                            <a href="{{ route('superadmin.assets.create_habis') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
+
+                        @if (auth()->user()->role == 'admin')
+                            <a href="{{ route('admin.assets.create_habis') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
 
             <!-- Data Table Habis Pakai -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="overflow-x-auto">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 bg-indigo-800">
                         <thead class="bg-indigo-800">
                             <tr>
@@ -293,7 +325,7 @@
                                     <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
-                                        
+
 
                                             <!-- Show -->
                                             <a class="fas fa-eye text-blue-600 hover:text-blue-800"
@@ -302,10 +334,12 @@
                                             <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
                                                 href="{{ route('admin.assets.edit', $asset->id) }}"></a>
                                             <!-- Delete -->
-                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}" class="delete-form">
+                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}"
+                                                class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit"></button>
+                                                <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                    type="submit"></button>
                                             </form>
                                         </div>
                                     </td>
@@ -315,10 +349,10 @@
                         </tbody>
                         {{ $assetsHabisPakai->links() }}
                     </table>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

@@ -18,39 +18,23 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-// Route::get('/detail', function () {
-//     return redirect('');
-// });
-
-// Route::get('/profil', function () {
-//     return view('profil');
-// });
-
-// Route::get('/create', function () {
-//     return view('form');
-// });
-
 // Auth routes
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']); //
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/categories/by-group', [CategoryController::class, 'getByGroup'])
-    ->name('categories.by-group')
-    ->middleware('auth'); // optional: biar tetap butuh login
-// Tambahkan route untuk category groups
-
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->name('categories.by-group')->middleware('auth'); // optional: biar tetap butuh login
 
 // Route publik untuk verifikasi aset via QR Code
-Route::get('/verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
+Route::get('verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
 
-// User dashboard routes
+// User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/in', [AuthController::class, 'login']);
-    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profil', [UserDashboardController::class, 'profil'])->name('profil');
+    Route::get('in', [AuthController::class, 'login']);
+    Route::get('dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('profil', [UserDashboardController::class, 'profil'])->name('profil');
 });
 
-// Admin dashboard routes
+// Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
@@ -58,7 +42,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Assets (resource route)
     Route::resource('assets', controller: AssetsController::class);
 
-    // Custom create forms for each jenis_aset (optional — if you still want them separated)
+    // Custom create forms untuk masing-masing tipe asset
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
@@ -66,41 +50,32 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
-    Route::get('/bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
+    Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
 });
 
-
-// Superadmin dashboard routes
+// Superadmin routes
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
-    // instansi
-    // Route::get('/instansi', [SuperAdminDashboardController::class, 'instansi'])->name('instansi');
-    Route::get('/profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
-    // Route::get('/instansi/create', [SuperAdminDashboardController::class, 'create_instansi'])->name('create_instansi');
-    // Route::get('/instansi/edit', [SuperAdminDashboardController::class, 'edit_instansi'])->name('edit_instansi');
+    Route::get('dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
+    Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
 
-    // bidang
-    // Route::get('/bidang', [SuperAdminDashboardController::class, 'bidang'])->name('bidang');
-    // Route::get('/bidang/create', [SuperAdminDashboardController::class, 'create_bidang'])->name('create_bidang');
-    // Route::get('/bidang/edit', [SuperAdminDashboardController::class, 'edit_bidang'])->name('edit_bidang');
-
+    // routes asset
     Route::resource('assets', controller: AssetsController::class);
-    // Tambahkan route untuk user
+    // Custom create forms untuk masing-masing tipe asset
+    Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
+    Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
+    Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
+    // routes akun (user)
     Route::resource('user', controller: UserController::class);
-    // Tambahkan route untuk karyawan
+    // routes employee (karyawan)
     Route::resource('employee', controller: EmployeeController::class);
-    // Tambahkan route untuk instansi
-    // Route::resource('instansi', controller: InstansiController::class);
+    // routes institution (institusi)
     Route::resource('institution', controller: InstitutionController::class);
-    // Tambahkan route untuk grup kategori
+    // routes category-groups (grup kategori)
     Route::resource('category-groups', CategoryGroupController::class);
-    // Tambahkan route untuk categories
-    Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])
-        ->name('categories.by-group');
-
+    // routes category (kategori)
+    Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->name('categories.by-group');
     Route::resource('categories', CategoryController::class);
-    // Tambahkan route untuk bidang
+    // routes department (bidang)
     Route::resource('departement', controller: DepartementController::class);
-    // Route::resource('bidang', controller: BidangController::class);
 });
