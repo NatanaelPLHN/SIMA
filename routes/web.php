@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AssetsController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\CategoryGroupController;
@@ -41,6 +42,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Assets (resource route)
     Route::resource('assets', controller: AssetsController::class);
+    Route::resource('borrowing', controller: BorrowingController::class);
 
     // Custom create forms untuk masing-masing tipe asset
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');

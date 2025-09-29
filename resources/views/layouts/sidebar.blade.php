@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.peminjaman') }}"
+                    <a href="{{ route('admin.borrowing.index') }}"
                         class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                         {{-- icon --}}
                         {{-- <i class="fas fa-clipboard-list mr-2"></i> --}}

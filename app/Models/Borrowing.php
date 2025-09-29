@@ -19,6 +19,8 @@ class Borrowing extends Model
         'tanggal_pinjam',
         'tanggal_kembali',
         'status',
+        'tujuan_penggunaan',
+        'keterangan',
     ];
 
     protected $casts = [
@@ -29,13 +31,19 @@ class Borrowing extends Model
     // Relasi dengan Asset
     public function asset()
     {
-        return $this->belongsTo(Asset::class, 'asset_id');
+        return $this->belongsTo(Asset::class, 'asset_id')->withDefault([
+            'nama_aset' => 'Asset telah dihapus',
+            'kode' => 'N/A'
+        ]);
     }
 
     // Relasi dengan Karyawan
     public function employee()
     {
-        return $this->belongsTo(Employee::class, 'borrowed_by');
+        return $this->belongsTo(Employee::class, 'borrowed_by')->withDefault([
+            'nama' => 'Karyawan telah dihapus',
+            'nip' => 'N/A'
+        ]);
     }
     // public function karyawan()
     // {
