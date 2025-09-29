@@ -25,7 +25,7 @@
 </div>
 <!-- Alpine.js Dependent Dropdown -->
 <div x-data="{
-    selectedInstitution: '{{ old('institution_id', $employee->bidang->instansi_id ?? '') }}',
+    selectedInstitution: '{{ old('institution_id', $employee->department->instansi_id ?? '') }}',
     selectedDepartment: '{{ old('department_id', $employee->department_id ?? '') }}',
     departments: {{ Js::from($departements) }},
     get filteredDepartments() {
@@ -49,7 +49,7 @@
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
             <option value="">Pilih Instansi</option>
             @foreach($institutions as $institution)
-                <option value="{{ $institution->id }}" {{ (old('institution_id', $employee->bidang->instansi_id ?? '') == $institution->id) ? 'selected' : '' }}>
+                <option value="{{ $institution->id }}" {{ (old('institution_id', $employee->department->instansi_id ?? '') == $institution->id) ? 'selected' : '' }}>
                     {{ $institution->nama }}
                 </option>
             @endforeach
