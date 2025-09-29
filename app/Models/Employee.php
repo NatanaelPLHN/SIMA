@@ -21,8 +21,12 @@ class Employee extends Model
     // Relasi dengan Peminjaman
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class, 'borrowed_by');
+        return $this->hasMany(Employee::class, 'borrowed_by');
     }
+    // public function peminjaman()
+    // {
+    //     return $this->hasMany(Peminjaman::class, 'borrowed_by');
+    // }
     // Relasi dengan Bidang (Department)
     public function department()
     {

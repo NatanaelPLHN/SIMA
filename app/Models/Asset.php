@@ -41,7 +41,11 @@ class Asset extends Model
     }
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class, 'aset_id');
+        return $this->hasMany(Borrowing::class, 'aset_id');
     }
+    // public function peminjaman()
+    // {
+    //     return $this->hasMany(Peminjaman::class, 'aset_id');
+    // }
 
 }
