@@ -15,7 +15,9 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = Employee::with('department')->paginate(10);
+        // $employees = Employee::with('department')->paginate(10);
+        $employees = Employee::with(['department', 'user'])->paginate(10);
+        // $employees = Employee::with('department')->paginate(10);
         return view('employee.index', compact('employees'));
     }
 
@@ -66,7 +68,7 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        $employee->load('bidang.institution');
+        $employee->load('department.institution');
         $institutions = Institution::all();
         $departements = Departement::all();
         return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));

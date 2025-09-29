@@ -31,6 +31,6 @@ class Employee extends Model
     // Relasi dengan user
     public function user()
     {
-        return $this->hasOne(User::class, 'employee_id');
+        return $this->hasOne(User::class, 'karyawan_id');
     }
 }
