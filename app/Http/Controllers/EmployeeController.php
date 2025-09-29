@@ -78,7 +78,7 @@ class EmployeeController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Employee $employee)
-    {
+    {$oldDepartmentId = $employee->department_id;
         $validated = $request->validate([
             'nip' => 'required|unique:employees,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
@@ -91,8 +91,20 @@ class EmployeeController extends Controller
             'nama.required' => 'Nama wajib diisi.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
-         $original = $employee->replicate();
-          $employee->fill($validated);
+        // Cek apakah departemen karyawan berubah
+      // dan apakah karyawan tersebut adalah kepala di departemen lamanya.
+      if ($oldDepartmentId && $oldDepartmentId != $request->department_id) {
+        $oldDepartment = Departement::find($oldDepartmentId);
+
+        // Jika departemen lama ada dan ID karyawan sama dengan kepala idang
+        if ($oldDepartment && $oldDepartment->kepala_bidang_id == $employee->id) {
+            // Hapus jabatan kepala bidang dari departemen lama
+            $oldDepartment->kepala_bidang_id = null;
+            $oldDepartment->save();
+        }
+    }
+        $original = $employee->replicate();
+        $employee->fill($validated);
         if (!$employee->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data employee.');
         }

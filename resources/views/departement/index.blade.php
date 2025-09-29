@@ -57,7 +57,7 @@
                                 <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->nama }}</td>
                                 <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->kepala->nama ?? '-' }}</td>
                                 <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->lokasi ?? '-' }}</td>
-                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->instansi->nama ?? '-' }}
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $departement->institution->nama ?? '-' }}
                                 </td>
                                 <td class="text-center px-4 py-3 text-sm">
                                     <div class="flex items-center justify-center gap-x-3">
