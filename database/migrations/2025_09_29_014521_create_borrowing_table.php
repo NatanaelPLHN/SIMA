@@ -13,17 +13,19 @@ return new class extends Migration
     {
         Schema::create('borrowing', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('asset_id');
-            $table->unsignedBigInteger('borrowed_by');
+            $table->unsignedBigInteger('asset_id')->nullable();
+            $table->unsignedBigInteger('borrowed_by')->nullable();
             $table->integer('jumlah');
             $table->dateTime('tanggal_pinjam');
             $table->dateTime('tanggal_kembali')->nullable();
-            $table->string('status');
+            $table->enum('status', ['dipakai','dikembalikan'])->default('dipakai');
+            $table->string('tujuan_penggunaan');
+            $table->string('keterangan')->nullable();
             $table->timestamps();
 
             // Foreign key constraints
-            $table->foreign('asset_id')->references('id')->on('aset')->onDelete('cascade');
-            $table->foreign('borrowed_by')->references('id')->on('employees')->onDelete('cascade');
+            $table->foreign('asset_id')->references('id')->on('aset')->onDelete('set null');
+            $table->foreign('borrowed_by')->references('id')->on('employees')->onDelete('set null');
 
             // Indexes for better performance
             $table->index(['asset_id']);
