@@ -109,17 +109,42 @@
                                     <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
-                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }} "
-                                                class="delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
-                                                </button>
-                                            </form>
+                                            @if (auth()->user()->role == 'superadmin')
+                                                <!-- Show -->
+                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                    href="{{ route('superadmin.assets.show', $asset->id) }}"></a>
+                                                <!-- Edit -->
+                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                    href="{{ route('superadmin.assets.edit', $asset->id) }}"></a>
+                                                <!-- Delete -->
+                                                <form method="POST"
+                                                    action="{{ route('superadmin.assets.destroy', $asset->id) }} "
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                        type="submit">
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            @if (auth()->user()->role == 'admin')
+                                                <!-- Show -->
+                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                    href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                                <!-- Edit -->
+                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                    href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                                <!-- Delete -->
+                                                <form method="POST"
+                                                    action="{{ route('admin.assets.destroy', $asset->id) }} "
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                        type="submit">
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -214,22 +239,42 @@
                                     <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
-                                            <!-- Show -->
-                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                            @if (auth()->user()->role == 'superadmin')
+                                                <!-- Show -->
+                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                    href="{{ route('superadmin.assets.show', $asset->id) }}"></a>
+                                                <!-- Edit -->
+                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                    href="{{ route('superadmin.assets.edit', $asset->id) }}"></a>
+                                                <!-- Delete -->
+                                                <form method="POST"
+                                                    action="{{ route('superadmin.assets.destroy', $asset->id) }}"
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                        type="submit"></button>
+                                                </form>
+                                            @endif
 
-                                            <!-- Edit -->
-                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                            @if (auth()->user()->role == 'admin')
+                                                <!-- Show -->
+                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                    href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                                <!-- Edit -->
+                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                    href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                                <!-- Delete -->
+                                                <form method="POST"
+                                                    action="{{ route('admin.assets.destroy', $asset->id) }}"
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                        type="submit"></button>
+                                                </form>
+                                            @endif
 
-                                            <!-- Delete -->
-                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}"
-                                                class="delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                    type="submit"></button>
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -326,21 +371,41 @@
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
 
+                                            @if (auth()->user()->role == 'superadmin')
+                                                <!-- Show -->
+                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                    href="{{ route('superadmin.assets.show', $asset->id) }}"></a>
+                                                <!-- Edit -->
+                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                    href="{{ route('superadmin.assets.edit', $asset->id) }}"></a>
+                                                <!-- Delete -->
+                                                <form method="POST"
+                                                    action="{{ route('superadmin.assets.destroy', $asset->id) }}"
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                        type="submit"></button>
+                                                </form>
+                                            @endif
 
-                                            <!-- Show -->
-                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                            <!-- Edit -->
-                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                            <!-- Delete -->
-                                            <form method="POST" action="{{ route('admin.assets.destroy', $asset->id) }}"
-                                                class="delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                    type="submit"></button>
-                                            </form>
+                                            @if (auth()->user()->role == 'admin')
+                                                <!-- Show -->
+                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                    href="{{ route('admin.assets.show', $asset->id) }}"></a>
+                                                <!-- Edit -->
+                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                    href="{{ route('admin.assets.edit', $asset->id) }}"></a>
+                                                <!-- Delete -->
+                                                <form method="POST"
+                                                    action="{{ route('admin.assets.destroy', $asset->id) }}"
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                        type="submit"></button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
