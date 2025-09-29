@@ -44,10 +44,19 @@
 
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ route('admin.assets.index') }}"
-                    class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
-                    Batal
-                </a>
+                @if (auth()->user()->role == 'superadmin')
+                    <a href="{{ route('superadmin.assets.index') }}"
+                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                        Batal
+                    </a>
+                @endif
+
+                @if (auth()->user()->role == 'admin')
+                    <a href="{{ route('admin.assets.index') }}"
+                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                        Batal
+                    </a>
+                @endif
                 <button type="submit"
                     class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
                     Simpan
