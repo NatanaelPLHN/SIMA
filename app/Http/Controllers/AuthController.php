@@ -33,6 +33,8 @@ class AuthController extends Controller
                     return redirect()->intended('/superadmin/dashboard');
                 } elseif ($user->isAdmin()) {
                     return redirect()->intended('/admin/dashboard');
+                } elseif ($user->isSubAdmin()) {
+                    return redirect()->intended('/subadmin/dashboard');
                 } else {
                     return redirect()->intended('/user/dashboard');
                 }

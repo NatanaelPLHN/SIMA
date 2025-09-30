@@ -26,9 +26,9 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'email' => 'user@gmail.com',
+            'email' => 'subadmin@gmail.com',
             'password' => Hash::make('password'),
-            'role' => 'user',
+            'role' => 'subadmin',
             'karyawan_id' => Employee::where('nama', 'Anandita Agung')->first()->id,
         ]);
     }
