@@ -49,5 +49,10 @@ class Asset extends Model
     // {
     //     return $this->hasMany(Peminjaman::class, 'aset_id');
     // }
+    // Stock opname detail records for this asset
+    public function stockOpnameDetails()
+    {
+        return $this->hasMany(StockOpnameDetail::class, 'aset_id');
+    }
 
 }

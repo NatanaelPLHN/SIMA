@@ -41,6 +41,18 @@ class User extends Authenticatable
         return $this->belongsTo(Employee::class, 'karyawan_id');
     }
 
+    // User scheduled stock opnames
+    public function scheduledStockOpnames()
+    {
+        return $this->hasMany(StockOpname::class, 'scheduled_by');
+    }
+
+    // User performed checks (as checker)
+    public function stockOpnameDetails()
+    {
+        return $this->hasMany(StockOpnameDetail::class, 'checked_by');
+    }
+
     public function isSuperAdmin()
     {
         return $this->role === 'superadmin';
