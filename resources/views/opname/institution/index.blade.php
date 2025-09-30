@@ -8,53 +8,61 @@
         <!-- Form Controls -->
         <div class="bg-white rounded-lg shadow-md p-4 mb-6">
             <form id="opname-form" action="{{ route('superadmin.opname.store') }}" method="POST" enctype="multipart/form-data">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <input type="hidden" name="status" value="bergerak">
+                @csrf.
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <input type="hidden" name="status" value="bergerak">
 
                     <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 w-full">
                         <div class="w-full md:w-1/4">
-                            <label for="tanggal_dijadwalkan" class="text-sm font-medium text-gray-700">tanggal_dijadwalkan</label>
+                            <label for="tanggal_dijadwalkan"
+                                class="text-sm font-medium text-gray-700">tanggal_dijadwalkan</label>
                             <input type="date" id="tanggal_dijadwalkan" name="tanggal_dijadwalkan"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
 
                         <div class="w-full md:w-2/5">
-                            <label for="bidang" class="text-sm font-medium text-gray-700">Bidang</label>
-                            <select id="bidang"
+                            <label for="departement_id" class="text-sm font-medium text-gray-700">Bidang</label>
+                            <select id="departement_id" name="departement_id"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Pilih Bidang</option>
-                                <option value="bidang1">Bidang 1</option>
+                                {{-- <option value="bidang1">Bidang 1</option>
                                 <option value="bidang2">Bidang 2</option>
-                                <option value="bidang3">Bidang 3</option>
+                                <option value="bidang3">Bidang 3</option> --}}
+                                @foreach ($departements as $bidang)
+                                    <option value="{{ $bidang->id }}">{{ $bidang->nama }}</option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="w-full md:w-1/5">
-                            <label for="kategori" class="text-sm font-medium text-gray-700">Kategori</label>
-                            <select id="kategori"
+                            <label for="category_group_id" class="text-sm font-medium text-gray-700">Kategori</label>
+                            <select id="category_group_id" name="category_group_id"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Pilih Kategori</option>
-                                <option value="elektronik">Elektronik</option>
+                                @foreach ($categoryGroups as $group)
+                                    <option value="{{ $group->id }}">{{ $group->nama }}</option>
+                                @endforeach
+                                {{-- <option value="elektronik">Elektronik</option>
                                 <option value="perabotan">Perabotan</option>
                                 <option value="kendaraan">Kendaraan</option>
-                                <option value="perlengkapan">Perlengkapan</option>
+                                <option value="perlengkapan">Perlengkapan</option> --}}
                             </select>
                         </div>
-                </form>
-                <div class="w-full md:w-1/6 flex items-end">
-                    <button type="submit"
-                        class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                        Tambah
-                    </button>
-                </div>
-            </div>
+                        <div class="w-full md:w-1/6 flex items-end">
+                            <button type="submit"
+                                class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </button>
+                        </div>
+            </form>
         </div>
+    </div>
 
-        <div class="mt-4 flex items-center space-x-2">
-            <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
-            <input type="text" id="search"
-                class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        </div>
+    <div class="mt-4 flex items-center space-x-2">
+        <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
+        <input type="text" id="search"
+            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    </div>
     </div>
 
     <!-- Data Table -->

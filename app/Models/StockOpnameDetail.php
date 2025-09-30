@@ -17,7 +17,8 @@ class StockOpnameDetail extends Model
         'jumlah_sistem',
         'jumlah_fisik',
         'status_fisik',
-        'user_id',
+        'checked_by',
+        // 'user_id',
     ];
 
     // Belongs to a stock opname session
