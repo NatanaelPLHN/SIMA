@@ -113,7 +113,7 @@
                     <ul x-show="monitoringOpen" x-transition class="ml-6 mt-1 space-y-1">
                         <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Data Peminjaman</a></li>
                         <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Mutasi Aset</a></li>
-                        <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Stock Opname</a></li>
+                        <li><a href="{{ route('superadmin.opname.index') }}" class="block px-2 py-1 hover:text-indigo-200">Stock Opname</a></li>
                     </ul>
                 </li>
 

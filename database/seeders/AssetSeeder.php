@@ -14,7 +14,7 @@ class AssetSeeder extends Seeder
     {
         // Seeder for Aset Bergerak
         Asset::factory()
-            ->count(100)
+            ->count(15)
             ->has(AsetBergerak::factory(), 'bergerak')
             ->create([
                 'jenis_aset' => 'bergerak',
@@ -22,7 +22,7 @@ class AssetSeeder extends Seeder
 
         // Seeder for Aset Tidak Bergerak
         Asset::factory()
-            ->count(100)
+            ->count(15)
             ->has(AsetTidakBergerak::factory(), 'tidakBergerak')
             ->create([
                 'jenis_aset' => 'tidak_bergerak',
@@ -30,7 +30,7 @@ class AssetSeeder extends Seeder
 
         // Seeder for Aset Habis Pakai
         Asset::factory()
-            ->count(100)
+            ->count(15)
             ->has(AsetHabisPakai::factory(), 'habisPakai')
             ->create([
                 'jenis_aset' => 'habis_pakai',

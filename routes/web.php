@@ -13,6 +13,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\SuperAdminDashboardController;
+use App\Http\Controllers\StockOpnameController;
+// use App\Http\Controllers\StockOpnameDetail;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -92,4 +94,5 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('categories', CategoryController::class);
     // routes department (bidang)
     Route::resource('departement', controller: DepartementController::class);
+    Route::resource('opname', controller: StockOpnameController::class);
 });

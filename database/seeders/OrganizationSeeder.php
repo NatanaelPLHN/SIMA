@@ -23,7 +23,7 @@ class OrganizationSeeder extends Seeder
                     ->count(3) // X departments per institution
                     ->has(
                         Employee::factory()
-                            ->count(20) // X employees per department
+                            ->count(13) // X employees per department
                             ->has(User::factory()) // each employee has 1 user account
                     )
             )

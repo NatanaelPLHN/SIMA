@@ -23,7 +23,8 @@ class StockOpnameDetail extends Model
     // Belongs to a stock opname session
     public function stockOpname()
     {
-        return $this->belongsTo(StockOpname::class, 'stock_opname_id');
+        return $this->belongsTo(StockOpnameSession::class, 'stock_opname_id');
+        // return $this->belongsTo(StockOpname::class, 'stock_opname_id');
     }
 
     // Asset being checked

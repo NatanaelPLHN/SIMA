@@ -16,12 +16,13 @@
             $table->string('kode')->unique();
             $table->string('nama_aset');
             $table->enum('jenis_aset', ['bergerak', 'tidak_bergerak', 'habis_pakai']);
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete(); 
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->integer('jumlah')->default(1);
             $table->date('tgl_pembelian')->nullable();
             $table->decimal('nilai_pembelian', 15, 2)->nullable();
             $table->string('lokasi_terakhir')->nullable();
             $table->enum('status', ['tersedia','dipakai','rusak','hilang','habis'])->default('tersedia');
+            $table->foreignId('departement_id')->constrained('departements')->cascadeOnDelete();
             $table->timestamps();
         });
     }

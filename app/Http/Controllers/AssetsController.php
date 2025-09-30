@@ -79,6 +79,8 @@ class AssetsController extends Controller
 
         $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias]);
 
+        $departement_id = $user->employee?->department?->id;
+        $validated['departement_id'] = $departement_id;
         do {
             $kode = implode('-', [
                 $institutionAlias,
@@ -89,6 +91,7 @@ class AssetsController extends Controller
         } while (Asset::where('kode', $kode)->exists());
 
         $validated['kode'] = $kode;
+        // dd($validated);
         $asset = Asset::create($validated);
 
         // handle details table
