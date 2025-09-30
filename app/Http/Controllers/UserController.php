@@ -112,7 +112,6 @@ class UserController extends Controller
         return redirect()->route('superadmin.user.index')->with('success', 'User updated successfully.');
     }
 
-
     /**
      * Remove the specified resource from storage.
      */

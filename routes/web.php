@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\SuperAdminDashboardController;
+use App\Http\Controllers\SubAdminDashboardController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -47,6 +48,13 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::get('profil', [UserDashboardController::class, 'profil'])->name('profil');
 });
 
+// SubAdmin routes
+Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin.')->group(function () {
+    // Dashboard
+    Route::get('dashboard', [SubAdminDashboardController::class, 'dashboard'])->name('dashboard');
+
+});
+
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
@@ -66,6 +74,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
     Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
 });
+
 
 // Superadmin routes
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
