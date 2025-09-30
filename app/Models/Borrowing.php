@@ -15,7 +15,7 @@ class Borrowing extends Model
     protected $fillable = [
         'asset_id',
         'borrowed_by',
-        'jumlah',
+        // 'jumlah',
         'tanggal_pinjam',
         'tanggal_kembali',
         'status',
@@ -23,11 +23,14 @@ class Borrowing extends Model
         'keterangan',
     ];
 
+    // protected $casts = [
+    //     'tanggal_pinjam' => 'datetime',
+    //     'tanggal_kembali' => 'datetime',
+    // ];
     protected $casts = [
-        'tanggal_pinjam' => 'datetime',
-        'tanggal_kembali' => 'datetime',
+        'tanggal_pinjam' => 'date:Y-m-d',
+        'tanggal_kembali' => 'date:Y-m-d',
     ];
-
     // Relasi dengan Asset
     public function asset()
     {

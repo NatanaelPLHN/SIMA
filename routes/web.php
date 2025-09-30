@@ -18,6 +18,12 @@ use App\Http\Controllers\SuperAdminDashboardController;
 Route::get('/', function () {
     return redirect('/login');
 });
+Route::get('/opname', function () {
+    return view('opname.index');
+});
+Route::get('/show', function () {
+    return view('opname.show');
+});
 
 // Auth routes
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');

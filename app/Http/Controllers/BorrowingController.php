@@ -40,7 +40,7 @@ class BorrowingController extends Controller
         $validated = $request->validate([
             'asset_id' => 'required|exists:aset,id',
             'borrowed_by' => 'required|exists:employees,id',
-            'jumlah' => 'required|integer|min:1',
+            // 'jumlah' => 'required|integer|min:1',
             'tanggal_pinjam' => 'required|date|before_or_equal:today',
             'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
             // 'status' => 'required|in:dipinjam,dikembalikan,terlambat',
@@ -49,7 +49,7 @@ class BorrowingController extends Controller
         ], [
             'asset_id.exists' => 'Asset tidak ditemukan.',
             'borrowed_by.exists' => 'Karyawan tidak ditemukan.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            // 'jumlah.min' => 'Jumlah minimal 1.',
             'tanggal_pinjam.before_or_equal' => 'Tanggal pinjam tidak boleh melebihi hari ini.',
             'tanggal_kembali.after_or_equal' => 'Tanggal kembali harus setelah tanggal pinjam.',
             'status.in' => 'Status tidak valid.',
@@ -57,11 +57,11 @@ class BorrowingController extends Controller
 
         // Validasi tambahan: cek jumlah tidak melebihi jumlah asset
         $asset = Asset::find($request->asset_id);
-        if ($request->jumlah > $asset->jumlah) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['jumlah' => 'Jumlah pinjam melebihi jumlah asset yang tersedia.']);
-        }
+        // if ($request->jumlah > $asset->jumlah) {
+        //     return redirect()->back()
+        //         ->withInput()
+        //         ->withErrors(['jumlah' => 'Jumlah pinjam melebihi jumlah asset yang tersedia.']);
+        // }
 
         // Update status asset
         if ($request->status === 'dipinjam') {
@@ -104,26 +104,27 @@ class BorrowingController extends Controller
         $validated = $request->validate([
             'asset_id' => 'required|exists:aset,id',
             'borrowed_by' => 'required|exists:employees,id',
-            'jumlah' => 'required|integer|min:1',
+            // 'jumlah' => 'required|integer|min:1',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
             'status' => 'required|in:dipinjam,dikembalikan,terlambat',
             'tujuan_penggunaan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string|max:255',
         ], [
             'asset_id.exists' => 'Asset tidak ditemukan.',
             'borrowed_by.exists' => 'Karyawan tidak ditemukan.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            // 'jumlah.min' => 'Jumlah minimal 1.',
             'tanggal_kembali.after_or_equal' => 'Tanggal kembali harus setelah tanggal pinjam.',
             'status.in' => 'Status tidak valid.',
         ]);
 
         // Validasi tambahan: cek jumlah tidak melebihi jumlah asset
         $asset = Asset::find($request->asset_id);
-        if ($request->jumlah > $asset->jumlah) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['jumlah' => 'Jumlah pinjam melebihi jumlah asset yang tersedia.']);
-        }
+        // if ($request->jumlah > $asset->jumlah) {
+        //     return redirect()->back()
+        //         ->withInput()
+        //         ->withErrors(['jumlah' => 'Jumlah pinjam melebihi jumlah asset yang tersedia.']);
+        // }
 
         // Update status asset berdasarkan status peminjaman
         if ($request->status === 'dikembalikan' && $borrowing->status !== 'dikembalikan') {
