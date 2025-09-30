@@ -14,13 +14,13 @@
                     <div class="text-sm">Status: Proses</div>
                 </div>
 
-                <div class="w-full md:w-1/3">
+                {{-- <div class="w-full md:w-1/3">
                     <label for="keterangan" class="text-sm font-medium text-white">Keterangan</label>
                     <input type="text" id="keterangan" class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
+                </div> --}}
 
                 <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                    Jadwalkan
+                    Scan QR
                 </button>
             </div>
         </div>

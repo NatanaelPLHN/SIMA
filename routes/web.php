@@ -24,6 +24,12 @@ Route::get('/opname', function () {
 Route::get('/show', function () {
     return view('opname.show');
 });
+Route::get('/op', function () {
+    return view('opname_bidang.index');
+});
+Route::get('/do', function () {
+    return view('opname_bidang.opname');
+});
 
 // Auth routes
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
