@@ -19,6 +19,8 @@ class StockOpnameSession extends Model
         'tanggal_selesai',
         'status',
         'catatan',
+        'stock_opname_id',
+
     ];
 
     // The user who scheduled the opname

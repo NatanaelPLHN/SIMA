@@ -25,9 +25,6 @@
                             <select id="departement_id" name="departement_id"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Pilih Bidang</option>
-                                {{-- <option value="bidang1">Bidang 1</option>
-                                <option value="bidang2">Bidang 2</option>
-                                <option value="bidang3">Bidang 3</option> --}}
                                 @foreach ($departements as $bidang)
                                     <option value="{{ $bidang->id }}">{{ $bidang->nama }}</option>
                                 @endforeach
@@ -42,11 +39,7 @@
                                 @foreach ($categoryGroups as $group)
                                     <option value="{{ $group->id }}">{{ $group->nama }}</option>
                                 @endforeach
-                                {{-- <option value="elektronik">Elektronik</option>
-                                <option value="perabotan">Perabotan</option>
-                                <option value="kendaraan">Kendaraan</option>
-                                <option value="perlengkapan">Perlengkapan</option> --}}
-                            </select>
+                             </select>
                         </div>
                         <div class="w-full md:w-1/6 flex items-end">
                             <button type="submit"
@@ -71,6 +64,7 @@
             <thead class="bg-indigo-800">
                 <tr>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bidang</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kategori
@@ -80,74 +74,26 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+                @foreach ($sessions as $index => $session)
                 <tr>
-                    <td class="px-4 py-3 text-sm text-gray-900">10</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Audrey Mckinney</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
+                    {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session->scheduler->employee->department->nama }}</td> --}}
+                    <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->departement->nama }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td>
+                    {{-- <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()->jumlah_sistem }}</td> --}}
+                    {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session->details?->asset?->departement?->nama? }}</td> --}}
+
                     <td class="px-4 py-3 text-sm">
                         <div class="flex space-x-2">
                             <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="/show"></a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td class="px-4 py-3 text-sm text-gray-900">1</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Savannah Howard</td>
-                    <td class="px-4 py-3 text-sm">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Morris Cooper</td>
-                    <td class="px-4 py-3 text-sm">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="px-4 py-3 text-sm text-gray-900">2</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Victoria Lane</td>
-                    <td class="px-4 py-3 text-sm">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="px-4 py-3 text-sm text-gray-900">9</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">Stella Warren</td>
-                    <td class="px-4 py-3 text-sm">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+
+                @endforeach
             </tbody>
         </table>
     </div>

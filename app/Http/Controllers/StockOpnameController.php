@@ -36,7 +36,7 @@ class StockOpnameController extends Controller
 
         //   return view('opname.institution.create', compact('departements', 'categoryGroups'));
 
-        $sessions = StockOpnameSession::with('scheduler')
+        $sessions = StockOpnameSession::with(['scheduler','details'])
             ->latest()
             ->paginate(10);
         return view('opname.institution.index', compact('sessions', 'departements', 'categoryGroups'));
