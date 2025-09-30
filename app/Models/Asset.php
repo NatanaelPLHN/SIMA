@@ -19,7 +19,9 @@ class Asset extends Model
         'tgl_pembelian',
         'nilai_pembelian',
         'lokasi_terakhir',
-        'status'
+        'status',
+        'departement_id',
+
     ];
 
     public function bergerak()
@@ -41,15 +43,15 @@ class Asset extends Model
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+    public function departement()
+    {
+        return $this->belongsTo(Departement::class, 'departement_id');
+    }
     public function peminjaman()
     {
         return $this->hasMany(Borrowing::class, 'aset_id');
     }
-    // public function peminjaman()
-    // {
-    //     return $this->hasMany(Peminjaman::class, 'aset_id');
-    // }
-    // Stock opname detail records for this asset
+
     public function stockOpnameDetails()
     {
         return $this->hasMany(StockOpnameDetail::class, 'aset_id');
