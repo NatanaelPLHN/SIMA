@@ -55,6 +55,12 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     // Dashboard
     Route::get('dashboard', [SubAdminDashboardController::class, 'dashboard'])->name('dashboard');
 
+    Route::resource('user', controller: UserController::class);
+
+    Route::resource('assets', controller: AssetsController::class);
+    Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
+    Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
+    Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
 });
 
 // Admin routes
@@ -62,15 +68,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Dashboard
     Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
 
-    // Assets (resource route)
-    Route::resource('assets', controller: AssetsController::class);
+    Route::resource('departement', controller: DepartementController::class);
+    Route::resource('employee', controller: EmployeeController::class);
+
     Route::resource('borrowing', controller: BorrowingController::class);
-
-    // Custom create forms untuk masing-masing tipe asset
-    Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
-    Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
-    Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
-
     Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
