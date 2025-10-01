@@ -73,8 +73,8 @@ class StockOpnameController extends Controller
             'scheduled_by' => $user->id,
             'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
             'status' => 'draft',
-            'catatan' => $request->catatan ?? 'Stock opname untuk ' . $departement->nama,
-        ]);
+            'catatan' => '',
+               ]);
         // Jika sesi gagal dibuat, hentikan proses.
         if (!$session) {
             return back()->with('error', 'Gagal membuat sesi stock opname.')->withInput();
@@ -172,15 +172,22 @@ class StockOpnameController extends Controller
                 ->with('error', 'Gagal menghapus sesi stock opname.');
         }
     }
-    public function start(StockOpnameSession $opname)
+    public function start(Request $request, StockOpnameSession $opname)
     {
+        $validated = $request->validate([
+            'catatan' => 'nullable|string',
+
+        ]);
         if ($opname->status !== 'draft') {
             return redirect()->back()
                 ->with('error', 'Sesi hanya bisa dimulai jika statusnya draft.');
         }
 
+
         $opname->update([
             'status' => 'dijadwalkan',
+            'catatan' => $request->catatan ?? 'Stock opname untuk ' . 'nama departeent',
+
         ]);
 
         return redirect()->back()->with('success', 'Sesi stock opname berhasil dimulai.');
