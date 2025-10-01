@@ -15,6 +15,7 @@ class StockOpnameDetail extends Model
         'aset_id',
         'jumlah_sistem',
         'jumlah_fisik',
+        'status_lama',
         'status_fisik',
         'checked_by',
         'stock_opname_id',

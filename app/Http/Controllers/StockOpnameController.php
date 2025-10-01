@@ -26,7 +26,6 @@ class StockOpnameController extends Controller
         //     return redirect()->route('superadmin.opname.index')->with('error', 'Informasi institusi tidak ditemukan untuk akun Anda.');
         // }
         $institutionId = $user->employee?->department?->institution?->id;
-        // dd($institutionId);
 
         // Ambil departemen yang hanya berada di institusi superadmin
         $departements = Departement::where('instansi_id', $institutionId)->get();
@@ -73,7 +72,7 @@ class StockOpnameController extends Controller
             'nama' => 'Opname ' . $departement->nama . ' - ' . $categoryGroup->nama . ' (' . $request->tanggal_dijadwalkan . ')',
             'scheduled_by' => $user->id,
             'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
-            'status' => 'dijadwalkan',
+            'status' => 'draft',
             'catatan' => $request->catatan ?? 'Stock opname untuk ' . $departement->nama,
         ]);
         // Jika sesi gagal dibuat, hentikan proses.
@@ -87,23 +86,13 @@ class StockOpnameController extends Controller
             })
             ->get();
 
-        // $assetsToOpname = Asset::where('departement_id', $request->departement_id)
-        // ->whereHas('category.categoryGroup', function ($query) use ($request) {
-        //     $query->where('id', $request->category_group_id);
-        // })
-        // ->get();
-        // Jika tidak ada aset yang ditemukan, hapus sesi yang baru dibuat dan beri pesan.
-        if ($assetsToOpname->isEmpty()) {
+
+            if ($assetsToOpname->isEmpty()) {
             $session->delete(); // Hapus sesi yang kosong
             return back()->with('info', 'Tidak ada aset yang ditemukan untuk departemen dan grup kategori yang dipilih.')->withInput();
         }
 
-        //   if ($assetsToOpname->isEmpty()) {
-        //     // dd($assetsToOpname);
-        //       DB::rollBack(); // Batalkan transaksi jika tidak ada aset yang cocok
-        //       return back()->with('info', 'Tidak ada aset yang ditemukan untuk departemen dan grup kategori yang dipilih.')->withInput();
-        //   }
-        // 4. Looping: Buat satu StockOpnameDetail untuk setiap Aset yang ditemukan
+
         foreach ($assetsToOpname as $asset) {
             // Di sini kita membuat baris baru di tabel stock_opname_details
             StockOpnameDetail::create([
@@ -111,6 +100,7 @@ class StockOpnameController extends Controller
                 'aset_id' => $asset->id,
                 'jumlah_sistem' => $asset->jumlah,
                 'jumlah_fisik' => 0, // Default 0, akan diisi saat pengecekan
+                'status_lama' => $asset->status, // Status default
                 'status_fisik' => 'tersedia', // Status default
                 'checked_by' => $departement->kepala->id, // Penanggung jawab awal
             ]);
@@ -118,30 +108,6 @@ class StockOpnameController extends Controller
 
         return redirect()->route('superadmin.opname.index')->with('success', 'Jadwal stock opname berhasil dibuat.');
 
-
-
-        // -----------------------------------------
-
-        // $validated = $request->validate([
-        //     'nama' => 'required|string|max:255',
-        //     'scheduled_by' => 'required|exists:users,id',
-        //     'tanggal_dijadwalkan' => 'required|date|after_or_equal:today',
-        //     'tanggal_dimulai' => 'nullable|date|after_or_equal:tanggal_dijadwalkan',
-        //     'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_dimulai',
-        //     'status' => 'required|in:draft,dijadwalkan,selesai',
-        //     'catatan' => 'nullable|string',
-        // ], [
-        //     'nama.required' => 'Nama sesi wajib diisi.',
-        //     'scheduled_by.required' => 'User penjadwal wajib dipilih.',
-        //     'scheduled_by.exists' => 'User penjadwal tidak ditemukan.',
-        //     'tanggal_dijadwalkan.required' => 'Tanggal dijadwalkan wajib diisi.',
-        //     'tanggal_dijadwalkan.after_or_equal' => 'Tanggal dijadwalkan harus hari ini atau setelahnya.',
-        //     'status.in' => 'Status tidak valid.',
-        // ]);
-        // StockOpnameSession::create($validated);
-
-        // return redirect()->route('opname.index')
-        //     ->with('success', 'Sesi stock opname berhasil ditambahkan.');
     }
 
     /**
@@ -151,11 +117,8 @@ class StockOpnameController extends Controller
     {
         // Gunakan $opname karena route model binding
         $opname->load(['details', 'scheduler']); // Eager load relasi untuk efisiensi
-        // $stockOpnameSession = StockOpnameSession::with(['details', 'scheduler']);
-        // dd($stockOpnameSession);
         return view('opname.institution.show', compact('opname'));
-        // $stockOpnameSession->load(['scheduler', 'details']);
-        // return view('stock-opname-sessions.show', compact('stockOpnameSession'));
+
     }
 
     /**
@@ -209,16 +172,15 @@ class StockOpnameController extends Controller
                 ->with('error', 'Gagal menghapus sesi stock opname.');
         }
     }
-    public function start(StockOpnameSession $stockOpnameSession)
+    public function start(StockOpnameSession $opname)
     {
-        if ($stockOpnameSession->status !== 'pending') {
+        if ($opname->status !== 'draft') {
             return redirect()->back()
-                ->with('error', 'Sesi hanya bisa dimulai jika statusnya pending.');
+                ->with('error', 'Sesi hanya bisa dimulai jika statusnya draft.');
         }
 
-        $stockOpnameSession->update([
-            'status' => 'ongoing',
-            'tanggal_dimulai' => now(),
+        $opname->update([
+            'status' => 'dijadwalkan',
         ]);
 
         return redirect()->back()->with('success', 'Sesi stock opname berhasil dimulai.');

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('aset_id')->constrained('aset')->cascadeOnDelete();
             $table->integer('jumlah_sistem');
             $table->integer('jumlah_fisik');
+            $table->enum('status_lama', ['tersedia','dipakai','rusak','hilang','habis'])->default('hilang');
             $table->enum('status_fisik', ['tersedia','dipakai','rusak','hilang','habis'])->default('hilang');
             // $table->foreign('checked_by')->references('id')->on('users')->onDelete('cascade'); //foreign key id user yang melakukan opname
             $table->foreignId('checked_by')->constrained('users')->cascadeOnDelete();

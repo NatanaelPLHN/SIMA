@@ -17,7 +17,8 @@
                             <label for="tanggal_dijadwalkan"
                                 class="text-sm font-medium text-gray-700">tanggal_dijadwalkan</label>
                             <input type="date" id="tanggal_dijadwalkan" name="tanggal_dijadwalkan"
-                                class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            min="{{ date('Y-m-d') }}"
+                            class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
 
                         <div class="w-full md:w-2/5">
