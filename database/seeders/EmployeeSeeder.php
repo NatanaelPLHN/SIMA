@@ -22,7 +22,7 @@ class EmployeeSeeder extends Seeder
             'nama' => 'Siti Aminah',
             'alamat' => 'Jl. Mawar No.8',
             'telepon' => '08129876543',
-            'department_id' => 2,
+            'department_id' => 1,
         ]);
 
         $k3 = Employee::create([
@@ -30,12 +30,19 @@ class EmployeeSeeder extends Seeder
             'nama' => 'Anandita Agung',
             'alamat' => 'Jl. Perjuangan',
             'telepon' => '085865748901',
-            'department_id' => 1, 
+            'department_id' => 1,
+        ]);
+        $k4 = Employee::create([
+            'nip' => '19800203004',
+            'nama' => 'Asep',
+            'alamat' => 'Jl. Perjuangan',
+            'telepon' => '085865748901',
+            'department_id' => 2,
         ]);
 
         // Update Kepala Bidang
         $k1->department->update(['kepala_bidang_id' => $k1->id]);
-        $k2->department->update(['kepala_bidang_id' => $k2->id]);
         $k3->department->update(['kepala_bidang_id' => $k3->id]);
+        $k4->department->update(['kepala_bidang_id' => $k2->id]);
     }
 }

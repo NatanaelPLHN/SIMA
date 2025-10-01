@@ -41,6 +41,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.opname.index') }}"
+                        class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
+                        {{-- icon --}}
+                        {{-- <i class="fas fa-clipboard-list mr-2"></i> --}}
+                        Stock Opname
+                    </a>
+                </li>
+                <li>
                     <a href="#"
                         class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                         {{-- <i class="fas fa-handshake mr-2"></i> --}}

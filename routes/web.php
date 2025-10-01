@@ -15,7 +15,8 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\SuperAdminDashboardController;
 use App\Http\Controllers\SubAdminDashboardController;
 use App\Http\Controllers\StockOpnameController;
-// use App\Http\Controllers\StockOpnameDetail;
+use App\Http\Controllers\StockOpnameDepartmentController;
+// use App\Http\Controllers\StockOpname;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -75,6 +76,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
     Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
+    Route::resource('opname', controller: StockOpnameDepartmentController::class);
+    Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
+
 });
 
 

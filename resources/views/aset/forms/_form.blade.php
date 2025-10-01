@@ -33,7 +33,7 @@
     {{-- Grup Kategori --}}
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Grup Kategori</label>
-        @if(Route::is('admin.assets.edit'))
+        @if (Route::is('admin.assets.edit'))
             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                 {{ $asset->category->CategoryGroup->nama ?? '-' }}
             </div>
@@ -42,10 +42,10 @@
             <select id="category_group_id" name="category_group_id"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">-- Pilih Grup --</option>
-            @foreach($groupCategories as $group)
-            <option value="{{ $group->id }}">{{ $group->nama }}</option>
-            @endforeach
-</select>
+                @foreach ($groupCategories as $group)
+                    <option value="{{ $group->id }}">{{ $group->nama }}</option>
+                @endforeach
+            </select>
 
         @endif
     </div>
@@ -53,16 +53,18 @@
     {{-- Kategori --}}
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-        @if(Route::is('admin.assets.edit'))
+        @if (Route::is('admin.assets.edit'))
             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                 {{ $asset->category->nama ?? '-' }}
             </div>
             <input type="hidden" name="category_id" value="{{ $asset->category_id }}">
         @else
-            <select id="category_id" name="category_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <select id="category_id" name="category_id"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">-- Pilih Kategori --</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}" {{ old('category_id', $asset->category_id ?? '') == $cat->id ? 'selected' : '' }}>
+                @foreach ($categories as $cat)
+                    <option value="{{ $cat->id }}"
+                        {{ old('category_id', $asset->category_id ?? '') == $cat->id ? 'selected' : '' }}>
                         {{ $cat->nama }}
                     </option>
                 @endforeach
@@ -84,14 +86,17 @@
         <select id="status" name="status"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('status') ? 'border-red-500' : '' }}">
             <option value="">Pilih Status</option>
-            <option value="tersedia" {{ old('status', $asset->status ?? '') === 'tersedia' ? 'selected' : '' }}>Tersedia
+            <option value="tersedia" {{ old('status', $asset->status ?? '') === 'tersedia' ? 'selected' : '' }}>
+                Tersedia
             </option>
             <option value="dipakai" {{ old('status', $asset->status ?? '') === 'dipakai' ? 'selected' : '' }}>Dipakai
             </option>
-            <option value="rusak" {{ old('status', $asset->status ?? '') === 'rusak' ? 'selected' : '' }}>Rusak</option>
+            <option value="rusak" {{ old('status', $asset->status ?? '') === 'rusak' ? 'selected' : '' }}>Rusak
+            </option>
             <option value="hilang" {{ old('status', $asset->status ?? '') === 'hilang' ? 'selected' : '' }}>Hilang
             </option>
-            <option value="habis" {{ old('status', $asset->status ?? '') === 'habis' ? 'selected' : '' }}>Habis</option>
+            <option value="habis" {{ old('status', $asset->status ?? '') === 'habis' ? 'selected' : '' }}>Habis
+            </option>
         </select>
         @error('status')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -123,7 +128,7 @@
 
 {{-- Script untuk filter kategori berdasarkan grup --}}
 <script>
-    document.getElementById('category_group_id').addEventListener('change', function () {
+    document.getElementById('category_group_id').addEventListener('change', function() {
         let groupId = this.value;
         let categorySelect = document.getElementById('category_id');
         categorySelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';

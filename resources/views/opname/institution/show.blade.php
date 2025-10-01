@@ -14,20 +14,21 @@
                     <div class="text-sm">Tanggal Buat: {{ $opname->tanggal_dijadwalkan }}</div>
                     <div class="text-sm">Status: {{ $opname->status }}</div>
                 </div>
-                    @if ($opname->status == 'draft')
-                    <form id="start-form" action="{{ route('superadmin.opname.start', $opname->id) }}" method="POST" enctype="multipart/form-data" class="contents">
+                @if ($opname->status == 'draft')
+                    <form id="start-form" action="{{ route('superadmin.opname.start', $opname->id) }}" method="POST"
+                        enctype="multipart/form-data" class="contents">
                         @csrf
                         <div class="w-full md:w-1/3">
                             <label for="catatan" class="text-sm font-medium text-white">Catatan</label>
                             <input type="text" id="catatan" name="catatan"
                                 class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
-                            <button type="submit"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Jadwalkan
-                            </button>
-                        </form>
-                    @endif
+                        <button type="submit"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Jadwalkan
+                        </button>
+                    </form>
+                @endif
 
 
             </div>
@@ -72,9 +73,9 @@
                                 <td class="px-4 py-3 text-sm text-gray-900">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if ($detail->status_lama == 'tersedia') bg-green-100 text-green-800 @endif
-                                @if ($detail->status_lama == 'tidak ditemukan') bg-red-100 text-red-800 @endif
-                                @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif">
+                                        @if ($detail->status_lama == 'tersedia') bg-green-100 text-green-800 @endif
+                                        @if ($detail->status_lama == 'tidak ditemukan') bg-red-100 text-red-800 @endif
+                                        @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif">
                                         {{ ucfirst($detail->status_lama) }}
                                     </span>
 
@@ -105,7 +106,6 @@
                             @endif
                         </tr>
                     @endforeach
-
                 </tbody>
             </table>
         </div>
