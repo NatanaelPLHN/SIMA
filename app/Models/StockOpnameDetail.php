@@ -12,12 +12,12 @@ class StockOpnameDetail extends Model
     protected $table = 'stock_opname_details';
 
     protected $fillable = [
-        'stock_opname_id',
         'aset_id',
         'jumlah_sistem',
         'jumlah_fisik',
         'status_fisik',
         'checked_by',
+        'stock_opname_id',
         // 'user_id',
     ];
 

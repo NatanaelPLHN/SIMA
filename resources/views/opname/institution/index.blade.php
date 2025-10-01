@@ -76,19 +76,17 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @foreach ($sessions as $index => $session)
                 <tr>
+                    {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session }}</td> --}}
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
-                    {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session->scheduler->employee->department->nama }}</td> --}}
                     <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->departement->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td>
-                    {{-- <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()->jumlah_sistem }}</td> --}}
-                    {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session->details?->asset?->departement?->nama? }}</td> --}}
 
                     <td class="px-4 py-3 text-sm">
                         <div class="flex space-x-2">
-                            <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="/show"></a>
+                            <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="{{ route('superadmin.opname.show', $session->id) }}"></a>
                         </div>
                     </td>
                 </tr>

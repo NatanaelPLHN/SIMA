@@ -109,7 +109,6 @@ class AssetsController extends Controller
             if (!file_exists(dirname($fullPath))) {
                 mkdir(dirname($fullPath), 0755, true);
             }
-            // route('superadmin.assets.show', $assetBergerak->id)
             QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
             $assetBergerak->update(['qr_code_path' => $qrCodePath]);
         }

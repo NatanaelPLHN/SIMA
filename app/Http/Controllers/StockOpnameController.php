@@ -147,12 +147,13 @@ class StockOpnameController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(StockOpnameSession $stockOpnameSession)
+    public function show(StockOpnameSession $opname)
     {
         // Gunakan $opname karena route model binding
-        $stockOpnameSession->load('details.asset', 'scheduler'); // Eager load relasi untuk efisiensi
-
-        return view('opname.institution.show', compact('stockOpnameSession'));
+        $opname->load(['details', 'scheduler']); // Eager load relasi untuk efisiensi
+        // $stockOpnameSession = StockOpnameSession::with(['details', 'scheduler']);
+        // dd($stockOpnameSession);
+        return view('opname.institution.show', compact('opname'));
         // $stockOpnameSession->load(['scheduler', 'details']);
         // return view('stock-opname-sessions.show', compact('stockOpnameSession'));
     }
