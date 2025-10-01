@@ -14,6 +14,7 @@ class StockOpnameSession extends Model
     protected $fillable = [
         'nama',
         'scheduled_by',
+        'departement_id',
         'tanggal_dijadwalkan',
         'tanggal_dimulai',
         'tanggal_selesai',
@@ -27,6 +28,11 @@ class StockOpnameSession extends Model
     public function scheduler()
     {
         return $this->belongsTo(User::class, 'scheduled_by');
+    }
+
+    public function departement()
+    {
+        return $this->belongsTo(Departement::class, 'departement_id');
     }
 
     // All details of assets checked in this opname

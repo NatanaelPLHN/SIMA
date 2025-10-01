@@ -81,7 +81,7 @@
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->departement->nama }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->departement->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td>
 

@@ -36,4 +36,10 @@ class Departement extends Model
     {
         return $this->hasMany(Employee::class, 'department_id');
     }
+
+    // Relasi dengan Karyawan (Anggota Bidang)
+    public function opnameSession()
+    {
+        return $this->hasMany(StockOpnameSession::class, 'departement_id');
+    }
 }

@@ -71,6 +71,7 @@ class StockOpnameController extends Controller
         $session = StockOpnameSession::create([
             'nama' => 'Opname ' . $departement->nama . ' - ' . $categoryGroup->nama . ' (' . $request->tanggal_dijadwalkan . ')',
             'scheduled_by' => $user->id,
+            'departement_id' => $request->departement_id,
             'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
             'status' => 'draft',
             'catatan' => '',
@@ -86,12 +87,10 @@ class StockOpnameController extends Controller
             })
             ->get();
 
-
             if ($assetsToOpname->isEmpty()) {
             $session->delete(); // Hapus sesi yang kosong
             return back()->with('info', 'Tidak ada aset yang ditemukan untuk departemen dan grup kategori yang dipilih.')->withInput();
         }
-
 
         foreach ($assetsToOpname as $asset) {
             // Di sini kita membuat baris baru di tabel stock_opname_details
@@ -186,7 +185,7 @@ class StockOpnameController extends Controller
 
         $opname->update([
             'status' => 'dijadwalkan',
-            'catatan' => $request->catatan ?? 'Stock opname untuk ' . 'nama departeent',
+            'catatan' => $request->catatan ?? 'Stock opname untuk ' . $opname->departement->nama,
 
         ]);
 
