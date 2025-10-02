@@ -1,6 +1,8 @@
 @csrf
 @php
     $categories = $categories ?? collect();
+    // Menentukan jenis aset saat ini, baik dari mode edit ($asset) atau mode create ($jenis_aset)
+    $current_jenis_aset = $asset->jenis_aset ?? ($jenis_aset ?? '');
 @endphp
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {{-- Nama Aset --}}
@@ -73,14 +75,14 @@
 
     </div>
 </div>
-<input type="hidden" name="jumlah" value="1">
+{{-- <input type="hidden" name="jumlah" value="1"> --}}
 
 {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
 </div> --}}
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
+    {{-- <div>
         <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status <span
                 class="text-red-500">*</span></label>
         <select id="status" name="status"
@@ -101,7 +103,34 @@
         @error('status')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
-    </div>
+    </div> --}}
+    @if (in_array($current_jenis_aset, ['bergerak', 'tidak_bergerak']))
+        <div>
+            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status <span
+                    class="text-red-500">*</span></label>
+            <select id="status" name="status" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="">Pilih Status</option>
+                <option value="tersedia" {{ old('status', $asset->status ?? '') == 'tersedia' ? 'selected' : '' }}>
+                    Tersedia</option>
+                <option value="dipakai" {{ old('status', $asset->status ?? '') == 'dipakai' ? 'selected' : '' }}>
+                    Dipakai</option>
+                <option value="rusak" {{ old('status', $asset->status ?? '') == 'rusak' ? 'selected' : '' }}>Rusak
+                </option>
+                <option value="hilang" {{ old('status', $asset->status ?? '') == 'hilang' ? 'selected' : '' }}>Hilang
+                </option>
+            </select>
+        </div>
+    @elseif($current_jenis_aset === 'habis_pakai')
+        <div>
+            <label for="jumlah" class="block text-sm font-medium text-gray-700 mb-1">Jumlah<span
+                    class="text-red-500">*</span></label>
+            <input type="number" id="jumlah" name="jumlah" min="0"
+                value="{{ old('jumlah', $asset->jumlah ?? '1') }}" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+    @endif
+
 
     <div>
         <label for="tgl_pembelian" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Pembelian<span
@@ -146,4 +175,94 @@
                 });
         }
     });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     let jenisAset;
+    //     const statusSelect = document.getElementById('status');
+    //     const jumlahContainer = document.getElementById('jumlah-container');
+    //     const jumlahInput = document.getElementById('jumlah');
+    //     const form = statusSelect.closest('form');
+
+    //     // Cek apakah kita di halaman edit atau create
+    //     @if (isset($asset))
+    //         // Mode Edit: Ambil jenis aset dari variabel $asset
+    //         jenisAset = @json($asset->jenis_aset);
+    //     @else
+    //         // Mode Create: Ambil dari input tersembunyi
+    //         const jenisAsetInput = document.querySelector('input[name="jenis_aset"]');
+    //         if (jenisAsetInput) {
+    //             jenisAset = jenisAsetInput.value;
+    //         }
+    //     @endif
+
+    //     const statusOptions = {
+    //         bergerak: ['tersedia', 'dipakai', 'rusak', 'hilang'],
+    //         tidak_bergerak: ['tersedia', 'dipakai', 'rusak', 'hilang'],
+    //         habis_pakai: ['tersedia', 'habis']
+    //     };
+
+    //     // Ambil status saat ini (untuk mode edit)
+    //     const currentStatus = @json(old('status', $asset->status ?? ''));
+
+    //     function updateForm() {
+    //         if (!jenisAset) return;
+
+    //         // Kosongkan opsi status
+    //         statusSelect.innerHTML = '<option value="">Pilih Status</option>';
+
+    //         // Isi opsi status berdasarkan jenis aset
+    //         const options = statusOptions[jenisAset] || [];
+    //         options.forEach(status => {
+    //             const option = document.createElement('option');
+    //             option.value = status;
+    //             option.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+    //             // Jika status ini adalah status yang sedang aktif, pilih opsi ini
+    //             if (option.value === currentStatus) {
+    //                 option.selected = true;
+    //             }
+
+    //             statusSelect.appendChild(option);
+    //         });
+
+    //         if (jenisAset === 'habis_pakai') {
+    //             jumlahContainer.style.display = 'block';
+    //             jumlahInput.setAttribute('name', 'jumlah');
+    //         } else {
+    //             jumlahContainer.style.display = 'none';
+    //             jumlahInput.removeAttribute('name');
+    //         }
+    //     }
+
+    //     // Event listener untuk form submission
+    //     form.addEventListener('submit', function(e) {
+    //         if (jenisAset === 'bergerak' || jenisAset === 'tidak_bergerak') {
+    //             // Hapus jika ada input jumlah sebelumnya untuk menghindari duplikasi
+    //             const existingJumlah = form.querySelector('input[name="jumlah"]');
+    //             if (existingJumlah) {
+    //                 existingJumlah.remove();
+    //             }
+
+    //             // Buat input hidden untuk jumlah
+    //             const hiddenJumlah = document.createElement('input');
+    //             hiddenJumlah.type = 'hidden';
+    //             hiddenJumlah.name = 'jumlah';
+    //             hiddenJumlah.value = (statusSelect.value === 'hilang') ? 0 : 1;
+    //             form.appendChild(hiddenJumlah);
+
+    //         } else if (jenisAset === 'habis_pakai') {
+    //             // Atur status berdasarkan jumlah
+    //             const jumlahValue = parseInt(jumlahInput.value, 10);
+    //             if (jumlahValue === 0) {
+    //                 // Cari opsi 'habis' dan pilih
+    //                 Array.from(statusSelect.options).find(o => o.value === 'habis').selected = true;
+    //             } else if (jumlahValue > 0) {
+    //                 // Cari opsi 'tersedia' dan pilih
+    //                 Array.from(statusSelect.options).find(o => o.value === 'tersedia').selected = true;
+    //             }
+    //         }
+    //     });
+
+    //     // Panggil fungsi saat halaman dimuat
+    //     updateForm();
+    // });
 </script>

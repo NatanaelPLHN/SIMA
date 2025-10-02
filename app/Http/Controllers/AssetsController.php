@@ -51,11 +51,11 @@ class AssetsController extends Controller
             'nama_aset' => 'required',
             'jenis_aset' => 'required|in:bergerak,tidak_bergerak,habis_pakai',
             'category_id' => 'required|exists:categories,id',
-            'jumlah' => 'required|integer|min:1',
+            'jumlah' => 'nullable|integer|min:0',
             'tgl_pembelian' => 'required|date|before_or_equal:today',
             'nilai_pembelian' => 'required|numeric|min:0',
             'lokasi_terakhir' => 'required|string',
-            'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
+            'status' => 'nullable|in:tersedia,dipakai,rusak,hilang,habis',
             'nomor_serial' => 'nullable|required_if:jenis_aset,bergerak|unique:aset_bergerak,nomor_serial',
         ], [
             'kode.unique' => 'Kode aset sudah digunakan.',
@@ -67,7 +67,14 @@ class AssetsController extends Controller
             'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
             'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
         ]);
-
+        // LOGIKA BARU SESUAI JENIS ASET
+        if ($validated['jenis_aset'] === 'habis_pakai') {
+            // Jika jumlah 0, statusnya 'habis', selain itu 'tersedia'
+            $validated['status'] = ($validated['jumlah'] == 0) ? 'habis' : 'tersedia';
+        } else { // Untuk 'bergerak' dan 'tidak_bergerak'
+            // Jika status 'hilang', jumlahnya 0, selain itu 1
+            $validated['jumlah'] = ($request->status === 'hilang') ? 0 : 1;
+        }
         $user = auth()->user();
 
         $institutionAlias = $user->employee?->department?->institution?->alias;
@@ -191,13 +198,19 @@ class AssetsController extends Controller
         $validated = $request->validate([
             'nama_aset' => 'required',
             'category_id' => 'required|exists:categories,id',
-            'jumlah' => 'required|integer|min:1',
+            'jumlah' => 'nullable|integer|min:0',
             'tgl_pembelian' => 'nullable|date',
             'nilai_pembelian' => 'nullable|numeric',
             'lokasi_terakhir' => 'nullable|string',
-            'status' => 'required|in:tersedia,dipakai,rusak,hilang,habis',
+            'status' => 'nullable|in:tersedia,dipakai,rusak,hilang,habis',
         ]);
-
+        // LOGIKA BARU SESUAI JENIS ASET
+        if ($asset->jenis_aset === 'habis_pakai') {
+            $validated['status'] = ($request->jumlah == 0) ? 'habis' :
+                'tersedia';
+        } else { // Untuk 'bergerak' dan 'tidak_bergerak'
+            $validated['jumlah'] = ($request->status === 'hilang') ? 0 : 1;
+        }
         $original = $asset->replicate();
         $asset->fill($validated);
         if (!$asset->isDirty()) {
@@ -240,7 +253,7 @@ class AssetsController extends Controller
 
         return redirect()->route(match (auth()->user()->role) {
             'superadmin' => 'superadmin.assets.index',
-            // 'admin'      => 'admin.assets.index',
+            'admin'      => 'admin.assets.index',
             // 'user'       => 'user.assets.index', //user gak ada
             default      => 'login',
         })->with('success', 'Aset berhasil diperbarui.');

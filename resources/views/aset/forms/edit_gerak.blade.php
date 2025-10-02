@@ -5,11 +5,11 @@
 @section('content')
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
             @if (auth()->user()->role == 'superadmin')
-                <form id="asset-form" action="{{ route('superadmin.assets.store') }}" method="POST" enctype="multipart/form-data"
+                <form id="asset-form" action="{{ route('superadmin.assets.update',$asset->id) }}" method="POST" enctype="multipart/form-data"
             @endif
 
             @if (auth()->user()->role == 'admin')
-                <form id="asset-form" action="{{ route('admin.assets.store') }}" method="POST" enctype="multipart/form-data"
+                <form id="asset-form" action="{{ route('admin.assets.update',$asset->id) }}" method="POST" enctype="multipart/form-data"
             @endif
             class="grid grid-cols-1 md:grid-cols gap-6">
             @csrf

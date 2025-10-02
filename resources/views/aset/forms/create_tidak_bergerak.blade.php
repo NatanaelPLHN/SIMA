@@ -15,7 +15,8 @@
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Left Column -->
 
-            @include('aset.forms._form')
+            {{-- @include('aset.forms._form') --}}
+            @include('aset.forms._form', ['jenis_aset' => 'tidak_bergerak'])
 
             <!-- Hidden field: jenis_aset -->
             <input type="hidden" name="jenis_aset" value="tidak_bergerak">
