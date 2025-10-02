@@ -36,7 +36,6 @@
                         Selesai
                     </button>
                 @endif
-                {{-- ... (kode search input di sini) ... --}}
             </div>
 
             <!-- Data Table -->
@@ -97,7 +96,8 @@
                                             {{-- ID unik untuk setiap select, penting untuk label jika ada --}}
                                             <select id="status_fisik_{{ $detail->id }}"
                                                 name="statuses[{{ $detail->id }}]"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
                                                 <option value="">Pilih Status</option>
                                                 {{-- Menampilkan status yang sudah ada sebagai pilihan default --}}
                                                 <option value="tersedia"
@@ -173,11 +173,60 @@ flex items-center justify-center z-50 hidden">
             modal.classList.remove('hidden');
             html5QrCode = new Html5Qrcode("qr-reader");
             const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                //   alert(QR Code terdeteksi: ${decodedText});
-                alert('QR Code terdeteksi: ' + decodedText);
+                console.log(QR Code terdeteksi: $ {
+                    decodedText
+                });
+
+                try {
+                    // 1. Buat objek URL untuk mempermudah parsing
+                    const url = new URL(decodedText);
+
+                    // 2. Ambil path dari URL (misal: /verify/asset/DinKes-BiKes-1-1-2)
+                    const path = url.pathname;
+
+                    // 3. Pisahkan path berdasarkan '/' dan ambil bagian terakhir
+                    const pathParts = path.split('/');
+                    const assetCode = pathParts[pathParts.length - 1];
+
+                    // 4. Cari elemen input search
+                    const searchInput = document.getElementById('search-opname');
+
+                    if (searchInput && assetCode) {
+                        // 5. Masukkan kode aset ke dalam input search
+                        searchInput.value = assetCode;
+
+                        // 6. (Opsional) Secara otomatis picu event 'input' agar filter berjalan jika ada
+                        searchInput.dispatchEvent(new Event('input', {
+                            bubbles: true
+                        }));
+
+                        // Beri notifikasi singkat (lebih baik dari alert)
+                        alert(Aset dengan kode $ {
+                                assetCode
+                            }
+                            ditemukan dan dimasukkan ke pencarian.);
+                    } else {
+                        alert('Input pencarian tidak ditemukan atau kode aset tidak valid.');
+                    }
+
+                } catch (e) {
+                    // Jika decodedText bukan URL yang valid, anggap saja itu adalah kodenya langsung
+                    console.warn("Hasil scan bukan URL yang valid, menggunakan teks mentah:", decodedText);
+                    const searchInput = document.getElementById('search-opname');
+                    if (searchInput) {
+                        searchInput.value = decodedText;
+                        searchInput.dispatchEvent(new Event('input', {
+                            bubbles: true
+                        }));
+                        alert(Kode $ {
+                                decodedText
+                            }
+                            dimasukkan ke pencarian.);
+                    }
+                }
+
+                // 7. Hentikan pemindaian dan tutup modal
                 stopScanning();
-                // Anda bisa menambahkan logika lain di sini,
-                // misalnya mengirim hasil scan ke server via fetch/axios
             };
             const config = {
                 fps: 10,
