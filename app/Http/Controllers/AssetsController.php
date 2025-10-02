@@ -84,7 +84,7 @@ class AssetsController extends Controller
         $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
         $categoryAlias       = $category->id; // category alias = ID
 
-        $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias]);
+        $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias, str(mt_rand(1, 999)),]);
 
         $departement_id = $user->employee?->department?->id;
         $validated['departement_id'] = $departement_id;
@@ -93,7 +93,8 @@ class AssetsController extends Controller
                 $institutionAlias,
                 $departmentAlias,
                 $categoryGroupAlias,
-                $categoryAlias
+                $categoryAlias,
+                str(mt_rand(1, 999)),
             ]);
         } while (Asset::where('kode', $kode)->exists());
 
