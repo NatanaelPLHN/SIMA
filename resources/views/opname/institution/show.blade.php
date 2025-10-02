@@ -74,8 +74,10 @@
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                         @if ($detail->status_lama == 'tersedia') bg-green-100 text-green-800 @endif
-                                        @if ($detail->status_lama == 'tidak ditemukan') bg-red-100 text-red-800 @endif
-                                        @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif">
+                                        @if ($detail->status_lama == 'dipakai') bg-green-100 text-green-800 @endif
+                                        @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif
+                                        @if ($detail->status_lama == 'habis') bg-red-100 text-red-800 @endif
+                                        @if ($detail->status_lama == 'hilang') bg-red-100 text-red-800 @endif">
                                         {{ ucfirst($detail->status_lama) }}
                                     </span>
 
@@ -83,24 +85,26 @@
                                 <td class="px-4 py-3 text-sm text-gray-900">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if ($detail->status_baru == 'tersedia') bg-green-100 text-green-800 @endif
-                                @if ($detail->status_baru == 'tidak ditemukan') bg-red-100 text-red-800 @endif
-                                @if ($detail->status_baru == 'rusak') bg-yellow-100 text-yellow-800 @endif">
-                                        {{ ucfirst($detail->status_baru) }}
+                                @if ($detail->status_fisik == 'tersedia') bg-green-100 text-green-800 @endif
+                                @if ($detail->status_fisik == 'dipakai') bg-green-100 text-green-800 @endif
+                                @if ($detail->status_fisik == 'rusak') bg-yellow-100 text-yellow-800 @endif
+                                @if ($detail->status_fisik == 'habis') bg-red-100 text-red-800 @endif
+                                @if ($detail->status_fisik == 'hilang') bg-red-100 text-red-800 @endif">
+                                        {{ ucfirst($detail->status_fisik) }}
                                     </span>
 
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-900">
-                                    {{ $detail->jumlah_fisik - $detail->jumlah_fisik }}
+                                    {{ $detail->jumlah_fisik - $detail->jumlah_sistem }}
                                 </td>
                             @else
                                 <td class="px-4 py-3 text-sm text-gray-900">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if ($detail->status_fisik == 'tersedia') bg-green-100 text-green-800 @endif
-                                @if ($detail->status_fisik == 'tidak ditemukan') bg-red-100 text-red-800 @endif
-                                @if ($detail->status_fisik == 'rusak') bg-yellow-100 text-yellow-800 @endif">
-                                        {{ ucfirst($detail->status_fisik) }}
+                                @if ($detail->status_lama == 'tersedia') bg-green-100 text-green-800 @endif
+                                @if ($detail->status_lama == 'tidak ditemukan') bg-red-100 text-red-800 @endif
+                                @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif">
+                                        {{ ucfirst($detail->status_lama) }}
                                     </span>
                                 </td>
                             @endif
