@@ -85,8 +85,9 @@
                                 @if ($detail->asset->jenis_aset == 'bergerak' || $detail->asset->jenis_aset == 'tidak_bergerak')
                                     {{-- <td class="px-4 py-3 text-sm text-gray-900"> --}}
 
-                                        {{-- harus dibuat agar jumlah fisik berdasarkan status  --}}
-                                    <input type="hidden" name="jumlah_fisik[{{ $detail->id }}]" value="1" class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm" readonly>
+                                    {{-- harus dibuat agar jumlah fisik berdasarkan status  --}}
+                                    {{-- <input type="hidden" name="jumlah_fisik[{{ $detail->id }}]" value="1"
+                                        class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm" readonly> --}}
                                     {{-- </td> --}}
                                     <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->status_lama ?? '-' }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-900">
@@ -108,8 +109,8 @@
                                                 <option value="hilang"
                                                     {{ $detail->status_fisik == 'hilang' ? 'selected' : '' }}>Hilang
                                                 </option>
-                                                <option value="habis"
-                                                    {{ $detail->status_fisik == 'habis' ? 'selected' : '' }}>Habis</option>
+                                                {{-- <option value="habis"
+                                                    {{ $detail->status_fisik == 'habis' ? 'selected' : '' }}>Habis</option> --}}
                                             </select>
                                         </div>
                                     </td>
@@ -118,10 +119,10 @@
                                     <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->jumlah_sistem }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-900">
                                         <input type="number" name="jumlah_fisik[{{ $detail->id }}]"
-                                            {{-- value="{{ $detail->jumlah_fisik ?? $detail->jumlah_sistem }}" --}}
+                                            value="{{ $detail->jumlah_fisik ?? $detail->jumlah_sistem }}"
                                             class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm">
-                                        {{-- Status untuk aset habis pakai bisa di-set otomatis di controller --}}
-                                        {{-- <input type="hidden" name="statuses[{{ $detail->id }}]" value="tersedia"> --}}
+                                        {{-- Kirim nilai kosong untuk status, karena akan di-handle di controller --}}
+                                        <input type="hidden" name="statuses[{{ $detail->id }}]" value="">
                                     </td>
                                     <td class="px-4 py-3 text-sm text-gray-900">
                                         {{-- Selisih bisa dihitung di backend atau via JS --}}
