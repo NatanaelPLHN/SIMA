@@ -35,7 +35,7 @@ class StockOpnameController extends Controller
 
         //   return view('opname.institution.create', compact('departements', 'categoryGroups'));
 
-        $sessions = StockOpnameSession::with(['scheduler','details'])
+        $sessions = StockOpnameSession::with(['scheduler', 'details'])
             ->latest()
             ->paginate(10);
         return view('opname.institution.index', compact('sessions', 'departements', 'categoryGroups'));
@@ -75,7 +75,7 @@ class StockOpnameController extends Controller
             'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
             'status' => 'draft',
             'catatan' => '',
-               ]);
+        ]);
         // Jika sesi gagal dibuat, hentikan proses.
         if (!$session) {
             return back()->with('error', 'Gagal membuat sesi stock opname.')->withInput();
@@ -87,7 +87,7 @@ class StockOpnameController extends Controller
             })
             ->get();
 
-            if ($assetsToOpname->isEmpty()) {
+        if ($assetsToOpname->isEmpty()) {
             $session->delete(); // Hapus sesi yang kosong
             return back()->with('info', 'Tidak ada aset yang ditemukan untuk departemen dan grup kategori yang dipilih.')->withInput();
         }
@@ -106,7 +106,6 @@ class StockOpnameController extends Controller
         }
 
         return redirect()->route('superadmin.opname.index')->with('success', 'Jadwal stock opname berhasil dibuat.');
-
     }
 
     /**
@@ -117,7 +116,6 @@ class StockOpnameController extends Controller
         // Gunakan $opname karena route model binding
         $opname->load(['details', 'scheduler']); // Eager load relasi untuk efisiensi
         return view('opname.institution.show', compact('opname'));
-
     }
 
     /**
@@ -153,7 +151,7 @@ class StockOpnameController extends Controller
 
         $stockOpnameSession->update($validated);
 
-        return redirect()->route('superadmin.stock-opname-sessions.index')
+        return redirect()->route('superadmin.opname.index')
             ->with('success', 'Sesi stock opname berhasil diperbarui.');
     }
 
@@ -164,10 +162,10 @@ class StockOpnameController extends Controller
     {
         try {
             $stockOpnameSession->delete();
-            return redirect()->route('superadmin.stock-opname-sessions.index')
+            return redirect()->route('superadmin.opname.index')
                 ->with('success', 'Sesi stock opname berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.stock-opname-sessions.index')
+            return redirect()->route('superadmin.opname.index')
                 ->with('error', 'Gagal menghapus sesi stock opname.');
         }
     }
@@ -205,16 +203,23 @@ class StockOpnameController extends Controller
 
         return redirect()->back()->with('success', 'Sesi stock opname berhasil diselesaikan.');
     }
-    public function cancel(StockOpnameSession $stockOpnameSession)
+    public function cancel(StockOpnameSession $opname)
     {
-        if ($stockOpnameSession->status === 'completed') {
-            return redirect()->back()
-                ->with('error', 'Sesi yang sudah selesai tidak bisa dibatalkan.');
+        if ($opname->status === 'draft') {
+            try {
+                $opname->delete();
+                return redirect()->route('superadmin.opname.index')
+                    ->with('success', 'Sesi stock opname berhasil dihapus.');
+            } catch (\Exception $e) {
+                return redirect()->route('superadmin.opname.index')
+                    ->with('error', 'Gagal menghapus sesi stock opname.');
+            }
+        } elseif ($opname->status === 'dijadwalkan') {
+            $opname->update([
+                'status' => 'cancelled',
+            ]);
         }
 
-        $stockOpnameSession->update([
-            'status' => 'cancelled',
-        ]);
 
         return redirect()->back()->with('success', 'Sesi stock opname berhasil dibatalkan.');
     }

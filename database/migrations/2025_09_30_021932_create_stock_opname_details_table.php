@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             // $table->foreign('stock_opname_id')->references('id')->on('stock_opname_sessions')->onDelete('cascade');
             $table->foreignId('stock_opname_id')->constrained('stock_opname_sessions')->cascadeOnDelete();
-            // $table->foreign('aset_id')->references('id')->on('aset')->onDelete('cascade');
+            // klo aset dihapus maka ini kehapus ga
             $table->foreignId('aset_id')->constrained('aset')->cascadeOnDelete();
             $table->integer('jumlah_sistem');
             $table->integer('jumlah_fisik');

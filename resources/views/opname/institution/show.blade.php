@@ -28,7 +28,17 @@
                             Jadwalkan
                         </button>
                     </form>
-                @endif
+                    @endif
+                    @if ($opname->status == 'draft' || $opname->status == 'dijadwalkan' )
+                    <form id="cancel-form" action="{{ route('superadmin.opname.cancel', $opname->id) }}" method="POST"
+                        enctype="multipart/form-data" class="contents">
+                        @csrf
+                        <button type="submit"
+                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Batalkan
+                        </button>
+                    </form>
+                    @endif
 
 
             </div>
