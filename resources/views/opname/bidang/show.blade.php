@@ -30,10 +30,12 @@
                 <label for="search-opname" class="text-sm font-medium text-gray-700">Cari:</label>
                 <input type="text" id="search-opname"
                     class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <button type="submit"
-                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                    Selesai
-                </button>
+                @if ($opname->status != 'selesai')
+                    <button type="submit"
+                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                        Selesai
+                    </button>
+                @endif
                 {{-- ... (kode search input di sini) ... --}}
             </div>
 
@@ -95,7 +97,7 @@
                                             {{-- ID unik untuk setiap select, penting untuk label jika ada --}}
                                             <select id="status_fisik_{{ $detail->id }}"
                                                 name="statuses[{{ $detail->id }}]"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
                                                 <option value="">Pilih Status</option>
                                                 {{-- Menampilkan status yang sudah ada sebagai pilihan default --}}
                                                 <option value="tersedia"
@@ -120,7 +122,8 @@
                                     <td class="px-4 py-3 text-sm text-gray-900">
                                         <input type="number" name="jumlah_fisik[{{ $detail->id }}]"
                                             value="{{ $detail->jumlah_fisik ?? $detail->jumlah_sistem }}"
-                                            class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm">
+                                            class="w-20 border border-gray-300 rounded-md px-2 py-1 text-sm"
+                                            {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
                                         {{-- Kirim nilai kosong untuk status, karena akan di-handle di controller --}}
                                         <input type="hidden" name="statuses[{{ $detail->id }}]" value="">
                                     </td>
