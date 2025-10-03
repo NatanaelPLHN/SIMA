@@ -74,8 +74,8 @@
                                     Jumlah Fisik
                                 </th>
                             @endif
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Selisih
-                            </th>
+                            {{-- <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Selisih
+                            </th> --}}
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -129,13 +129,12 @@
                                         {{-- Kirim nilai kosong untuk status, karena akan di-handle di controller --}}
                                         <input type="hidden" name="statuses[{{ $detail->id }}]" value="">
                                     </td>
-                                    <td class="px-4 py-3 text-sm text-gray-900">
-                                        {{-- Selisih bisa dihitung di backend atau via JS --}}
+                                    {{-- <td class="px-4 py-3 text-sm text-gray-900">
                                         -
-                                    </td>
+                                    </td> --}}
                                 @endif
 
-                                <td class="px-4 py-3 text-sm text-gray-900">selisih</td>
+                                {{-- <td class="px-4 py-3 text-sm text-gray-900">selisih</td> --}}
                             </tr>
                         @endforeach
                     </tbody>

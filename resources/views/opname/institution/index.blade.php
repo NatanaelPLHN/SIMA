@@ -33,6 +33,16 @@
                         </div>
 
                         <div class="w-full md:w-1/5">
+                            <label for="jenis_aset" class="text-sm font-medium text-gray-700">Kategori</label>
+                            <select id="jenis_aset" name="jenis_aset"
+                                class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Pilih Jenis Aset</option>
+                                    <option value="bergerak">Bergerak</option>
+                                    <option value="tidak_bergerak">Tidak Bergerak</option>
+                                    <option value="habis_pakai">Habis Pakai</option>
+                             </select>
+                        </div>
+                        {{-- <div class="w-full md:w-1/5">
                             <label for="category_group_id" class="text-sm font-medium text-gray-700">Kategori</label>
                             <select id="category_group_id" name="category_group_id"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -41,7 +51,7 @@
                                     <option value="{{ $group->id }}">{{ $group->nama }}</option>
                                 @endforeach
                              </select>
-                        </div>
+                        </div> --}}
                         <div class="w-full md:w-1/6 flex items-end">
                             <button type="submit"
                                 class="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
