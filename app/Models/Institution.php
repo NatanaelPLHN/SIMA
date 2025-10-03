@@ -18,9 +18,14 @@ class Institution extends Model
         'email',
         'alamat',
         'alias',
+        'kepala_instansi_id',
     ];
     public function departements()
     {
         return $this->hasMany(Departement::class, 'instansi_id');
+    }
+    public function kepala()
+    {
+        return $this->belongsTo(Employee::class, 'kepala_instansi_id');
     }
 }

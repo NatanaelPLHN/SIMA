@@ -19,7 +19,11 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->text('alamat')->nullable();
             $table->string('alias')->unique();
+            // $table->string('kepala_instansi')->nullable();
             $table->timestamps();
+
+
+            // $table->index(['kepala_instansi']);
         });
     }
 
