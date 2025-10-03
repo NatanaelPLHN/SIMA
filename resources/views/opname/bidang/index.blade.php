@@ -36,20 +36,23 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kategori</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Keterangan</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kategori
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Keterangan
+                        </th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($sessions as $index => $session)
-                        @if (($session->departement->id == $user->employee?->department?->id) && ($session->status != "draft"))
+                        @if ($session->departement->id == $user->employee?->department?->id && $session->status != 'draft')
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900">{{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">
+                                    {{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->catatan }}</td>
                                 {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td> --}}
                                 <td class="px-4 py-3 text-sm text-gray-900">
@@ -64,8 +67,19 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-sm">
-                                    <a href="{{ route('admin.opname.show', $session->id) }}" class="fas fa-edit text-yellow-600 hover:text-yellow-800">
-                                    </a>
+                                    {{-- <a href="{{ route('admin.opname.show', $session->id) }}" class="fas fa-edit text-yellow-600 hover:text-yellow-800">
+                                    </a> --}}
+                                    @if ($session->status == 'dijadwalkan')
+                                        <button type="button" class="start-opname-btn"
+                                            data-start-url="{{ route('admin.opname.startOpname', $session->id) }}"
+                                            data-show-url="{{ route('admin.opname.show', $session->id) }}">
+                                            <i class="fas fa-play text-green-600 hover:text-green-800"></i>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('admin.opname.show', $session->id) }}">
+                                            <i class="fas fa-eye text-blue-600 hover:text-blue-800"></i>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endif
@@ -76,3 +90,68 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    {{-- PERUBAHAN 2: Menambahkan JavaScript untuk SweetAlert --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButtons = document.querySelectorAll('.start-opname-btn');
+
+            startButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    const startUrl = this.dataset.startUrl;
+                    const showUrl = this.dataset.showUrl;
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content');
+
+                    Swal.fire({
+                        title: 'Mulai Stock Opname?',
+                        text: "Sesi ini akan ditandai sebagai 'proses' dan tidak dapat dibatalkan.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Mulai!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(startUrl, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken,
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    }
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        // Jika berhasil, arahkan ke halaman show
+                                        window.location.href = showUrl;
+                                    } else {
+                                        // Jika gagal, tampilkan pesan error
+                                        response.json().then(data => {
+                                            Swal.fire(
+                                                'Gagal!',
+                                                data.message ||
+                                                'Terjadi kesalahan saat memulai sesi.',
+                                                'error'
+                                            );
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Fetch Error:', error);
+                                    Swal.fire(
+                                        'Error!',
+                                        'Tidak dapat terhubung ke server.',
+                                        'error'
+                                    );
+                                });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+@endpush
