@@ -20,22 +20,24 @@
                         <div class="text-sm">Status: {{ $opname->status }}</div>
                         <div class="text-sm">Catatan: {{ $opname->catatan }}</div>
                     </div>
-                    <button id="scan-qr-button"
-                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                        Scan QR
-                    </button>
+                    @if ($opname->status != 'selesai')
+                        <button type="submit"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Selesai
+                        </button>
+                    @endif
+
+
                 </div>
             </div>
             <div class="my-4">
                 <label for="search-opname" class="text-sm font-medium text-gray-700">Cari:</label>
                 <input type="text" id="search-opname"
                     class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                @if ($opname->status != 'selesai')
-                    <button type="submit"
-                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                        Selesai
-                    </button>
-                @endif
+                <button type="button" id="scan-qr-button"
+                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                    Scan QR
+                </button>
             </div>
 
             <!-- Data Table -->
@@ -155,120 +157,119 @@ flex items-center justify-center z-50 hidden">
             </button>
         </div>
     </div>
-
-
-
 @endsection
-{{-- @push('scripts') --}}
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const scanButton = document.getElementById('scan-qr-button');
-        const closeModalButton = document.getElementById('close-modal-button');
-        const modal = document.getElementById('qr-scanner-modal');
-        let html5QrCode;
 
-        // Fungsi untuk memulai pemindaian
-        function startScanning() {
-            modal.classList.remove('hidden');
-            html5QrCode = new Html5Qrcode("qr-reader");
-            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                console.log(QR Code terdeteksi: $ {
-                    decodedText
-                });
+@push('scripts')
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scanButton = document.getElementById('scan-qr-button');
+            const closeModalButton = document.getElementById('close-modal-button');
+            const modal = document.getElementById('qr-scanner-modal');
+            let html5QrCode;
 
-                try {
-                    // 1. Buat objek URL untuk mempermudah parsing
-                    const url = new URL(decodedText);
+            // Fungsi untuk memulai pemindaian
+            function startScanning() {
+                modal.classList.remove('hidden');
+                html5QrCode = new Html5Qrcode("qr-reader");
+                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                    // --- INI YANG DIPERBAIKI ---
+                    // console.log(QR Code terdeteksi: $ {
+                    //     decodedText
+                    // });
 
-                    // 2. Ambil path dari URL (misal: /verify/asset/DinKes-BiKes-1-1-2)
-                    const path = url.pathname;
+                    try {
+                        // 1. Buat objek URL untuk mempermudah parsing
+                        const url = new URL(decodedText);
 
-                    // 3. Pisahkan path berdasarkan '/' dan ambil bagian terakhir
-                    const pathParts = path.split('/');
-                    const assetCode = pathParts[pathParts.length - 1];
+                        // 2. Ambil path dari URL (misal: /verify/asset/DinKes-BiKes-1-1-2)
+                        const path = url.pathname;
 
-                    // 4. Cari elemen input search
-                    const searchInput = document.getElementById('search-opname');
+                        // 3. Pisahkan path berdasarkan '/' dan ambil bagian terakhir
+                        const pathParts = path.split('/');
+                        const assetCode = pathParts[pathParts.length - 1];
 
-                    if (searchInput && assetCode) {
-                        // 5. Masukkan kode aset ke dalam input search
-                        searchInput.value = assetCode;
+                        // 4. Cari elemen input search
+                        const searchInput = document.getElementById('search-opname');
 
-                        // 6. (Opsional) Secara otomatis picu event 'input' agar filter berjalan jika ada
-                        searchInput.dispatchEvent(new Event('input', {
-                            bubbles: true
-                        }));
+                        if (searchInput && assetCode) {
+                            // 5. Masukkan kode aset ke dalam input search
+                            searchInput.value = assetCode;
 
-                        // Beri notifikasi singkat (lebih baik dari alert)
-                        alert(Aset dengan kode $ {
-                                assetCode
-                            }
-                            ditemukan dan dimasukkan ke pencarian.);
-                    } else {
-                        alert('Input pencarian tidak ditemukan atau kode aset tidak valid.');
+                            // 6. (Opsional) Secara otomatis picu event 'input' agar filter berjalan jika ada
+                            searchInput.dispatchEvent(new Event('input', {
+                                bubbles: true
+                            }));
+
+                            // Beri notifikasi singkat (lebih baik dari alert)
+                            // alert(Aset dengan kode $ {
+                            //         assetCode
+                            //     }
+                            //     ditemukan dan dimasukkan ke pencarian.);
+                        } else {
+                            alert('Input pencarian tidak ditemukan atau kode aset tidak valid.');
+                        }
+
+                    } catch (e) {
+                        // Jika decodedText bukan URL yang valid, anggap saja itu adalah kodenya langsung
+                        console.warn("Hasil scan bukan URL yang valid, menggunakan teks mentah:", decodedText);
+                        const searchInput = document.getElementById('search-opname');
+                        if (searchInput) {
+                            searchInput.value = decodedText;
+                            searchInput.dispatchEvent(new Event('input', {
+                                bubbles: true
+                            }));
+                            // alert(Kode $ {
+                            //         decodedText
+                            //     }
+                            //     dimasukkan ke pencarian.);
+                        }
                     }
 
-                } catch (e) {
-                    // Jika decodedText bukan URL yang valid, anggap saja itu adalah kodenya langsung
-                    console.warn("Hasil scan bukan URL yang valid, menggunakan teks mentah:", decodedText);
-                    const searchInput = document.getElementById('search-opname');
-                    if (searchInput) {
-                        searchInput.value = decodedText;
-                        searchInput.dispatchEvent(new Event('input', {
-                            bubbles: true
-                        }));
-                        alert(Kode $ {
-                                decodedText
-                            }
-                            dimasukkan ke pencarian.);
-                    }
-                }
-
-                // 7. Hentikan pemindaian dan tutup modal
-                stopScanning();
-            };
-            const config = {
-                fps: 10,
-                qrbox: {
-                    width: 250,
-                    height: 250
-                }
-            };
-
-            // Meminta izin kamera dan memulai pemindaian
-            html5QrCode.start({
-                    facingMode: "environment"
-                }, config, qrCodeSuccessCallback)
-                .catch(err => {
-                    console.error("Tidak dapat memulai pemindaian QR Code", err);
-                    alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
+                    // 7. Hentikan pemindaian dan tutup modal
                     stopScanning();
-                });
-        }
+                };
+                const config = {
+                    fps: 10,
+                    qrbox: {
+                        width: 250,
+                        height: 250
+                    }
+                };
 
-        // Fungsi untuk menghentikan pemindaian
-        function stopScanning() {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {
-                    console.log("Pemindaian QR Code dihentikan.");
-                }).catch(err => {
-                    console.error("Gagal menghentikan pemindaian QR Code.", err);
-                });
+                // Meminta izin kamera dan memulai pemindaian
+                html5QrCode.start({
+                        facingMode: "environment"
+                    }, config, qrCodeSuccessCallback)
+                    .catch(err => {
+                        console.error("Tidak dapat memulai pemindaian QR Code", err);
+                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
+                        stopScanning();
+                    });
             }
-            modal.classList.add('hidden');
-        }
 
-        // Event listener untuk tombol
-        scanButton.addEventListener('click', startScanning);
-        closeModalButton.addEventListener('click', stopScanning);
-
-        // Juga tutup jika mengklik di luar modal
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                stopScanning();
+            // Fungsi untuk menghentikan pemindaian
+            function stopScanning() {
+                if (html5QrCode && html5QrCode.isScanning) {
+                    html5QrCode.stop().then(() => {
+                        console.log("Pemindaian QR Code dihentikan.");
+                    }).catch(err => {
+                        console.error("Gagal menghentikan pemindaian QR Code.", err);
+                    });
+                }
+                modal.classList.add('hidden');
             }
+
+            // Event listener untuk tombol
+            scanButton.addEventListener('click', startScanning);
+            closeModalButton.addEventListener('click', stopScanning);
+
+            // Juga tutup jika mengklik di luar modal
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    stopScanning();
+                }
+            });
         });
-    });
-</script>
-{{-- @endpush --}}
+    </script>
+@endpush
