@@ -87,6 +87,7 @@ class AssetsController extends Controller
         $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias, str(mt_rand(1, 999)),]);
 
         $departement_id = $user->employee?->department?->id;
+        // dd($user);
         $validated['departement_id'] = $departement_id;
         do {
             $kode = implode('-', [
@@ -247,7 +248,7 @@ class AssetsController extends Controller
             }
         }
 
-        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset diperbarui ditambahkan.');
+        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil diperbarui.');
     }
 
     public function destroy(Asset $asset)
@@ -260,9 +261,12 @@ class AssetsController extends Controller
         if (Storage::disk('public')->exists($qrCodePath)) {
             Storage::disk('public')->delete($qrCodePath);
         }
-        $asset->delete();
-
-        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil dihapus.');
+        try{
+            $asset->delete();
+            return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil dihapus.');
+        } catch(\Exception $e){
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Gagal menghapus Aset. Aset masih memiliki data peminjaman.');
+        }
     }
 
     /**

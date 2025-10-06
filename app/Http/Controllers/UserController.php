@@ -14,7 +14,7 @@ class UserController extends Controller
     {
         $this->authorizeResource(User::class, 'user');
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -43,8 +43,8 @@ class UserController extends Controller
         $validated = $request->validate([
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'role' => ['required', Rule::in(['superadmin', 'admin', 'user'])],
-            'karyawan_id' => 'nullable|exists:employees,id',
+            'role' => ['required', Rule::in(['superadmin', 'admin', 'subadmin', 'user'])],
+            'karyawan_id' => 'required|exists:employees,id',
         ], [
             'email.unique' => 'Email sudah digunakan.',
             'email.required' => 'Email wajib diisi.',
@@ -54,7 +54,8 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('superadmin.user.index')->with('success', 'User created successfully.');
+        return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil ditambahkan.');
+
     }
 
     /**
@@ -85,7 +86,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password'    => 'nullable|min:6|confirmed',
-            'role'        => ['required', Rule::in(['superadmin', 'admin', 'user'])],
+            'role'        => ['required', Rule::in(['superadmin', 'admin', 'subadmin', 'user'])],
             'karyawan_id' => 'nullable|exists:employees,id',
         ], [
             'email.unique'       => 'Email sudah digunakan.',
@@ -114,7 +115,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('superadmin.user.index')->with('success', 'User updated successfully.');
+        return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
     }
 
     /**
@@ -124,9 +125,9 @@ class UserController extends Controller
     {
         try{
             $user->delete();
-            return redirect()->route('superadmin.user.index')->with('success', 'Akun berhasil dihapus.');
+            return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil dihapus.');
         } catch(\Exception $e){
-            return redirect()->route('superadmin.user.index')->with('error', 'Gagal menghapus akun. Akun masih memiliki data peminjaman.');
+            return redirect(routeForRole('user', 'index'))->with('error', 'Gagal menghapus akun. Akun masih memiliki data peminjaman.');
         }
     }
 }

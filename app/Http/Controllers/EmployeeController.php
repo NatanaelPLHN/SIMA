@@ -20,9 +20,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // $employees = Employee::with('department')->paginate(10);
         $employees = Employee::with(['department', 'user'])->paginate(10);
-        // $employees = Employee::with('department')->paginate(10);
         return view('employee.index', compact('employees'));
     }
 
@@ -58,7 +56,7 @@ class EmployeeController extends Controller
 
         Employee::create($validated);
 
-        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -120,7 +118,7 @@ class EmployeeController extends Controller
         $employee->save();
         $employee->update($validated);
 
-        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
@@ -130,9 +128,11 @@ class EmployeeController extends Controller
     {
         try {
             $employee->delete();
-            return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil dihapus.');
+            return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil dihapus.');
+
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.employee.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect(routeForRole('employee', 'index'))->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+
         }
     }
 }

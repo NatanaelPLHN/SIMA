@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <form id="asset-form" action="{{ routeForRole('assets', 'update') }}" method="POST" enctype="multipart/form-data"
+        <form id="asset-form" action="{{ routeForRole('assets', 'update', $asset->id) }}" method="POST"
             class="grid grid-cols-1 md:grid-cols gap-6">
             @csrf
             @method('PUT')

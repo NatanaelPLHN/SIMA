@@ -73,7 +73,8 @@ class InstitutionController extends Controller
         }
         Institution::create($validated);
 
-        return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil ditambahkan.');
+        return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil ditambahkan.');
+
     }
 
     /**
@@ -83,21 +84,6 @@ class InstitutionController extends Controller
     {
         return view('institution.show', compact('institution'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit(Institution $institution)
-    // {
-    //     dd($institution);
-    //     // $employees = Employee::where('department.instansi_id', $institution->id)->get();
-    //     $employees = Employee::whereHas('department', function ($query) use ($institution) {
-    //         $query->where('instansi_id', $institution->id);
-    //     })->get();
-    //     // dd($employees);
-
-    //     return view('institution.edit_institution', compact('institution','employees'));
-    // }
 
     public function edit(Institution $institution)
 {
@@ -158,7 +144,8 @@ class InstitutionController extends Controller
         $institution->save();
         $institution->update($validated);
 
-        return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil diperbarui.');
+        return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil diperbarui.');
+
     }
 
     /**
@@ -168,9 +155,10 @@ class InstitutionController extends Controller
     {
         try {
             $institution->delete();
-            return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil dihapus.');
+            return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil dihapus.');
+
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.institution.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
+            return redirect(routeForRole('institution', 'index'))->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
         }
     }
 }

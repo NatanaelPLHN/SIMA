@@ -5,13 +5,13 @@
 @section('content')
     <h1 class="text-lg font-semibold text-indigo-800">Tambah Bidang</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <form action="{{ route('admin.departement.store') }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ routeForRole('departement', 'store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
             @include('departement._departement')
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ route('admin.departement.index') }}"
+                <a href="{{ routeForRole('departement', 'index') }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
                     Batal
                 </a>

@@ -99,14 +99,14 @@
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
                                             <!-- Show -->
-                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800" 
-                                                href="{{ routeForRole('assets', 'show'), $asset->id }}"></a>
+                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                href="{{ routeForRole('assets', 'show', $asset->id) }}"></a>
                                             <!-- Edit -->
                                             <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ routeForRole('assets', 'edit'), $asset->id }}"></a>
+                                                href="{{ routeForRole('assets', 'edit', $asset->id) }}"></a>
                                             <!-- Delete -->
                                             <form method="POST"
-                                                href="{{ routeForRole('assets', 'destroy'), $asset->id }}"></a>
+                                                action="{{ routeForRole('assets', 'destroy', $asset->id) }}"
                                                 class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
@@ -200,13 +200,13 @@
                                         <div class="flex items-center justify-center gap-x-3">
                                             <!-- Show -->
                                             <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                href="{{ routeForRole('assets', 'show'), $asset->id }}"></a>
+                                                href="{{ routeForRole('assets', 'show', $asset->id) }}"></a>
                                             <!-- Edit -->
                                             <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ routeForRole('assets', 'edit'), $asset->id }}"></a>
+                                                href="{{ routeForRole('assets', 'edit', $asset->id) }}"></a>
                                             <!-- Delete -->
                                             <form method="POST"
-                                                href="{{ routeForRole('assets', 'destroy'), $asset->id }}"></a>
+                                                action="{{ routeForRole('assets', 'destroy', $asset->id) }}"
                                                 class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
@@ -302,13 +302,13 @@
                                         <div class="flex items-center justify-center gap-x-3">
                                             <!-- Show -->
                                             <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                href="{{ routeForRole('assets', 'show'), $asset->id }}"></a>
+                                                href="{{ routeForRole('assets', 'show', $asset->id) }}"></a>
                                             <!-- Edit -->
                                             <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ routeForRole('assets', 'edit'), $asset->id }}"></a>
+                                                href="{{ routeForRole('assets', 'edit', $asset->id) }}"></a>
                                             <!-- Delete -->
                                             <form method="POST"
-                                                href="{{ routeForRole('assets', 'destroy'), $asset->id }}"></a>
+                                                action="{{ routeForRole('assets', 'destroy', $asset->id) }}"
                                                 class="delete-form">
                                                 @csrf
                                                 @method('DELETE')

@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <a href="{{ route('superadmin.user.create') }}"
+                    <a href="{{ routeForRole('user', 'create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah User
                     </a>
@@ -68,11 +68,11 @@
                             </td>
                             <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
                                 <div class="flex items-center justify-center gap-x-3">
-                                    {{-- <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                        href="{{ route('superadmin.user.show', $user->id) }}"></a> --}}
+                                    <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                        href="{{ route('user', 'show', $user->id) }}"></a>
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('superadmin.user.edit', $user->id) }}"></a>
-                                    <form method="POST" action="{{ route('superadmin.user.destroy', $user->id) }}"
+                                        href="{{ route('user', 'edit', $user->id) }}"></a>
+                                    <form method="POST" action="{{ route('user', 'destroy', $user->id) }}"
                                         class="delete-form">
                                         @csrf
                                         @method('DELETE')

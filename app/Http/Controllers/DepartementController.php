@@ -13,7 +13,7 @@ class DepartementController extends Controller
     {
         $this->authorizeResource(Departement::class, 'departement');
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -72,7 +72,8 @@ class DepartementController extends Controller
 
         $departement = Departement::create($validated);
 
-        return redirect()->route('admin.departement.index')->with('success', 'Departement berhasil ditambahkan.');
+        return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil ditambahkan.');
+
     }
 
     /**
@@ -141,7 +142,8 @@ class DepartementController extends Controller
         $departement->save();
         $departement->update($validated);
 
-        return redirect()->route('admin.departement.index')->with('success', 'Departement berhasil diperbarui.');
+        return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil diperbarui.');
+
     }
 
     /**
@@ -151,9 +153,11 @@ class DepartementController extends Controller
     {
         try {
             $departement->delete();
-            return redirect()->route('admin.departement.index')->with('success', 'Departement berhasil dihapus.');
+            return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil dihapus.');
+
         } catch (\Exception $e) {
-            return redirect()->route('admin.departement.index')->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
+            return redirect(routeForRole('departement', 'index'))->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
+
         }
     }
 }

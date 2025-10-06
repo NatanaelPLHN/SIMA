@@ -22,7 +22,7 @@
                     <label for="search" class="text-sm font-medium text-gray-700">Cari:</label>
                     <input type="text" id="search"
                         class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <a href="{{ route('superadmin.employee.create') }}"
+                    <a href="{{ routeForRole('employee', 'create') }}"
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
@@ -74,8 +74,8 @@
                             <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
                                 <div class="flex items-center justify-center gap-x-3">
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('admin.employee.edit', $pegawai->id) }}"></a>
-                                    <form method="POST" action="{{ route('admin.employee.destroy', $pegawai->id) }}"
+                                        href="{{ routeForRole('employee', 'edit', $pegawai->id) }}"></a>
+                                    <form method="POST" action="{{ routeForRole('employee', 'destroy', $pegawai->id) }}"
                                         class="delete-form">
                                         @csrf
                                         @method('DELETE')
