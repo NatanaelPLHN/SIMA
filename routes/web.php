@@ -45,6 +45,8 @@ Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->na
 Route::get('verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
 Route::get('/api/asset/{kode}', [StockOpnameDepartmentController::class, 'getAssetDetailsByCode'])->name('api.asset.details');
 
+Route::post('verify-password', [StockOpnameDepartmentController::class, 'verifyPassword'])->name('verifyPassword');
+
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
@@ -64,7 +66,6 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
-
 });
 
 // Admin routes
@@ -83,7 +84,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('opname', controller: StockOpnameDepartmentController::class);
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
-
 });
 
 // Superadmin routes
@@ -114,6 +114,4 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
     Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
-
-
 });
