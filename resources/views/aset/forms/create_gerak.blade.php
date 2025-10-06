@@ -14,6 +14,9 @@
             @if (auth()->user()->role == 'admin')
                 <form id="asset-form" action="{{ route('admin.assets.store') }}" method="POST" enctype="multipart/form-data"
             @endif
+            @if (auth()->user()->role == 'subadmin')
+                <form id="asset-form" action="{{ route('subadmin.assets.store') }}" method="POST" enctype="multipart/form-data"
+            @endif
                 class="grid grid-cols-1 md:grid-cols gap-6">
                 <!-- Form Groups -->
                 @include('aset.forms._form', ['jenis_aset' => 'bergerak'])

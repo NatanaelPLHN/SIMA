@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('tanggal_dijadwalkan');
             $table->dateTime('tanggal_dimulai')->nullable();
             $table->dateTime('tanggal_selesai')->nullable();
-            $table->enum('status', ['draft','cancelled','dijadwalkan','selesai'])->default('draft');
+            $table->enum('status', ['draft','cancelled','dijadwalkan','proses','selesai'])->default('draft');
             $table->text('catatan');
             $table->timestamps();
         });
