@@ -63,6 +63,7 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
+    Route::get('profil', [SubAdminDashboardController::class, 'profil'])->name('profil');
 
 });
 
