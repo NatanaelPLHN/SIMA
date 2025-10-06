@@ -147,13 +147,7 @@ class AssetsController extends Controller
         }
         // $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
 
-        return redirect()->route(match (auth()->user()->role) {
-            'superadmin' => 'superadmin.assets.index',
-            'admin'      => 'admin.assets.index',
-            'subadmin'      => 'subadmin.assets.index',
-            // 'user'       => 'user.assets.index', //user gak ada
-            default      => 'login',
-        })->with('success', 'Aset berhasil ditambahkan.');
+        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil ditambahkan.');
     }
 
 
@@ -253,12 +247,7 @@ class AssetsController extends Controller
             }
         }
 
-        return redirect()->route(match (auth()->user()->role) {
-            'superadmin' => 'superadmin.assets.index',
-            'admin'      => 'admin.assets.index',
-            // 'user'       => 'user.assets.index', //user gak ada
-            default      => 'login',
-        })->with('success', 'Aset berhasil diperbarui.');
+        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset diperbarui ditambahkan.');
     }
 
     public function destroy(Asset $asset)
@@ -273,12 +262,7 @@ class AssetsController extends Controller
         }
         $asset->delete();
 
-        return redirect()->route(match (auth()->user()->role) {
-            'superadmin' => 'superadmin.assets.index',
-            'admin'      => 'admin.assets.index',
-            // 'user'       => 'user.assets.index', //user gak ada
-            default      => 'login',
-        })->with('success', 'Aset berhasil dihapus.');
+        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil dihapus.');
     }
 
     /**
