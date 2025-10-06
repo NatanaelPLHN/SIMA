@@ -18,7 +18,7 @@
 </div>
 
 {{-- buat drop down berdasarkan data instansi --}}
-<div>
+{{-- <div>
     <label for="instansi_id" class="block text-sm font-medium text-gray-700">Instansi <span class="text-red-500">*</span></label>
     <select name="instansi_id" id="instansi_id"
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('instansi_id') ? 'border-red-500' : '' }}">
@@ -32,7 +32,27 @@
     @error('instansi_id')
         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
     @enderror
-</div>
+</div> --}}
+@if (isset($departement) && $departement->exists)
+      {{-- Tampilan untuk form EDIT --}}
+      <div>
+          <label for="instansi_id" class="block text-sm font-medium text-gray-700">Instansi</label>
+          <input type="text" id="instansi_nama" name="instansi_nama"
+                 value="{{ $departement->institution->nama ?? 'Tidak Ditemukan' }}"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" disabled>
+          <input type="hidden" name="instansi_id" value="{{ $departement->institution->id ?? '' }}">
+          <p class="mt-1 text-sm text-gray-500">Instansi tidak dapat diubah.</p>
+      </div>
+  @else
+      {{-- Tampilan untuk form CREATE --}}
+      <div>
+          <label class="block text-sm font-medium text-gray-700">Instansi</label>
+          <div class="mt-1 p-3 bg-indigo-100 border border-indigo-200 rounded-md">
+              <p class="font-semibold text-indigo-800">{{ Auth::user()->employee?->institution?->nama }}</p>
+              <p class="text-sm text-indigo-600">Departemen baru akan otomatis terdaftar di bawah instansi ini.</p>
+          </div>
+      </div>
+  @endif
 <div>
     <label for="kepala_bidang_id" class="block text-sm font-medium text-gray-700">Kepala Bidang</label>
     <select name="kepala_bidang_id" id="kepala_bidang_id"

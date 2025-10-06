@@ -7,6 +7,8 @@ use App\Models\Institution;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 class DepartementController extends Controller
 {
     public function __construct()
@@ -26,12 +28,17 @@ class DepartementController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    // public function create()
+    // {
+    //     $institutions = Institution::all();
+    //     $employees = collect();
+    //     return view('departement.create_departement', compact('institutions', 'employees'));
+    // }
     public function create()
     {
-        $institutions = Institution::all();
-        // Untuk create, tidak ada employee karena bidang belum ada
         $employees = collect();
-        return view('departement.create_departement', compact('institutions', 'employees'));
+
+        return view('departement.create_departement', compact('employees'));
     }
 
     /**
@@ -43,16 +50,21 @@ class DepartementController extends Controller
             'nama' => 'required|string|max:255',
             'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
-            'instansi_id' => 'required|exists:institutions,id',
+            // 'instansi_id' => 'required|exists:institutions,id',
             'alias' => 'required|string|max:255',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
             'nama.required' => 'Alias bidang wajib diisi.',
-            'instansi_id.required' => 'Instansi wajib dipilih.',
-            'instansi_id.exists' => 'Instansi tidak ditemukan.',
+            // 'instansi_id.required' => 'Instansi wajib dipilih.',
+            // 'instansi_id.exists' => 'Instansi tidak ditemukan.',
             'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
+        // 2. Ambil ID institusi dari user yang sedang login
+        $institutionId = Auth::user()->employee?->institution->id;
 
+        if (!$institutionId) {
+            return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan institusi manapun.');
+        }
         // Validasi: kepala_bidang harus null saat create karena bidang belum ada
         if ($request->kepala_bidang) {
             return redirect()->back()
@@ -61,7 +73,7 @@ class DepartementController extends Controller
         }
         // Validasi custom: nama dan instansi harus unique bersama
         $existing = Departement::where('nama', $request->nama)
-            ->where('instansi_id', $request->instansi_id)
+            ->where('instansi_id', $institutionId)
             ->first();
 
         if ($existing) {
@@ -69,11 +81,10 @@ class DepartementController extends Controller
                 ->withInput()
                 ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
         }
-
+        $validated['instansi_id'] = $institutionId;
         $departement = Departement::create($validated);
 
         return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil ditambahkan.');
-
     }
 
     /**
@@ -143,7 +154,6 @@ class DepartementController extends Controller
         $departement->update($validated);
 
         return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil diperbarui.');
-
     }
 
     /**
@@ -154,10 +164,8 @@ class DepartementController extends Controller
         try {
             $departement->delete();
             return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil dihapus.');
-
         } catch (\Exception $e) {
             return redirect(routeForRole('departement', 'index'))->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
-
         }
     }
 }
