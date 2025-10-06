@@ -15,21 +15,21 @@ class UserSeeder extends Seeder
             'email' => 'superadmin@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'superadmin',
-            'karyawan_id' => Employee::where('nama', 'Budi Santoso')->first()->id,
+            'karyawan_id' => null,
         ]);
 
-        User::create([
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'karyawan_id' => Employee::where('nama', 'Siti Aminah')->first()->id,
-        ]);
+        // User::create([
+        //     'email' => 'admin@gmail.com',
+        //     'password' => Hash::make('password'),
+        //     'role' => 'admin',
+        //     'karyawan_id' => Employee::where('nama', 'Siti Aminah')->first()->id,
+        // ]);
 
-        User::create([
-            'email' => 'subadmin@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'subadmin',
-            'karyawan_id' => Employee::where('nama', 'Anandita Agung')->first()->id,
-        ]);
+        // User::create([
+        //     'email' => 'subadmin@gmail.com',
+        //     'password' => Hash::make('password'),
+        //     'role' => 'subadmin',
+        //     'karyawan_id' => Employee::where('nama', 'Anandita Agung')->first()->id,
+        // ]);
     }
 }

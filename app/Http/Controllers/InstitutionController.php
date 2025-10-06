@@ -10,13 +10,21 @@ use Illuminate\Http\Request;
 
 class InstitutionController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Institution::class, 'institution');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $instansis = Institution::with('kepala')->paginate(10);
-        return view('institution.index', compact('instansis'));
+        // $institution = Institution::with('employees')->find(1);
+        // dd($institution->employees);
+
+        $institutions = Institution::with('kepala')->paginate(10);
+        return view('institution.index', compact('institutions'));
     }
 
     /**
@@ -79,15 +87,26 @@ class InstitutionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Institution $institution)
-    {
-        // $employees = Employee::where('department.instansi_id', $institution->id)->get();
-        $employees = Employee::whereHas('department', function ($query) use ($institution) {
-            $query->where('instansi_id', $institution->id);
-        })->get();
+    // public function edit(Institution $institution)
+    // {
+    //     dd($institution);
+    //     // $employees = Employee::where('department.instansi_id', $institution->id)->get();
+    //     $employees = Employee::whereHas('department', function ($query) use ($institution) {
+    //         $query->where('instansi_id', $institution->id);
+    //     })->get();
+    //     // dd($employees);
 
-        return view('institution.edit_institution', compact('institution','employees'));
-    }
+    //     return view('institution.edit_institution', compact('institution','employees'));
+    // }
+
+    public function edit(Institution $institution)
+{
+    // employees directly tied to this institution
+    $employees = $institution->employees;
+
+    return view('institution.edit_institution', compact('institution','employees'));
+}
+
 
     /**
      * Update the specified resource in storage.

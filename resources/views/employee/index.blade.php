@@ -56,19 +56,27 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($employees as $index => $pegawai)
                         <tr>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $index + 1 }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->nip }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->nama }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->user->email ?? '-' }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->alamat ?? '-' }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->telepon ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $index + 1 }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $pegawai->nip }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $pegawai->nama }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $pegawai->user->email ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $pegawai->alamat ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $pegawai->telepon ?? '-' }}</td>
                             {{-- <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->bidang->nama ?? '-' }}</td> --}}
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->department->nama ?? '-' }}</td>
+                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                {{ $pegawai->department->nama ?? '-' }}</td>
                             <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
                                 <div class="flex items-center justify-center gap-x-3">
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('superadmin.employee.edit', $pegawai->id) }}"></a>
-                                    <form method="POST" action="{{ route('superadmin.employee.destroy', $pegawai->id) }}" class="delete-form">
+                                        href="{{ route('admin.employee.edit', $pegawai->id) }}"></a>
+                                    <form method="POST" action="{{ route('admin.employee.destroy', $pegawai->id) }}"
+                                        class="delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button class="fas fa-trash text-red-600 hover:text-red-800"
