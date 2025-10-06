@@ -133,10 +133,11 @@ class InstitutionController extends Controller
         if ($request->kepala_instansi_id) {
             $employee = Employee::find($request->kepala_instansi_id);
             // dd($employee->department?);
-            if ($employee && $employee->department?->instansi_id != $institution->id) {
+            if ($employee && $employee->institution?->id != $institution->id) {
+            // if ($employee && $employee->department?->instansi_id != $institution->id) {
                 return redirect()->back()
                     ->withInput()
-                    ->withErrors(['kepala_bidang_id' => 'Kepala bidang harus merupakan anggota departement ini.']);
+                    ->withErrors(['kepala_instansi_id' => 'Kepala instansi harus merupakan anggota instansi ini.']);
             }
         }
         $existing = Institution::where('nama', $request->nama)

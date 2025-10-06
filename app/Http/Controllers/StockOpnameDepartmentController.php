@@ -202,6 +202,7 @@ class StockOpnameDepartmentController extends Controller
         // Hanya ubah status jika masih 'dijadwalkan' untuk mencegah perubahan ganda
         if ($session->status === 'dijadwalkan') {
             $session->status = 'proses';
+            $session->tanggal_dimulai = now();
             $session->save();
 
             return response()->json(['message' => 'Sesi opname berhasil dimulai.']);
