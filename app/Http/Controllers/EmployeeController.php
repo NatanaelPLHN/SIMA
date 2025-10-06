@@ -10,6 +10,11 @@ use App\Models\Institution;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Employee::class, 'employee');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -41,11 +46,13 @@ class EmployeeController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
+            'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
+            'institution_id.exists' => 'Institusi tidak ditemukan.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
 
@@ -84,11 +91,13 @@ class EmployeeController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
+            'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
+            'institution_id.exists' => 'Institusi tidak ditemukan.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
         // Cek apakah departemen karyawan berubah

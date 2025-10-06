@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
             // BidangSeeder::class,
             // CategoryGroupSeeder::class,
             // CategorySeeder::class,
-            AssetSeeder::class,
-            OrganizationSeeder::class,
-            EmployeeSeeder::class,
+            // AssetSeeder::class,
+            // OrganizationSeeder::class,
+            // EmployeeSeeder::class,
             UserSeeder::class,
         ]);
     }

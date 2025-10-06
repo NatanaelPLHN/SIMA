@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Departement;
 use App\Models\Institution;
-// use App\Models\Karyawan;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class DepartementController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Departement::class, 'departement');
+    }
+    
     /**
      * Display a listing of the resource.
      */
@@ -24,10 +28,10 @@ class DepartementController extends Controller
      */
     public function create()
     {
-        $instansis = Institution::all();
+        $institutions = Institution::all();
         // Untuk create, tidak ada employee karena bidang belum ada
         $employees = collect();
-        return view('departement.create_departement', compact('instansis', 'employees'));
+        return view('departement.create_departement', compact('institutions', 'employees'));
     }
 
     /**
@@ -68,7 +72,7 @@ class DepartementController extends Controller
 
         $departement = Departement::create($validated);
 
-        return redirect()->route('superadmin.departement.index')->with('success', 'Departement berhasil ditambahkan.');
+        return redirect()->route('admin.departement.index')->with('success', 'Departement berhasil ditambahkan.');
     }
 
     /**
@@ -85,10 +89,10 @@ class DepartementController extends Controller
      */
     public function edit(Departement $departement)
     {
-        $instansis = Institution::all();
+        $institutions = Institution::all();
         // Hanya tampilkan employee yang ada di departement ini
         $employees = Employee::where('department_id', $departement->id)->get();
-        return view('departement.edit_departement', compact('departement', 'instansis', 'employees'));
+        return view('departement.edit_departement', compact('departement', 'institutions', 'employees'));
     }
 
     /**
@@ -137,7 +141,7 @@ class DepartementController extends Controller
         $departement->save();
         $departement->update($validated);
 
-        return redirect()->route('superadmin.departement.index')->with('success', 'Departement berhasil diperbarui.');
+        return redirect()->route('admin.departement.index')->with('success', 'Departement berhasil diperbarui.');
     }
 
     /**
@@ -147,9 +151,9 @@ class DepartementController extends Controller
     {
         try {
             $departement->delete();
-            return redirect()->route('superadmin.departement.index')->with('success', 'Departement berhasil dihapus.');
+            return redirect()->route('admin.departement.index')->with('success', 'Departement berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.departement.index')->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
+            return redirect()->route('admin.departement.index')->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
         }
     }
 }

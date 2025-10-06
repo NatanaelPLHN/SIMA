@@ -41,7 +41,7 @@
 <div>
     <label for="kepala_instansi_id" class="block text-sm font-medium text-gray-700">Kepala Bidang</label>
     <select name="kepala_instansi_id" id="kepala_instansi_id"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_bidang_id') ? 'border-red-500' : '' }}">
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_instansi_id') ? 'border-red-500' : '' }}">
         <option value="">Pilih Kepala Instansi</option>
         @forelse ($employees as $employee)
             <option value="{{ $employee->id }}" {{ old('kepala_instansi_id', $institution->kepala_instansi_id ?? '') == $employee->id ? 'selected' : '' }}>

@@ -64,7 +64,7 @@
                                 </span>
                             </td>
                             <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $user->karyawan->nama ?? '-' }}
+                                {{ $user->employee->nama ?? '-' }}
                             </td>
                             <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
                                 <div class="flex items-center justify-center gap-x-3">

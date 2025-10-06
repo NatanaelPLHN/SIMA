@@ -90,28 +90,20 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::get('qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
     Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
 
-    // routes asset
-    Route::resource('assets', controller: AssetsController::class);
-    // Custom create forms untuk masing-masing tipe asset
-    Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
-    Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
-    Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
-    // routes akun (user)
-    Route::resource('user', controller: UserController::class);
-    // routes employee (karyawan)
-    Route::resource('employee', controller: EmployeeController::class);
     // routes institution (institusi)
     Route::resource('institution', controller: InstitutionController::class);
+    Route::resource('user', controller: UserController::class);
+    Route::resource('employee', controller: EmployeeController::class);
+
+
     // routes category-groups (grup kategori)
     Route::resource('category-groups', CategoryGroupController::class);
     // routes category (kategori)
     Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->name('categories.by-group');
     Route::resource('categories', CategoryController::class);
-    // routes department (bidang)
-    Route::resource('departement', controller: DepartementController::class);
+
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
     Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
-
 
 });

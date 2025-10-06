@@ -53,7 +53,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse ($instansis as $index => $institution)
+                    @forelse ($institutions as $index => $institution)
                     <tr>
                         <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $index + 1 }}</td>
                         <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $institution->nama }}</td>
@@ -80,7 +80,7 @@
             </table>
         </div>
         {{-- sebelumnya work aja tanpa ini --}}
-        {{ $instansis->links() }}
+        {{ $institutions->links() }}
     </div>
 </div>
 @endsection
