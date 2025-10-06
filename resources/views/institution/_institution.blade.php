@@ -37,3 +37,28 @@
     value="{{ old('alamat', $institution->alamat ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
+
+<div>
+    <label for="kepala_instansi_id" class="block text-sm font-medium text-gray-700">Kepala Bidang</label>
+    <select name="kepala_instansi_id" id="kepala_instansi_id"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_bidang_id') ? 'border-red-500' : '' }}">
+        <option value="">Pilih Kepala Instansi</option>
+        @forelse ($employees as $employee)
+            <option value="{{ $employee->id }}" {{ old('kepala_instansi_id', $institution->kepala_instansi_id ?? '') == $employee->id ? 'selected' : '' }}>
+                {{ $employee->nama }} ({{ $employee->nip }})
+            </option>
+        @empty
+            <option value="">Tidak ada pegawai di institusi ini</option>
+        @endforelse
+    </select>
+
+    @if(isset($institution) && $institution->exists)
+        <p class="mt-1 text-sm text-gray-500">Hanya menampilkan pegawai yang ada di institusi ini.</p>
+    @else
+        <p class="mt-1 text-sm text-gray-500">Kepala institusi dapat dipilih setelah institusi dibuat dan pegawai ditambahkan.</p>
+    @endif
+
+    @error('kepala_instansi')
+        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+    @enderror
+</div>

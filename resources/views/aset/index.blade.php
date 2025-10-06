@@ -56,6 +56,12 @@
                                 Tambah
                             </a>
                         @endif
+                        @if (auth()->user()->role == 'subadmin')
+                            <a href="{{ route('subadmin.assets.create_gerak') }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Tambah
+                            </a>
+                        @endif
 
                     </div>
                 </div>

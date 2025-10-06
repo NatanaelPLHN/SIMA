@@ -43,6 +43,7 @@ Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->na
 
 // Route publik untuk verifikasi aset via QR Code
 Route::get('verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
+Route::get('/api/asset/{kode}', [StockOpnameDepartmentController::class, 'getAssetDetailsByCode'])->name('api.asset.details');
 
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
@@ -82,6 +83,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
     Route::resource('opname', controller: StockOpnameDepartmentController::class);
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
+    Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
 
 });
 

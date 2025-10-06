@@ -150,6 +150,7 @@ class AssetsController extends Controller
         return redirect()->route(match (auth()->user()->role) {
             'superadmin' => 'superadmin.assets.index',
             'admin'      => 'admin.assets.index',
+            'subadmin'      => 'subadmin.assets.index',
             // 'user'       => 'user.assets.index', //user gak ada
             default      => 'login',
         })->with('success', 'Aset berhasil ditambahkan.');

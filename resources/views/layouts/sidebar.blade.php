@@ -77,6 +77,8 @@
                             Peminjaman Aset
                         </a>
                     </li>
+                    <li><a href="{{ route('admin.opname.index') }}" class="block px-2 py-1 hover:text-indigo-200">Stock Opname</a></li>
+
                     <li>
                         <a href="#"
                            class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">

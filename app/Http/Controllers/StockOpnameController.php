@@ -58,18 +58,19 @@ class StockOpnameController extends Controller
         $request->validate([
             'tanggal_dijadwalkan' => 'required|date',
             'departement_id' => 'required|exists:departements,id',
-            'category_group_id' => 'required|exists:category_groups,id',
+            // 'category_group_id' => 'required|exists:category_groups,id',
+            'jenis_aset' => 'required|string',
             'catatan' => 'nullable|string',
         ]);
         $user = auth()->user();
         // dd($user);
         $departement = Departement::find($request->departement_id);
-        $categoryGroup = CategoryGroup::find($request->category_group_id);
+        // $categoryGroup = CategoryGroup::find($request->category_group_id);
         // dd($session);
 
         // 1. Buat Sesi Stock Opname baru
         $session = StockOpnameSession::create([
-            'nama' => 'Opname ' . $departement->nama . ' - ' . $categoryGroup->nama . ' (' . $request->tanggal_dijadwalkan . ')',
+            'nama' => 'Opname ' . $departement->nama . ' - ' . $request->jenis_aset . ' (' . $request->tanggal_dijadwalkan . ')',
             'scheduled_by' => $user->id,
             'departement_id' => $request->departement_id,
             'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
@@ -82,14 +83,17 @@ class StockOpnameController extends Controller
         }
         // 3. Cari semua Aset yang cocok dengan kriteria
         $assetsToOpname = Asset::where('departement_id', $request->departement_id)
-            ->whereHas('category', function ($query) use ($request) {
-                $query->where('category_group_id', $request->category_group_id);
-            })
+            ->where('jenis_aset',$request->jenis_aset)
             ->get();
+        // $assetsToOpname = Asset::where('departement_id', $request->departement_id)
+        //     ->whereHas('category', function ($query) use ($request) {
+        //         $query->where('category_group_id', $request->category_group_id);
+        //     })
+        //     ->get();
 
         if ($assetsToOpname->isEmpty()) {
             $session->delete(); // Hapus sesi yang kosong
-            return back()->with('info', 'Tidak ada aset yang ditemukan untuk departemen dan grup kategori yang dipilih.')->withInput();
+            return back()->with('info', 'Tidak ada aset yang ditemukan untuk departemen dan jenis aset yang dipilih.')->withInput();
         }
 
         foreach ($assetsToOpname as $asset) {
