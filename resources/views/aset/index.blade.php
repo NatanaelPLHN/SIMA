@@ -42,27 +42,10 @@
                         <label for="search-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-
-                        @if (auth()->user()->role == 'superadmin')
-                            <a href="{{ route('superadmin.assets.create_gerak') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
-
-                        @if (auth()->user()->role == 'admin')
-                            <a href="{{ route('admin.assets.create_gerak') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
-                        @if (auth()->user()->role == 'subadmin')
-                            <a href="{{ route('subadmin.assets.create_gerak') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
-
+                        <a href="{{ routeForRole('assets', 'create_gerak') }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Tambah
+                        </a>
                     </div>
                 </div>
             </div>
@@ -115,42 +98,21 @@
                                     <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
-                                            @if (auth()->user()->role == 'superadmin')
-                                                <!-- Show -->
-                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                    href="{{ route('superadmin.assets.show', $asset->id) }}"></a>
-                                                <!-- Edit -->
-                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                    href="{{ route('superadmin.assets.edit', $asset->id) }}"></a>
-                                                <!-- Delete -->
-                                                <form method="POST"
-                                                    action="{{ route('superadmin.assets.destroy', $asset->id) }} "
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                        type="submit">
-                                                    </button>
-                                                </form>
-                                            @endif
-                                            @if (auth()->user()->role == 'admin')
-                                                <!-- Show -->
-                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                    href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                                <!-- Edit -->
-                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                    href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                                <!-- Delete -->
-                                                <form method="POST"
-                                                    action="{{ route('admin.assets.destroy', $asset->id) }} "
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                        type="submit">
-                                                    </button>
-                                                </form>
-                                            @endif
+                                            <!-- Show -->
+                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                href="{{ routeForRole('assets', 'show', $asset->id) }}"></a>
+                                            <!-- Edit -->
+                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                href="{{ routeForRole('assets', 'edit', $asset->id) }}"></a>
+                                            <!-- Delete -->
+                                            <form method="POST"
+                                                action="{{ routeForRole('assets', 'destroy', $asset->id) }}"
+                                                class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="fas fa-trash text-red-600 hover:text-red-800" type="submit">
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -182,19 +144,10 @@
                         <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-tidak-bergerak"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        @if (auth()->user()->role == 'superadmin')
-                            <a href="{{ route('superadmin.assets.create_tidak_bergerak') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
-
-                        @if (auth()->user()->role == 'admin')
-                            <a href="{{ route('admin.assets.create_tidak_bergerak') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
+                        <a href="{{ routeForRole('assets', 'create_tidak_bergerak') }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Tambah
+                        </a>
                     </div>
                 </div>
             </div>
@@ -245,42 +198,22 @@
                                     <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
-                                            @if (auth()->user()->role == 'superadmin')
-                                                <!-- Show -->
-                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                    href="{{ route('superadmin.assets.show', $asset->id) }}"></a>
-                                                <!-- Edit -->
-                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                    href="{{ route('superadmin.assets.edit', $asset->id) }}"></a>
-                                                <!-- Delete -->
-                                                <form method="POST"
-                                                    action="{{ route('superadmin.assets.destroy', $asset->id) }}"
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                        type="submit"></button>
-                                                </form>
-                                            @endif
-
-                                            @if (auth()->user()->role == 'admin')
-                                                <!-- Show -->
-                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                    href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                                <!-- Edit -->
-                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                    href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                                <!-- Delete -->
-                                                <form method="POST"
-                                                    action="{{ route('admin.assets.destroy', $asset->id) }}"
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                        type="submit"></button>
-                                                </form>
-                                            @endif
-
+                                            <!-- Show -->
+                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                href="{{ routeForRole('assets', 'show', $asset->id) }}"></a>
+                                            <!-- Edit -->
+                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                href="{{ routeForRole('assets', 'edit', $asset->id) }}"></a>
+                                            <!-- Delete -->
+                                            <form method="POST"
+                                                action="{{ routeForRole('assets', 'destroy', $asset->id) }}"
+                                                class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                    type="submit">
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -312,19 +245,10 @@
                         <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-habis-pakai"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        @if (auth()->user()->role == 'superadmin')
-                            <a href="{{ route('superadmin.assets.create_habis') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
-
-                        @if (auth()->user()->role == 'admin')
-                            <a href="{{ route('admin.assets.create_habis') }}"
-                                class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Tambah
-                            </a>
-                        @endif
+                        <a href="{{ routeForRole('assets', 'create_habis') }}"
+                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Tambah
+                        </a>
                     </div>
                 </div>
             </div>
@@ -376,42 +300,22 @@
                                     <td class="text-center">{{ ucfirst($asset->status) }}</td>
                                     <td>
                                         <div class="flex items-center justify-center gap-x-3">
-
-                                            @if (auth()->user()->role == 'superadmin')
-                                                <!-- Show -->
-                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                    href="{{ route('superadmin.assets.show', $asset->id) }}"></a>
-                                                <!-- Edit -->
-                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                    href="{{ route('superadmin.assets.edit', $asset->id) }}"></a>
-                                                <!-- Delete -->
-                                                <form method="POST"
-                                                    action="{{ route('superadmin.assets.destroy', $asset->id) }}"
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                        type="submit"></button>
-                                                </form>
-                                            @endif
-
-                                            @if (auth()->user()->role == 'admin')
-                                                <!-- Show -->
-                                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                                    href="{{ route('admin.assets.show', $asset->id) }}"></a>
-                                                <!-- Edit -->
-                                                <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                    href="{{ route('admin.assets.edit', $asset->id) }}"></a>
-                                                <!-- Delete -->
-                                                <form method="POST"
-                                                    action="{{ route('admin.assets.destroy', $asset->id) }}"
-                                                    class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                                        type="submit"></button>
-                                                </form>
-                                            @endif
+                                            <!-- Show -->
+                                            <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                                href="{{ routeForRole('assets', 'show', $asset->id) }}"></a>
+                                            <!-- Edit -->
+                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                                href="{{ routeForRole('assets', 'edit', $asset->id) }}"></a>
+                                            <!-- Delete -->
+                                            <form method="POST"
+                                                action="{{ routeForRole('assets', 'destroy', $asset->id) }}"
+                                                class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                    type="submit">
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

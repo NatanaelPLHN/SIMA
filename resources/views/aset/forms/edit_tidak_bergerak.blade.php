@@ -4,13 +4,7 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-            @if (auth()->user()->role == 'superadmin')
-                <form id="asset-form" action="{{ route('superadmin.assets.update',$asset->id) }}" method="POST" enctype="multipart/form-data"
-            @endif
-
-            @if (auth()->user()->role == 'admin')
-                <form id="asset-form" action="{{ route('admin.assets.update',$asset->id }}" method="POST" enctype="multipart/form-data"
-            @endif
+        <form id="asset-form" action="{{ routeForRole('assets', 'update', $asset->id) }}" method="POST"
             class="grid grid-cols-1 md:grid-cols gap-6">
             @csrf
             @method('PUT')
@@ -33,40 +27,13 @@
             </div>
 
 
-            <!-- Generate Code Section -->
-            <div class="mt-6 pt-6 border-t border-gray-200">
-                <div class="flex items-center space-x-4">
-                    <label class="text-sm font-medium text-gray-700">Generate Code?</label>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center">
-                            <input type="radio" id="yes" name="generateCode" value="yes"
-                                class="text-indigo-600 focus:ring-indigo-500">
-                            <label for="yes" class="ml-2 text-sm text-gray-700">Yes</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="radio" id="no" name="generateCode" value="no"
-                                class="text-indigo-600 focus:ring-indigo-500">
-                            <label for="no" class="ml-2 text-sm text-gray-700">No</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                @if (auth()->user()->role == 'superadmin')
-                    <a href="{{ route('superadmin.assets.index') }}"
-                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
-                        Batal
-                    </a>
-                @endif
-
-                @if (auth()->user()->role == 'admin')
-                    <a href="{{ route('admin.assets.index') }}"
-                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
-                        Batal
-                    </a>
-                @endif
+                <a href="{{ routeForRole('assets', 'index') }}"
+                    class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                    Batal
+                </a>
                 <button type="submit"
                     class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
                     Simpan

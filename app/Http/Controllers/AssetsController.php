@@ -84,19 +84,52 @@ class AssetsController extends Controller
         $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
         $categoryAlias       = $category->id; // category alias = ID
 
-        $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias, str(mt_rand(1, 999)),]);
+        // $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias, str(mt_rand(1, 999)),]);
+        // 1. Cari aset terakhir dengan kombinasi yang sama
+        $lastAsset = Asset::where('departement_id', $user->employee?->department?->id)
+            ->where('category_id', $validated['category_id'])
+            ->latest('id') // Urutkan berdasarkan ID atau created_at untuk mendapatkan yang terbaru
+            ->first();
+        // $lastAsset = Asset::where('institution_id', $user->employee?->department?->institution?->id)
+        //     ->where('departement_id', $validated['departement_id'])
+        //     ->where('category_id', $validated['category_id'])
+        //     ->latest('id') // Urutkan berdasarkan ID atau created_at untuk mendapatkan yang terbaru
+        //     ->first();
 
+
+        // 2. Tentukan nomor urut berikutnya
+        $nextNumber = 1; // Default jika ini adalah aset pertama
+        if ($lastAsset) {
+            // Jika ada aset sebelumnya, ambil nomor urut terakhir dari kode
+            $parts = explode('-', $lastAsset->kode);
+            $lastNumber = (int) end($parts);
+            $nextNumber = $lastNumber + 1;
+        }
+
+        // 3. Format nomor urut dengan padding (misal: 001, 002, dst.)
+        // $paddedNextNumber = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+        // 4. Buat kode final yang unik dan berurutan
+        $kode = implode('-', [
+            $institutionAlias,
+            $departmentAlias,
+            $categoryGroupAlias,
+            $categoryAlias,
+            $nextNumber,
+            // $paddedNextNumber,
+        ]);
         $departement_id = $user->employee?->department?->id;
+        // dd($user);
         $validated['departement_id'] = $departement_id;
-        do {
-            $kode = implode('-', [
-                $institutionAlias,
-                $departmentAlias,
-                $categoryGroupAlias,
-                $categoryAlias,
-                str(mt_rand(1, 999)),
-            ]);
-        } while (Asset::where('kode', $kode)->exists());
+        // do {
+        //     $kode = implode('-', [
+        //         $institutionAlias,
+        //         $departmentAlias,
+        //         $categoryGroupAlias,
+        //         $categoryAlias,
+        //         str(mt_rand(1, 999)),
+        //     ]);
+        // } while (Asset::where('kode', $kode)->exists());
 
         $validated['kode'] = $kode;
         // dd($validated);
@@ -147,13 +180,7 @@ class AssetsController extends Controller
         }
         // $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
 
-        return redirect()->route(match (auth()->user()->role) {
-            'superadmin' => 'superadmin.assets.index',
-            'admin'      => 'admin.assets.index',
-            'subadmin'      => 'subadmin.assets.index',
-            // 'user'       => 'user.assets.index', //user gak ada
-            default      => 'login',
-        })->with('success', 'Aset berhasil ditambahkan.');
+        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil ditambahkan.');
     }
 
 
@@ -253,12 +280,7 @@ class AssetsController extends Controller
             }
         }
 
-        return redirect()->route(match (auth()->user()->role) {
-            'superadmin' => 'superadmin.assets.index',
-            'admin'      => 'admin.assets.index',
-            // 'user'       => 'user.assets.index', //user gak ada
-            default      => 'login',
-        })->with('success', 'Aset berhasil diperbarui.');
+        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil diperbarui.');
     }
 
     public function destroy(Asset $asset)
@@ -271,14 +293,12 @@ class AssetsController extends Controller
         if (Storage::disk('public')->exists($qrCodePath)) {
             Storage::disk('public')->delete($qrCodePath);
         }
-        $asset->delete();
-
-        return redirect()->route(match (auth()->user()->role) {
-            'superadmin' => 'superadmin.assets.index',
-            'admin'      => 'admin.assets.index',
-            // 'user'       => 'user.assets.index', //user gak ada
-            default      => 'login',
-        })->with('success', 'Aset berhasil dihapus.');
+        try {
+            $asset->delete();
+            return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Gagal menghapus Aset. Aset masih memiliki data peminjaman.');
+        }
     }
 
     /**

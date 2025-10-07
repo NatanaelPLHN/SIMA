@@ -20,7 +20,7 @@
                         <div class="text-sm">Catatan: {{ $opname->catatan }}</div>
                     </div>
                     @if ($opname->status != 'selesai')
-                        <button type="submit"
+                        <button type="submit" id="finish-opname-btn"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Selesai
                         </button>
@@ -43,15 +43,24 @@
                     <thead class="bg-indigo-800">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama Aset</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sub Kategori</th>
-                            @if ($opname->details->first()?->asset->jenis_aset == 'bergerak' || $opname->details->first()?->asset->jenis_aset =='tidak_bergerak')
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status Lama</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status Baru</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama
+                                Aset</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sub
+                                Kategori</th>
+                            @if (
+                                $opname->details->first()?->asset->jenis_aset == 'bergerak' ||
+                                    $opname->details->first()?->asset->jenis_aset == 'tidak_bergerak')
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Status Lama</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Status Baru</th>
                             @else
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Jumlah Sistem</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Jumlah Fisik</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Jumlah Sistem</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                                    Jumlah Fisik</th>
                             @endif
                         </tr>
                     </thead>
@@ -67,16 +76,22 @@
                                     <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->status_lama ?? '-' }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-900">
                                         <div>
-                                            <select id="status_fisik_{{ $detail->id }}" name="statuses[{{ $detail->id }}]"
-                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2
-focus:ring-indigo-500"
+                                            <select id="status_fisik_{{ $detail->id }}"
+                                                name="statuses[{{ $detail->id }}]"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                 {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
                                                 <option value="">Pilih Status</option>
-                                                <option value="tersedia" {{ $detail->status_fisik == 'tersedia' ? 'selected' : ''
-}}>Tersedia</option>
-                                                <option value="dipakai" {{ $detail->status_fisik == 'dipakai' ? 'selected' : '' }}>Dipakai</option>
-                                                <option value="rusak" {{ $detail->status_fisik == 'rusak' ? 'selected' : '' }}>Rusak</option>
-                                                <option value="hilang" {{ $detail->status_fisik == 'hilang' ? 'selected' : '' }}>Hilang</option>
+                                                <option value="tersedia"
+                                                    {{ $detail->status_fisik == 'tersedia' ? 'selected' : '' }}>Tersedia
+                                                </option>
+                                                <option value="dipakai"
+                                                    {{ $detail->status_fisik == 'dipakai' ? 'selected' : '' }}>Dipakai
+                                                </option>
+                                                <option value="rusak"
+                                                    {{ $detail->status_fisik == 'rusak' ? 'selected' : '' }}>Rusak</option>
+                                                <option value="hilang"
+                                                    {{ $detail->status_fisik == 'hilang' ? 'selected' : '' }}>Hilang
+                                                </option>
                                             </select>
                                         </div>
                                     </td>
@@ -103,7 +118,8 @@ focus:ring-indigo-500"
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Scan QR Code</h2>
             <div id="qr-reader" class="w-full"></div>
-            <button id="close-modal-button" class="mt-4 w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium
+            <button id="close-modal-button"
+                class="mt-4 w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium
 transition-colors">
                 Tutup
             </button>
@@ -111,7 +127,8 @@ transition-colors">
     </div>
 
     {{-- PERUBAHAN 2: Menambahkan HTML untuk Modal Update Aset --}}
-    <div id="update-asset-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div id="update-asset-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 id="modal-title" class="text-xl font-semibold text-gray-800 mb-2">Update Aset</h2>
             <p id="modal-asset-info" class="text-sm text-gray-600 mb-4"></p>
@@ -121,11 +138,13 @@ transition-colors">
             </div>
 
             <div class="mt-6 flex justify-end gap-4">
-                <button id="modal-cancel-button" type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md font-medium
+                <button id="modal-cancel-button" type="button"
+                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md font-medium
 transition-colors">
                     Batal
                 </button>
-                <button id="modal-save-button" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium
+                <button id="modal-save-button" type="button"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-medium
 transition-colors">
                     Simpan
                 </button>
@@ -135,93 +154,101 @@ transition-colors">
 @endsection
 
 @push('scripts')
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Elemen-elemen Modal Pemindai QR
-        const scanButton = document.getElementById('scan-qr-button');
-        const qrScannerModal = document.getElementById('qr-scanner-modal');
-        const closeQrModalButton = document.getElementById('close-modal-button');
-        let html5QrCode;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elemen-elemen Modal Pemindai QR
+            const scanButton = document.getElementById('scan-qr-button');
+            const qrScannerModal = document.getElementById('qr-scanner-modal');
+            const closeQrModalButton = document.getElementById('close-modal-button');
+            let html5QrCode;
 
-        // Elemen-elemen Modal Update Aset
-        const updateAssetModal = document.getElementById('update-asset-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalAssetInfo = document.getElementById('modal-asset-info');
-        const modalDynamicContent = document.getElementById('modal-dynamic-content');
-        const modalSaveButton = document.getElementById('modal-save-button');
-        const modalCancelButton = document.getElementById('modal-cancel-button');
+            // Elemen-elemen Modal Update Aset
+            const updateAssetModal = document.getElementById('update-asset-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalAssetInfo = document.getElementById('modal-asset-info');
+            const modalDynamicContent = document.getElementById('modal-dynamic-content');
+            const modalSaveButton = document.getElementById('modal-save-button');
+            const modalCancelButton = document.getElementById('modal-cancel-button');
 
-        // --- LOGIKA PEMINDAI QR ---
+            // --- LOGIKA PEMINDAI QR ---
 
-        function startScanning() {
-            qrScannerModal.classList.remove('hidden');
-            html5QrCode = new Html5Qrcode("qr-reader");
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-                .catch(err => {
-                    alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
-                    stopScanning();
-                });
-        }
-
-        function stopScanning() {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch(err => console.error("Gagal menghentikan pemindaian.", err));
-            }
-            qrScannerModal.classList.add('hidden');
-        }
-
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            stopScanning();
-            let assetCode;
-            try {
-                const url = new URL(decodedText);
-                const pathParts = url.pathname.split('/');
-                assetCode = pathParts[pathParts.length - 1];
-            } catch (e) {
-                assetCode = decodedText;
-            }
-            console.log(`[DEBUG] 2. Kode Aset Ditemukan: ${assetCode}`);
-            fetchAssetData(assetCode);
-        };
-
-        scanButton.addEventListener('click', startScanning);
-        closeQrModalButton.addEventListener('click', stopScanning);
-
-        // --- LOGIKA MODAL UPDATE ASET ---
-
-        async function fetchAssetData(assetCode) {
-            // PERBAIKAN: Gunakan backtick untuk template literal
-            const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-            if (!targetRow) {
-                console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
-                alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
-                return;
+            function startScanning() {
+                qrScannerModal.classList.remove('hidden');
+                html5QrCode = new Html5Qrcode("qr-reader");
+                const config = {
+                    fps: 10,
+                    qrbox: {
+                        width: 250,
+                        height: 250
+                    }
+                };
+                html5QrCode.start({
+                        facingMode: "environment"
+                    }, config, qrCodeSuccessCallback)
+                    .catch(err => {
+                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
+                        stopScanning();
+                    });
             }
 
-            try {
-                const response = await fetch(`/api/asset/${assetCode}`);
-                console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Gagal mengambil data aset.');
+            function stopScanning() {
+                if (html5QrCode && html5QrCode.isScanning) {
+                    html5QrCode.stop().catch(err => console.error("Gagal menghentikan pemindaian.", err));
                 }
-                const asset = await response.json();
-                showUpdateModal(asset, targetRow);
-            } catch (error) {
-                alert(error.message);
+                qrScannerModal.classList.add('hidden');
             }
-        }
 
-        function showUpdateModal(asset, targetRow) {
-            modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
-            modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                stopScanning();
+                let assetCode;
+                try {
+                    const url = new URL(decodedText);
+                    const pathParts = url.pathname.split('/');
+                    assetCode = pathParts[pathParts.length - 1];
+                } catch (e) {
+                    assetCode = decodedText;
+                }
+                console.log(`[DEBUG] 2. Kode Aset Ditemukan: ${assetCode}`);
+                fetchAssetData(assetCode);
+            };
 
-            if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
-                const currentStatus = targetRow.querySelector('select[name^="statuses"]').value;
-                const selectHTML = `
+            scanButton.addEventListener('click', startScanning);
+            closeQrModalButton.addEventListener('click', stopScanning);
+
+            // --- LOGIKA MODAL UPDATE ASET ---
+
+            async function fetchAssetData(assetCode) {
+                // PERBAIKAN: Gunakan backtick untuk template literal
+                const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
+                if (!targetRow) {
+                    console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
+                    alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/asset/${assetCode}`);
+                    console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Gagal mengambil data aset.');
+                    }
+                    const asset = await response.json();
+                    showUpdateModal(asset, targetRow);
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+
+            function showUpdateModal(asset, targetRow) {
+                modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
+                modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
+
+                if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
+                    const currentStatus = targetRow.querySelector('select[name^="statuses"]').value;
+                    const selectHTML = `
                     <label for="modal-status" class="block text-sm font-medium text-gray-700">Status Fisik</label>
                     <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
 focus:ring-2 focus:ring-indigo-500">
@@ -230,49 +257,112 @@ focus:ring-2 focus:ring-indigo-500">
                         <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
                         <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
                     </select>`;
-                modalDynamicContent.innerHTML = selectHTML;
-            } else if (asset.jenis_aset === 'habis_pakai') {
-                const currentJumlah = targetRow.querySelector('input[name^="jumlah_fisik"]').value;
-                const inputHTML = `
+                    modalDynamicContent.innerHTML = selectHTML;
+                } else if (asset.jenis_aset === 'habis_pakai') {
+                    const currentJumlah = targetRow.querySelector('input[name^="jumlah_fisik"]').value;
+                    const inputHTML = `
                     <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
                     <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2
 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
-                modalDynamicContent.innerHTML = inputHTML;
+                    modalDynamicContent.innerHTML = inputHTML;
+                }
+
+                modalSaveButton.dataset.assetCode = asset.kode;
+                updateAssetModal.classList.remove('hidden');
             }
 
-            modalSaveButton.dataset.assetCode = asset.kode;
-            updateAssetModal.classList.remove('hidden');
-        }
-
-        function hideUpdateModal() {
-            updateAssetModal.classList.add('hidden');
-        }
-
-        modalCancelButton.addEventListener('click', hideUpdateModal);
-
-        modalSaveButton.addEventListener('click', function() {
-            const assetCode = this.dataset.assetCode;
-            // PERBAIKAN: Gunakan backtick untuk template literal
-            const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-
-            const modalInput = modalDynamicContent.querySelector('select, input');
-            const newValue = modalInput.value;
-
-            if (modalInput.id === 'modal-status') {
-                const targetSelect = targetRow.querySelector('select[name^="statuses"]');
-                targetSelect.value = newValue;
-            } else if (modalInput.id === 'modal-jumlah') {
-                const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
-                targetInput.value = newValue;
+            function hideUpdateModal() {
+                updateAssetModal.classList.add('hidden');
             }
 
-            targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
-            setTimeout(() => {
-                targetRow.classList.remove('bg-yellow-200');
-            }, 1000);
+            modalCancelButton.addEventListener('click', hideUpdateModal);
 
-            hideUpdateModal();
+            modalSaveButton.addEventListener('click', function() {
+                const assetCode = this.dataset.assetCode;
+                // PERBAIKAN: Gunakan backtick untuk template literal
+                const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
+
+                const modalInput = modalDynamicContent.querySelector('select, input');
+                const newValue = modalInput.value;
+
+                if (modalInput.id === 'modal-status') {
+                    const targetSelect = targetRow.querySelector('select[name^="statuses"]');
+                    targetSelect.value = newValue;
+                } else if (modalInput.id === 'modal-jumlah') {
+                    const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
+                    targetInput.value = newValue;
+                }
+
+                targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
+                setTimeout(() => {
+                    targetRow.classList.remove('bg-yellow-200');
+                }, 1000);
+
+                hideUpdateModal();
+            });
         });
-    });
-</script>
+        const opnameForm = document.getElementById('opname-form');
+              const finishButton = document.getElementById('finish-opname-btn');
+
+              if (finishButton) {
+                  finishButton.addEventListener('click', function(event) {
+                      // 1. Mencegah form dikirim secara otomatis
+                      event.preventDefault();
+
+                      // 2. Tampilkan SweetAlert untuk input password
+                      Swal.fire({
+                          title: 'Konfirmasi Penyelesaian',
+                          text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
+                          input: 'password',
+                          inputAttributes: {
+                              autocapitalize: 'off'
+                          },
+                          showCancelButton: true,
+                          confirmButtonText: 'Verifikasi & Selesaikan',
+                          cancelButtonText: 'Batal',
+                          showLoaderOnConfirm: true,
+                          preConfirm: (password) => {
+                              // 3. Kirim password ke API verifikasi
+                              const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                              return fetch('{{ route('verifyPassword') }}', {
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/json',
+                                      'Accept': 'application/json',
+                                      'X-CSRF-TOKEN': csrfToken
+                                  },
+                                  body: JSON.stringify({ password: password })
+                              })
+                              .then(response => {
+                                  if (!response.ok) {
+                                      // Jika password salah, lempar error untuk ditampilkan
+                                      return response.json().then(err => { throw new Error(err.message) });
+                                  }
+                                  return response.json();
+                              })
+                              .catch(error => {
+                                  Swal.showValidationMessage(
+                                      `Verifikasi gagal: ${error.message}`
+                                  );
+                              });
+                          },
+                          allowOutsideClick: () => !Swal.isLoading()
+                      }).then((result) => {
+                          // 4. Jika verifikasi berhasil (result.value tidak kosong)
+                          if (result.isConfirmed) {
+                              Swal.fire({
+                                  title: 'Terverifikasi!',
+                                  text: 'Menyelesaikan sesi stock opname...',
+                                  icon: 'success',
+                                  timer: 1500,
+                                  showConfirmButton: false
+                              }).then(() => {
+                                  // 5. Kirim form opname yang asli
+                                  opnameForm.submit();
+                              });
+                          }
+                      });
+                  });
+              }
+    </script>
 @endpush

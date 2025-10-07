@@ -15,26 +15,23 @@ class Employee extends Model
         'nama',
         'alamat',
         'telepon',
-        'department_id',
+        'institution_id', // kepala instansi
+        'department_id',  // kepala bidang or regular pegawai
     ];
 
-    // Relasi dengan Peminjaman
-    public function peminjaman()
+    public function institution()
     {
-        return $this->hasMany(Employee::class, 'borrowed_by');
+        return $this->belongsTo(Institution::class, 'institution_id');
     }
-    // public function peminjaman()
-    // {
-    //     return $this->hasMany(Peminjaman::class, 'borrowed_by');
-    // }
-    // Relasi dengan Bidang (Department)
+
     public function department()
     {
         return $this->belongsTo(Departement::class, 'department_id');
     }
-    // Relasi dengan user
+
     public function user()
     {
         return $this->hasOne(User::class, 'karyawan_id');
     }
 }
+

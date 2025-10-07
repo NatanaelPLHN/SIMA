@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\StockOpnameDetail;
 use App\Models\Asset;
@@ -143,7 +145,7 @@ class StockOpnameDepartmentController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.opname.show', $opname->id)->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
+            return redirect()->route(routeForRole('opname','index', $opname->id))->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -200,6 +202,7 @@ class StockOpnameDepartmentController extends Controller
         // Hanya ubah status jika masih 'dijadwalkan' untuk mencegah perubahan ganda
         if ($session->status === 'dijadwalkan') {
             $session->status = 'proses';
+            $session->tanggal_dimulai = now();
             $session->save();
 
             return response()->json(['message' => 'Sesi opname berhasil dimulai.']);
@@ -207,5 +210,24 @@ class StockOpnameDepartmentController extends Controller
 
         // Jika statusnya bukan 'dijadwalkan' (misal sudah 'proses' atau 'selesai')
         return response()->json(['message' => 'Sesi opname sudah berjalan atau telah selesai.'], 409); // 409 Conflict
+    }
+    public function verifyPassword(Request $request)
+    {
+        // Validasi bahwa password ada di request
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        // Ambil pengguna yang sedang terautentikasi
+        $user = Auth::user();
+
+        // Periksa apakah password yang diberikan cocok dengan password pengguna
+        if (Hash::check($request->password, $user->password)) {
+            // Jika cocok, kembalikan respons sukses
+            return response()->json(['message' => 'Password terverifikasi.'], 200);
+        }
+
+        // Jika tidak cocok, kembalikan respons error
+        return response()->json(['message' => 'Password yang Anda masukkan salah.'], 422); // 422 Unprocessable Entity
     }
 }

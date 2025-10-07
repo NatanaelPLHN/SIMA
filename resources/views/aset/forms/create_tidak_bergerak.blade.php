@@ -5,17 +5,10 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-            @if (auth()->user()->role == 'superadmin')
-                <form id="asset-form" action="{{ route('superadmin.assets.store') }}" method="POST" enctype="multipart/form-data"
-            @endif
-
-            @if (auth()->user()->role == 'admin')
-                <form id="asset-form" action="{{ route('admin.assets.store') }}" method="POST" enctype="multipart/form-data"
-            @endif
+        <form id="asset-form" action="{{ routeForRole('assets', 'store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Left Column -->
 
-            {{-- @include('aset.forms._form') --}}
             @include('aset.forms._form', ['jenis_aset' => 'tidak_bergerak'])
 
             <!-- Hidden field: jenis_aset -->
@@ -37,19 +30,14 @@
 
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                @if (auth()->user()->role == 'superadmin')
-                    <a href="{{ route('superadmin.assets.index') }}"
-                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
-                        Batal
-                    </a>
-                @endif
 
-                @if (auth()->user()->role == 'admin')
-                    <a href="{{ route('admin.assets.index') }}"
-                        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
-                        Batal
-                    </a>
-                @endif
+                <a href="{{ routeForRole('assets', 'index') }}"
+                    class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                    Batal
+                </a>
+
+
+
                 <button type="submit"
                     class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
                     Simpan

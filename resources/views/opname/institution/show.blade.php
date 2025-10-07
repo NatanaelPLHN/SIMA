@@ -12,6 +12,10 @@
                     <div class="font-medium">{{ $opname->nama }}</div>
 
                     <div class="text-sm">Tanggal Buat: {{ $opname->tanggal_dijadwalkan }}</div>
+                    @if ($opname->status == 'selesai')
+                    <div class="text-sm">Tanggal Mulai: {{ $opname->tanggal_dimulai }}</div>
+                    <div class="text-sm">Tanggal Selesai: {{ $opname->tanggal_selesai }}</div>
+                    @endif
                     <div class="text-sm">Status: {{ $opname->status }}</div>
                 </div>
                 @if ($opname->status == 'draft')

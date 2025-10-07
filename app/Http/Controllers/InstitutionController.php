@@ -10,13 +10,21 @@ use Illuminate\Http\Request;
 
 class InstitutionController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Institution::class, 'institution');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $instansis = Institution::with('kepala')->paginate(10);
-        return view('institution.index', compact('instansis'));
+        // $institution = Institution::with('employees')->find(1);
+        // dd($institution->employees);
+
+        $institutions = Institution::with('kepala')->paginate(10);
+        return view('institution.index', compact('institutions'));
     }
 
     /**
@@ -65,7 +73,8 @@ class InstitutionController extends Controller
         }
         Institution::create($validated);
 
-        return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil ditambahkan.');
+        return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil ditambahkan.');
+
     }
 
     /**
@@ -76,18 +85,14 @@ class InstitutionController extends Controller
         return view('institution.show', compact('institution'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Institution $institution)
-    {
-        // $employees = Employee::where('department.instansi_id', $institution->id)->get();
-        $employees = Employee::whereHas('department', function ($query) use ($institution) {
-            $query->where('instansi_id', $institution->id);
-        })->get();
+{
+    // employees directly tied to this institution
+    $employees = $institution->employees;
 
-        return view('institution.edit_institution', compact('institution','employees'));
-    }
+    return view('institution.edit_institution', compact('institution','employees'));
+}
+
 
     /**
      * Update the specified resource in storage.
@@ -114,10 +119,11 @@ class InstitutionController extends Controller
         if ($request->kepala_instansi_id) {
             $employee = Employee::find($request->kepala_instansi_id);
             // dd($employee->department?);
-            if ($employee && $employee->department?->instansi_id != $institution->id) {
+            if ($employee && $employee->institution?->id != $institution->id) {
+            // if ($employee && $employee->department?->instansi_id != $institution->id) {
                 return redirect()->back()
                     ->withInput()
-                    ->withErrors(['kepala_bidang_id' => 'Kepala bidang harus merupakan anggota departement ini.']);
+                    ->withErrors(['kepala_instansi_id' => 'Kepala instansi harus merupakan anggota instansi ini.']);
             }
         }
         $existing = Institution::where('nama', $request->nama)
@@ -138,7 +144,8 @@ class InstitutionController extends Controller
         $institution->save();
         $institution->update($validated);
 
-        return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil diperbarui.');
+        return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil diperbarui.');
+
     }
 
     /**
@@ -148,9 +155,10 @@ class InstitutionController extends Controller
     {
         try {
             $institution->delete();
-            return redirect()->route('superadmin.institution.index')->with('success', 'Instansi berhasil dihapus.');
+            return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil dihapus.');
+
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.institution.index')->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
+            return redirect(routeForRole('institution', 'index'))->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
         }
     }
 }

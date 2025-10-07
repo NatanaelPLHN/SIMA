@@ -7,7 +7,7 @@
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
         <!-- Form Controls -->
         <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-            <form id="opname-form" action="{{ route('superadmin.opname.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="opname-form" action="{{ routeForRole('opname', 'store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <input type="hidden" name="status" value="bergerak">
@@ -97,7 +97,7 @@
 
                     <td class="px-4 py-3 text-sm">
                         <div class="flex space-x-2">
-                            <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="{{ route('superadmin.opname.show', $session->id) }}"></a>
+                            <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="{{ routeForRole('opname', 'show', $session->id) }}"></a>
                         </div>
                     </td>
                 </tr>

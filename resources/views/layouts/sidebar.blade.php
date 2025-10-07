@@ -32,19 +32,12 @@
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                             </svg>
                         </button>
-                        <ul x-show="open" class="py-2 space-y-2" x-cloak>
-                            <li>
-                                <a href="{{ route('superadmin.institution.index') }}" class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 {{ request()->is('layouts/stacked') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
-                                    Instansi</a>
-                            </li>
-                            <li>
-                                <a href="#" class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 {{ request()->is('layouts/sidebar') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
-                                    Bidang</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('superadmin.employee.index') }}" class="flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 {{ request()->is('layouts/sidebar') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
-                                    Pegawai</a>
-                            </li>
+                        <ul x-show="masterOpen" x-transition class="ml-6 mt-1 space-y-1">
+                            <li><a href="{{ route('superadmin.institution.index') }}" class="block px-2 py-1 hover:text-indigo-200">Instansi</a></li>
+                            <li><a href="{{ route('superadmin.user.index') }}" class="block px-2 py-1 hover:text-indigo-200">Akun</a></li>
+                            <li><a href="{{ route('superadmin.employee.index') }}" class="block px-2 py-1 hover:text-indigo-200">Pegawai</a></li>
+                            <li><a href="{{ route('superadmin.category-groups.index') }}" class="block px-2 py-1 hover:text-indigo-200">Kategori</a></li>
+                            <li><a href="{{ route('superadmin.categories.index') }}" class="block px-2 py-1 hover:text-indigo-200">Sub Kategori</a></li>
                         </ul>
                     </li>
 
@@ -97,7 +90,12 @@
                             <span class="ml-3">Dashboard</span>
                         </a>
                     </li>
-
+                    <li>
+                        <a href="{{ route('admin.user.index') }}"
+                           class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
+                            <i class="fas fa-cube mr-2"></i> Akun
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('admin.departement.index') }}" class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 {{ request()->routeIs('admin.departement.*') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
                             <svg class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -155,7 +153,12 @@
                             <span class="ml-3">Aset</span>
                         </a>
                     </li>
-
+                    <li>
+                        <a href="{{ route('subadmin.employee.index') }}"
+                           class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
+                            Pegawai
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('subadmin.opname.index') }}" class="flex items-center p-2 text-base text-gray-900 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700 {{ request()->routeIs('subadmin.opname.*') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
                             <svg class="w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -187,11 +190,49 @@
                             <span class="ml-3">Peminjaman Aset</span>
                         </a>
                     </li>
-                    @break
-                    @endswitch
+                @break
+
+            @endswitch
+
+            <!-- Drawer Monitoring (Visible for all roles if needed) -->
+            <li>
+                <button @click="monitoringOpen = !monitoringOpen"
+                    class="flex items-center justify-between w-full px-3 py-2 hover:bg-indigo-700 rounded-md">
+                    <span class="flex items-center"><i class="fas fa-desktop mr-2"></i> Monitoring Aset</span>
+                    <i :class="monitoringOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                </button>
+                <ul x-show="monitoringOpen" x-transition class="ml-6 mt-1 space-y-1">
+                    <li><a href="{{ route('subadmin.opname.index') }}" class="block px-2 py-1 hover:text-indigo-200">Stock Opname</a></li>
+
+                    <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Data Peminjaman</a></li>
+                    <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Mutasi Aset</a></li>
+</ul>
+            </li>
+
+            <!-- Drawer Report (Visible for all roles if needed) -->
+            <li>
+                <button @click="reportOpen = !reportOpen"
+                    class="flex items-center justify-between w-full px-3 py-2 hover:bg-indigo-700 rounded-md">
+                    <span class="flex items-center"><i class="fas fa-chart-bar mr-2"></i> Report</span>
+                    <i :class="reportOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+                </button>
+                <ul x-show="reportOpen" x-transition class="ml-6 mt-1 space-y-1">
+                    <li><a href="{{ route('superadmin.qr') }}" class="block px-2 py-1 hover:text-indigo-200">Label Barcode</a></li>
+                    <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Kartu Inventaris</a></li>
                 </ul>
-            </div>
-        </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Logout -->
+    <div class="p-4 border-t border-indigo-700 mt-auto">
+        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+            @csrf
+            <button class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-indigo-200 hover:text-white transition-colors">
+                Log Out
+                <i class="fas fa-sign-out-alt ml-1"></i>
+            </button>
+        </form>
     </div>
 </aside>
 <div id="sidebarBackdrop" class="fixed inset-0 z-10 hidden bg-gray-900/50 dark:bg-gray-900/80 lg:hidden"></div>

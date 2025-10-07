@@ -7,65 +7,40 @@ use App\Models\Departement;
 use Illuminate\Http\Request;
 
 use App\Models\Institution;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Employee::class, 'employee');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $search = $request->get('search');
-        $sort = $request->get('sort', 'nama');
-        // default sort by 'nama' 
-        $direction = $request->get('direction', 'asc');
+        // $employees = Employee::with(['department', 'user'])->paginate(10);
+        // return view('employee.index', compact('employees'));
+        $user = auth()->user();
+        // Logika untuk memfilter data berdasarkan peran adalah logika bisnis,
+        // jadi tetap di controller. Ini sudah benar.
+        $query = Employee::with(['department','institution', 'user']);
 
-        // Daftar kolom yang diizinkan untuk sorting (aman dari SQL injection)
-        $allowedSorts = ['nip', 'nama', 'alamat', 'telepon', 'email', 'bidang'];
-        if (!in_array($sort, $allowedSorts)) {
-            $sort = 'nama';
-        }
-        if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'asc';
-        }
-
-        $query = Employee::with(['department', 'user']);
-
-        // Filter pencarian
-        $query->when($search, function ($q) use ($search) {
-            $q->where(function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%")
-                    ->orWhere('nip', 'like', "%{$search}%")
-                    ->orWhere('alamat', 'like', "%{$search}%")
-                    ->orWhere('telepon', 'like', "%{$search}%")
-                    ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"))
-                    ->orWhereHas('department', fn($d) => $d->where('nama', 'like', "%{$search}%"));
+        if ($user->role == 'admin') {
+            $query->whereHas('institution', function ($q) use ($user) {
+                $q->where('id', $user->employee?->institution->id);
             });
-        });
 
-        // Sorting
-        if ($sort === 'email') {
-            // Sorting berdasarkan relasi user.email → butuh join
-            $query->join('users', 'employees.id', '=', 'users.karyawan_id')
-                ->orderBy('users.email', $direction)
-                ->select('employees.*');
-        } elseif ($sort === 'bidang') {
-            // Sorting berdasarkan relasi department.nama
-            $query->join('departements', 'employees.department_id', '=', 'departements.id')
-                ->orderBy('departements.nama', $direction)
-                ->select('employees.*');
-        } else {
-            // Kolom langsung di tabel employees
-            $query->orderBy($sort, $direction);
+            // $institutions = Employee::where('id', $user->employee?->institution->id)->get();
+
+        } elseif ($user->role == 'subadmin') {
+            // Subadmin hanya boleh lihat employee di departemennya
+            $query->where('department_id', $user->employee->department_id);
         }
 
-        // Pagination + append semua query string (search, sort, direction)
-        $employees = $query->paginate(10)->appends([
-            'search' => $search,
-            'sort' => $sort,
-            'direction' => $direction,
-        ]);
-
+        $employees = $query->paginate(10);
         return view('employee.index', compact('employees'));
     }
 
@@ -74,8 +49,22 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        $institutions = Institution::all();
-        $departements = Departement::all();
+        // $institutions = Institution::all();
+        // $departements = Departement::all();
+        // return view('employee.create_employee', compact('institutions', 'departements'));
+        $user = auth()->user();
+        $institutions = collect();
+        $departements = collect();
+
+        if ($user->role == 'superadmin') {
+            $institutions = Institution::all();
+            $departements = Departement::all();
+        } elseif ($user->role == 'admin') {
+            // user()->employee?->institution->id
+            $institutions = Institution::where('id', $user->employee?->institution->id)->get();
+            $departements = Departement::where('instansi_id', $user->employee?->institution->id)->get();
+        }
+
         return view('employee.create_employee', compact('institutions', 'departements'));
     }
 
@@ -84,22 +73,45 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
         $validated = $request->validate([
             'nip' => 'required|unique:employees,nip',
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
+            'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
-            'department_id.exists' => 'Bidang tidak ditemukan.',
+            // 'institution_id.exists' => 'Institusi tidak ditemukan.',
+            // 'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
+        // Logika bisnis dan pengisian data otomatis berdasarkan peran
+        // employee?->institution->id;
+        if ($user->role == 'superadmin') {
+            if (empty($validated['institution_id'])) {
+                return back()->withErrors(['institution_id' => 'Institusi dan Bidang wajib dipilih.'])->withInput();
+            }
+        }
+        elseif ($user->role =='admin') {
+            $validated['institution_id'] = $user->employee?->institution->id;
+            if (empty($validated['department_id'])) {
+                return back()->withErrors(['department_id' => 'Bidang wajib dipilih.'])->withInput();
+            }
+            $department = Departement::find($validated['department_id']);
+            if (!$department || $department->instansi_id != $user->employee?->institution->id) {
+                return back()->withErrors(['department_id' => 'Anda hanya dapat memilih bidang dari institusi Anda.'])->withInput();
+            }
+        } elseif ($user->role == 'subadmin') {
+            $validated['institution_id'] = $user->employee?->institution->id;
+            $validated['department_id'] = $user->employee->department_id;
+        }
 
         Employee::create($validated);
 
-        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
     /**
@@ -116,41 +128,61 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
+        // $employee->load('department.institution');
+        // $institutions = Institution::all();
+        // $departements = Departement::all();
+        // return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
         $employee->load('department.institution');
-        $institutions = Institution::all();
-        $departements = Departement::all();
-        return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
+      $user = auth()->user();
+      $institutions = collect();
+      $departements = collect();
+
+      if ($user->role == 'superadmin') {
+          $institutions = Institution::all();
+          $departements = Departement::all();
+      } elseif ($user->role == 'admin') {
+          $institutionId = $user->employee?->institution->id;
+          $institutions = Institution::where('id', $institutionId)->get();
+          $departements = Departement::where('instansi_id', $institutionId)->get();
+      }
+      // Untuk subadmin, tidak perlu mengambil data apa pun karena mereka tidak bisa mengubah departemen.
+      // Form bisa dibuat read-only untuk mereka.
+
+      return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Employee $employee)
-    {$oldDepartmentId = $employee->department_id;
+    {
+        $oldDepartmentId = $employee->department_id;
         $validated = $request->validate([
             'nip' => 'required|unique:employees,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
             'alamat' => 'nullable|string',
             'telepon' => 'nullable|string|max:20',
+            'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
         ], [
             'nip.unique' => 'NIP sudah digunakan.',
             'nip.required' => 'NIP wajib diisi.',
             'nama.required' => 'Nama wajib diisi.',
+            'institution_id.exists' => 'Institusi tidak ditemukan.',
             'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
         // Cek apakah departemen karyawan berubah
-      // dan apakah karyawan tersebut adalah kepala di departemen lamanya.
-      if ($oldDepartmentId && $oldDepartmentId != $request->department_id) {
-        $oldDepartment = Departement::find($oldDepartmentId);
+        // dan apakah karyawan tersebut adalah kepala di departemen lamanya.
+        if ($oldDepartmentId && $oldDepartmentId != $request->department_id) {
+            $oldDepartment = Departement::find($oldDepartmentId);
 
-        // Jika departemen lama ada dan ID karyawan sama dengan kepala idang
-        if ($oldDepartment && $oldDepartment->kepala_bidang_id == $employee->id) {
-            // Hapus jabatan kepala bidang dari departemen lama
-            $oldDepartment->kepala_bidang_id = null;
-            $oldDepartment->save();
+            // Jika departemen lama ada dan ID karyawan sama dengan kepala idang
+            if ($oldDepartment && $oldDepartment->kepala_bidang_id == $employee->id) {
+                // Hapus jabatan kepala bidang dari departemen lama
+                $oldDepartment->kepala_bidang_id = null;
+                $oldDepartment->save();
+            }
         }
-    }
         $original = $employee->replicate();
         $employee->fill($validated);
         if (!$employee->isDirty()) {
@@ -159,7 +191,7 @@ class EmployeeController extends Controller
         $employee->save();
         $employee->update($validated);
 
-        return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil diperbarui.');
+        return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil diperbarui.');
     }
 
     /**
@@ -169,9 +201,9 @@ class EmployeeController extends Controller
     {
         try {
             $employee->delete();
-            return redirect()->route('superadmin.employee.index')->with('success', 'Karyawan berhasil dihapus.');
+            return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.employee.index')->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect(routeForRole('employee', 'index'))->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
         }
     }
 }
