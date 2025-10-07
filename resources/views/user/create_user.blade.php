@@ -8,7 +8,7 @@
         <form action="{{ routeForRole('user', 'store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
-            @php $user_role = auth()->user()->role; @endphp
+            {{-- @php $user_role = auth()->user()->role; @endphp
             <!-- Filter untuk Superadmin -->
             @if ($user_role === 'superadmin')
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
@@ -47,7 +47,7 @@
                         @endforeach
                     </select>
                 </div>
-            @endif
+            @endif --}}
             @include('user._user')
 
             <!-- Buttons -->
@@ -64,7 +64,7 @@
         </form>
     </div>
 @endsection
-@push('scripts')
+{{-- @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const userRole = '{{ auth()->user()->role }}';
@@ -128,4 +128,4 @@
             }
         });
     </script>
-@endpush
+@endpush --}}

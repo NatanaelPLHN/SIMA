@@ -68,40 +68,60 @@ class UserController extends Controller
         $user = Auth::user();
         $user_role = $user->role;
 
+        $employees = collect();
         $creatable_role = '';
         if ($user_role === 'superadmin') {
             $creatable_role = 'admin';
+            // Ambil semua ID karyawan yang merupakan kepala instansi
+            $kepalaInstansiIds = Institution::whereNotNull('kepala_instansi_id')->pluck('kepala_instansi_id');
+
+            // Ambil data employee yang merupakan kepala instansi DAN belum punya akun
+            $employees = Employee::whereIn('id', $kepalaInstansiIds)
+                ->whereDoesntHave('user')
+                ->orderBy('nama')
+                ->get();
         } elseif ($user_role === 'admin') {
             $creatable_role = 'subadmin';
+            // Ambil semua ID karyawan yang merupakan kepala departemen di instansi admin
+            $kepalaDepartemenIds = Departement::where('instansi_id', $user->employee->institution_id)
+                ->whereNotNull('kepala_bidang_id')
+                ->pluck('kepala_bidang_id');
+
+            // Ambil data employee yang merupakan kepala departemen DAN belum punya akun
+            $employees = Employee::whereIn('id', $kepalaDepartemenIds)
+                ->whereDoesntHave('user')
+                ->orderBy('nama')
+                ->get();
         } elseif ($user_role === 'subadmin') {
             $creatable_role = 'user';
+            // Ambil karyawan di departemen yang sama dengan subadmin, yang belum punya akun
+            $employees = Employee::where('department_id', $user->employee->department_id)
+                ->whereDoesntHave('user')
+                ->orderBy('nama')
+                ->get();
         }
-        $institutions = collect();
-        $departements = collect();
-        $employees = collect();
+        // $institutions = collect();
+        // $departements = collect();
 
-        if ($user_role === 'superadmin') {
-            $institutions = Institution::orderBy('nama')->get();
-        }
-        elseif ($user_role === 'admin') {
-            $institutionId = $user->employee?->institution_id;
-            if ($institutionId) {
-                $departements = Departement::where('instansi_id', $institutionId)->orderBy('nama')->get();
-            }
-        }
-        elseif ($user_role === 'subadmin') {
-            $departmentId = $user->employee?->department_id;
-            if ($departmentId) {
-                $employees = Employee::where('department_id', $departmentId)
-                    ->whereDoesntHave('user')
-                    ->orderBy('nama')
-                    ->get();
-            }
-        }
+        // if ($user_role === 'superadmin') {
+        //     $institutions = Institution::orderBy('nama')->get();
+        // } elseif ($user_role === 'admin') {
+        //     $institutionId = $user->employee?->institution_id;
+        //     if ($institutionId) {
+        //         $departements = Departement::where('instansi_id', $institutionId)->orderBy('nama')->get();
+        //     }
+        // } elseif ($user_role === 'subadmin') {
+        //     $departmentId = $user->employee?->department_id;
+        //     if ($departmentId) {
+        //         $employees = Employee::where('department_id', $departmentId)
+        //             ->whereDoesntHave('user')
+        //             ->orderBy('nama')
+        //             ->get();
+        //     }
+        // }
 
-        return view('user.create_user', compact(
-            'creatable_role', 'institutions', 'departements', 'employees'
-        ));
+        // return view('user.create_user', compact('creatable_role','institutions','departements','employees'));
+        return view('user.create_user', compact('creatable_role', 'employees'));
     }
 
     /**
@@ -120,14 +140,28 @@ class UserController extends Controller
         ]);
 
         // Tentukan role baru secara otomatis, jangan ambil dari request
-        $user_role = Auth::user()->role;
+        $user = Auth::user();
+        $user_role = $user->role;
         $new_role = '';
+        $employee = Employee::find($validated['karyawan_id']);
         if ($user_role === 'superadmin') {
             $new_role = 'admin';
+            // Validasi: Karyawan harus menjadi kepala instansi
+            $isKepalaInstansi = Institution::where('kepala_instansi_id', $employee->id)->exists();
+            if (!$isKepalaInstansi) {
+                return back()->withInput()->withErrors(['karyawan_id' => 'Superadmin hanya bisa membuat akun untuk Kepala Instansi.']);
+            }
         } elseif ($user_role === 'admin') {
             $new_role = 'subadmin';
+            $isKepalaDepartemen = Departement::where('kepala_bidang_id', $employee->id)->exists();
+            if (!$isKepalaDepartemen) {
+                return back()->withInput()->withErrors(['karyawan_id' => 'Admin hanya bisa membuat akun untuk Kepala Departemen.']);
+            }
         } elseif ($user_role === 'subadmin') {
             $new_role = 'user';
+            if ($employee->department_id !== $user->employee->department_id) {
+                return back()->withInput()->withErrors(['karyawan_id' => 'Subadmin hanya bisa membuat akun untuk karyawan di departemennya sendiri.']);
+            }
         } else {
             // Jika role pembuat tidak valid, gagalkan.
             return back()->with('error', 'Anda tidak memiliki izin untuk membuat pengguna.');
@@ -245,31 +279,31 @@ class UserController extends Controller
         }
     }
     public function getDepartements($institutionId)
-  {
-      // Hanya superadmin yang boleh mengakses ini
-      if (Auth::user()->role !== 'superadmin') {
-          return response()->json(['error' => 'Unauthorized'], 403);
-      }
-      $departements = Departement::where('instansi_id', $institutionId)
-          ->orderBy('nama')
-          ->get(['id', 'nama']);
-      return response()->json($departements);
-  }
-  public function getEmployees($departmentId)
-  {
-      $user = Auth::user();
-      // Admin hanya boleh mengambil dari instansinya, superadmin boleh dari mana saja
-      if ($user->role === 'admin') {
-          $department = Departement::find($departmentId);
-          if (!$department || $department->instansi_id != $user->employee?->institution_id) {
-              return response()->json(['error' => 'Unauthorized'], 403);
-          }
-      }
+    {
+        // Hanya superadmin yang boleh mengakses ini
+        if (Auth::user()->role !== 'superadmin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $departements = Departement::where('instansi_id', $institutionId)
+            ->orderBy('nama')
+            ->get(['id', 'nama']);
+        return response()->json($departements);
+    }
+    public function getEmployees($departmentId)
+    {
+        $user = Auth::user();
+        // Admin hanya boleh mengambil dari instansinya, superadmin boleh dari mana saja
+        if ($user->role === 'admin') {
+            $department = Departement::find($departmentId);
+            if (!$department || $department->instansi_id != $user->employee?->institution_id) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+        }
 
-      $employees = Employee::where('department_id', $departmentId)
-          ->whereDoesntHave('user') // Hanya ambil yang belum punya akun
-          ->orderBy('nama')
-          ->get(['id', 'nama']);
-      return response()->json($employees);
-  }
+        $employees = Employee::where('department_id', $departmentId)
+            ->whereDoesntHave('user') // Hanya ambil yang belum punya akun
+            ->orderBy('nama')
+            ->get(['id', 'nama']);
+        return response()->json($employees);
+    }
 }
