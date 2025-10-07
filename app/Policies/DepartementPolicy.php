@@ -13,14 +13,16 @@ class DepartementPolicy
     }
 
     public function view(User $user, Departement $departement)
-    {
-        if ($user->role === 'admin') {
-            return $user->employee &&
-                $user->employee->department &&
-                $user->employee->department->instansi_id === $departement->instansi_id;
-        }
-        return false;
-    }
+  {
+      if ($user->role === 'admin') {
+          // Pastikan admin punya relasi employee dan institution
+          if ($user->employee && $user->employee->institution) {
+              // Bandingkan ID institusi admin dengan ID institusi departemen
+              return $user->employee->institution->id === $departement->instansi_id;
+          }
+      }
+      return false;
+  }
 
     public function create(User $user)
     {

@@ -69,10 +69,10 @@
                             <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
                                 <div class="flex items-center justify-center gap-x-3">
                                     <a class="fas fa-eye text-blue-600 hover:text-blue-800"
-                                        href="{{ route('user', 'show', $user->id) }}"></a>
+                                        href="{{ routeForRole('user', 'show', $user->id) }}"></a>
                                     <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ route('user', 'edit', $user->id) }}"></a>
-                                    <form method="POST" action="{{ route('user', 'destroy', $user->id) }}"
+                                        href="{{ routeForRole('user', 'edit', $user->id) }}"></a>
+                                    <form method="POST" action="{{ routeForRole('user', 'destroy', $user->id) }}"
                                         class="delete-form">
                                         @csrf
                                         @method('DELETE')

@@ -2,50 +2,92 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+  use App\Models\User;
+  use Illuminate\Auth\Access\HandlesAuthorization;
 
-class UserPolicy
-{
-    public function viewAny(User $user)
-    {
-        return in_array($user->role, ['superadmin','admin']);
-    }
+  class UserPolicy
+  {
+      use HandlesAuthorization;
 
-    public function view(User $user, User $target)
-    {
-        if ($user->role === 'superadmin') {
-            return $target->role === 'admin'; // only manages admins
-        }
+      /**
+       * Determine whether the user can view any models.
+       *
+       * @param  \App\Models\User  $user
+       * @return bool
+       */
+      public function viewAny(User $user)
+      {
+          // Hanya superadmin, admin, dan subadmin yang bisa melihat daftar user.
+          return in_array($user->role, ['superadmin', 'admin', 'subadmin']);
+      }
 
-        if ($user->role === 'admin') {
-            return $target->role === 'user' &&
-                $user->employee &&
-                $target->employee &&
-                $user->employee->department->instansi_id === $target->employee->department->instansi_id;
-        }
+      /**
+       * Determine whether the user can view the model.
+       *
+       * @param  \App\Models\User  $user
+       * @param  \App\Models\User  $model
+       * @return bool
+       */
+      public function view(User $user, User $model)
+      {
+          // Superadmin bisa melihat detail user dengan role 'admin'.
+          if ($user->role === 'superadmin') {
+              return $model->role === 'admin';
+          }
 
-        if ($user->role === 'user') {
-            return $user->id === $target->id;
-        }
+          // Admin bisa melihat detail user dengan role 'subadmin'.
+          if ($user->role === 'admin') {
+              return $model->role === 'subadmin';
+          }
 
-        return false;
-    }
+          // Subadmin bisa melihat detail user dengan role 'user'.
+          if ($user->role === 'subadmin') {
+              return $model->role === 'user';
+          }
 
-    public function create(User $user)
-    {
-        return in_array($user->role, ['superadmin','admin']);
-    }
+          return false;
+      }
 
-    public function update(User $user, User $target)
-    {
-        return $this->view($user, $target);
-    }
+      /**
+       * Determine whether the user can create models.
+       *
+       * @param  \App\Models\User  $user
+       * @return bool
+       */
+      public function create(User $user)
+      {
+          // Hanya superadmin, admin, dan subadmin yang bisa membuat user baru.
+          return in_array($user->role, ['superadmin', 'admin', 'subadmin']);
+      }
 
-    public function delete(User $user, User $target)
-    {
-        if ($user->id === $target->id) return false; // can't delete self
-        return $this->update($user, $target);
-    }
-}
+      /**
+       * Determine whether the user can update the model.
+       *
+       * @param  \App\Models\User  $user
+       * @param  \App\Models\User  $model
+       * @return bool
+       */
+      public function update(User $user, User $model)
+      {
+          // Logikanya sama dengan 'view', siapa yang bisa melihat, dia juga bisa update.
+          return $this->view($user, $model);
+      }
 
+      /**
+       * Determine whether the user can delete the model.
+       *
+       * @param  \App\Models\User  $user
+       * @param  \App\Models\User  $model
+       * @return bool
+       */
+      public function delete(User $user, User $model)
+      {
+          // Pengguna tidak bisa menghapus dirinya sendiri.
+          if ($user->id === $model->id) {
+              return false;
+          }
+
+          // Logikanya sama dengan 'view', siapa yang bisa melihat, dia juga bisa delete.
+          return $this->view($user, $model);
+      }
+  }

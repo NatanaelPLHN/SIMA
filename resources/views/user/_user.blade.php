@@ -38,7 +38,7 @@
 </div>
 
 {{-- Role --}}
-<div class="mb-4">
+{{-- <div class="mb-4">
     <label for="role" class="block text-sm font-medium text-gray-700 mb-1">
         Role <span class="text-red-500">*</span>
     </label>
@@ -53,7 +53,7 @@
     @error('role')
         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
     @enderror
-</div>
+</div> --}}
 
 {{-- nda tau ini apa --}}
 <div class="mb-4">

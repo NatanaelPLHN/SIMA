@@ -77,6 +77,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::resource('departement', controller: DepartementController::class);
     Route::resource('employee', controller: EmployeeController::class);
+    Route::resource('user', controller: UserController::class);
 
     Route::resource('borrowing', controller: BorrowingController::class);
     Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
