@@ -1,6 +1,7 @@
 <?php
 namespace App\Observers;
 
+use App\Models\Employee;
 use App\Models\Institution;
 use App\Models\User;
 
@@ -32,6 +33,14 @@ class InstitutionObserver
 
             // 2. Proses Kepala Instansi BARU (jika ada)
             if ($newKepalaId) {
+                // 1. Hapus department_id dari employee yang baru diangkat
+                $newKepalaEmployee = Employee::find($newKepalaId);
+                if ($newKepalaEmployee) {
+                    $newKepalaEmployee->department_id = null; // Hapus departemen
+                    $newKepalaEmployee->save();
+                }
+
+                // 2. Update role user menjadi 'admin'
                 $newKepalaUser = User::where('karyawan_id', $newKepalaId)->first();
                 // Jika user baru ada, promosikan rolenya menjadi 'admin'
                 if ($newKepalaUser) {

@@ -26,12 +26,15 @@ class EmployeeController extends Controller
         $user = auth()->user();
         // Logika untuk memfilter data berdasarkan peran adalah logika bisnis,
         // jadi tetap di controller. Ini sudah benar.
-        $query = Employee::with(['department.institution', 'user']);
+        $query = Employee::with(['department','institution', 'user']);
 
         if ($user->role == 'admin') {
-            $query->whereHas('department.institution', function ($q) use ($user) {
+            $query->whereHas('institution', function ($q) use ($user) {
                 $q->where('id', $user->employee?->institution->id);
             });
+
+            // $institutions = Employee::where('id', $user->employee?->institution->id)->get();
+
         } elseif ($user->role == 'subadmin') {
             // Subadmin hanya boleh lihat employee di departemennya
             $query->where('department_id', $user->employee->department_id);

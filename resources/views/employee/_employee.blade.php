@@ -30,7 +30,7 @@
 @endphp
 <!-- Alpine.js Dependent Dropdown -->
 <div x-data="{
-    selectedInstitution: '{{ old('institution_id', $employee->department->instansi_id ?? '') }}',
+    selectedInstitution: '{{ old('institution_id', $employee->institution_id ?? '') }}',
     selectedDepartment: '{{ old('department_id', $employee->department_id ?? '') }}',
     departments: {{ Js::from($departements) }},
     get filteredDepartments() {

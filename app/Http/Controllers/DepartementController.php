@@ -68,12 +68,13 @@ class DepartementController extends Controller
             'kepala_bidang_id' => 'nullable|exists:employees,id',
             'lokasi' => 'nullable|string|max:255',
             // 'instansi_id' => 'required|exists:institutions,id',
-            'alias' => 'required|string|max:255',
+            'alias' => 'required|string|max:255|unique:departements,alias',
         ], [
             'nama.required' => 'Nama bidang wajib diisi.',
-            'nama.required' => 'Alias bidang wajib diisi.',
+            'alias.required' => 'Alias bidang wajib diisi.',
             // 'instansi_id.required' => 'Instansi wajib dipilih.',
             // 'instansi_id.exists' => 'Instansi tidak ditemukan.',
+            'alias.unique' => 'Alias ini sudah digunakan.',
             'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
         ]);
         // 2. Ambil ID institusi dari user yang sedang login
