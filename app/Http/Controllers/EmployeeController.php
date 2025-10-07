@@ -13,11 +13,59 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $employees = Employee::with('department')->paginate(10);
-        $employees = Employee::with(['department', 'user'])->paginate(10);
-        // $employees = Employee::with('department')->paginate(10);
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        // default sort by 'nama' 
+        $direction = $request->get('direction', 'asc');
+
+        // Daftar kolom yang diizinkan untuk sorting (aman dari SQL injection)
+        $allowedSorts = ['nip', 'nama', 'alamat', 'telepon', 'email', 'bidang'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array($direction, ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        $query = Employee::with(['department', 'user']);
+
+        // Filter pencarian
+        $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('telepon', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"))
+                    ->orWhereHas('department', fn($d) => $d->where('nama', 'like', "%{$search}%"));
+            });
+        });
+
+        // Sorting
+        if ($sort === 'email') {
+            // Sorting berdasarkan relasi user.email → butuh join
+            $query->join('users', 'employees.id', '=', 'users.karyawan_id')
+                ->orderBy('users.email', $direction)
+                ->select('employees.*');
+        } elseif ($sort === 'bidang') {
+            // Sorting berdasarkan relasi department.nama
+            $query->join('departements', 'employees.department_id', '=', 'departements.id')
+                ->orderBy('departements.nama', $direction)
+                ->select('employees.*');
+        } else {
+            // Kolom langsung di tabel employees
+            $query->orderBy($sort, $direction);
+        }
+
+        // Pagination + append semua query string (search, sort, direction)
+        $employees = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+
         return view('employee.index', compact('employees'));
     }
 
