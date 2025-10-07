@@ -27,24 +27,6 @@
             </div>
 
 
-            <!-- Generate Code Section -->
-            <div class="mt-6 pt-6 border-t border-gray-200">
-                <div class="flex items-center space-x-4">
-                    <label class="text-sm font-medium text-gray-700">Generate Code?</label>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center">
-                            <input type="radio" id="yes" name="generateCode" value="yes"
-                                class="text-indigo-600 focus:ring-indigo-500">
-                            <label for="yes" class="ml-2 text-sm text-gray-700">Yes</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="radio" id="no" name="generateCode" value="no"
-                                class="text-indigo-600 focus:ring-indigo-500">
-                            <label for="no" class="ml-2 text-sm text-gray-700">No</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">

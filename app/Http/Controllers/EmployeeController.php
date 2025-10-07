@@ -88,10 +88,11 @@ class EmployeeController extends Controller
         // Logika bisnis dan pengisian data otomatis berdasarkan peran
         // employee?->institution->id;
         if ($user->role == 'superadmin') {
-            if (empty($validated['institution_id']) || empty($validated['department_id'])) {
-                return back()->withErrors(['department_id' => 'Institusi dan Bidang wajib dipilih.'])->withInput();
+            if (empty($validated['institution_id'])) {
+                return back()->withErrors(['institution_id' => 'Institusi dan Bidang wajib dipilih.'])->withInput();
             }
-        } elseif ($user->role =='admin') {
+        }
+        elseif ($user->role =='admin') {
             $validated['institution_id'] = $user->employee?->institution->id;
             if (empty($validated['department_id'])) {
                 return back()->withErrors(['department_id' => 'Bidang wajib dipilih.'])->withInput();
@@ -124,10 +125,27 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
+        // $employee->load('department.institution');
+        // $institutions = Institution::all();
+        // $departements = Departement::all();
+        // return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
         $employee->load('department.institution');
-        $institutions = Institution::all();
-        $departements = Departement::all();
-        return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
+      $user = auth()->user();
+      $institutions = collect();
+      $departements = collect();
+
+      if ($user->role == 'superadmin') {
+          $institutions = Institution::all();
+          $departements = Departement::all();
+      } elseif ($user->role == 'admin') {
+          $institutionId = $user->employee?->institution->id;
+          $institutions = Institution::where('id', $institutionId)->get();
+          $departements = Departement::where('instansi_id', $institutionId)->get();
+      }
+      // Untuk subadmin, tidak perlu mengambil data apa pun karena mereka tidak bisa mengubah departemen.
+      // Form bisa dibuat read-only untuk mereka.
+
+      return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
     }
 
     /**

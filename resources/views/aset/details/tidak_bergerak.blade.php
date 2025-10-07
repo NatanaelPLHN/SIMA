@@ -42,13 +42,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Ukuran:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->tidak_bergerak->ukuran ?? '?' }}
+                                {{ $asset->tidakBergerak->ukuran ?? '?' }}
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Bahan:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->tidak_bergerak->bahan ?? '?' }}
+                                {{ $asset->tidakBergerak->bahan ?? '?' }}
                             </div>
                         </div>
                         <div>
@@ -63,7 +63,7 @@
                 <!-- Right Column -->
                 <div class="space-y-4">
                     <div class="flex justify-center">
-                        <img src="https://placehold.co/300x300?text=QR+Code" alt="QR Code" class="w-64 h-64 object-contain">
+                        <img src="{{ asset('storage/' . $asset->tidakBergerak->qr_code_path) }}" alt="QR Code" class="w-64 h-64 object-contain">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">

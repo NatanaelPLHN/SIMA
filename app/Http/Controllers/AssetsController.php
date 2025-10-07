@@ -86,11 +86,16 @@ class AssetsController extends Controller
 
         // $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias, str(mt_rand(1, 999)),]);
         // 1. Cari aset terakhir dengan kombinasi yang sama
-        $lastAsset = Asset::where('institution_id', $validated['institution_id'])
-            ->where('departement_id', $validated['departement_id'])
+        $lastAsset = Asset::where('departement_id', $user->employee?->department?->id)
             ->where('category_id', $validated['category_id'])
             ->latest('id') // Urutkan berdasarkan ID atau created_at untuk mendapatkan yang terbaru
             ->first();
+        // $lastAsset = Asset::where('institution_id', $user->employee?->department?->institution?->id)
+        //     ->where('departement_id', $validated['departement_id'])
+        //     ->where('category_id', $validated['category_id'])
+        //     ->latest('id') // Urutkan berdasarkan ID atau created_at untuk mendapatkan yang terbaru
+        //     ->first();
+
 
         // 2. Tentukan nomor urut berikutnya
         $nextNumber = 1; // Default jika ini adalah aset pertama
@@ -102,7 +107,7 @@ class AssetsController extends Controller
         }
 
         // 3. Format nomor urut dengan padding (misal: 001, 002, dst.)
-        $paddedNextNumber = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        // $paddedNextNumber = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
         // 4. Buat kode final yang unik dan berurutan
         $kode = implode('-', [
@@ -110,20 +115,21 @@ class AssetsController extends Controller
             $departmentAlias,
             $categoryGroupAlias,
             $categoryAlias,
-            $paddedNextNumber,
+            $nextNumber,
+            // $paddedNextNumber,
         ]);
         $departement_id = $user->employee?->department?->id;
         // dd($user);
         $validated['departement_id'] = $departement_id;
-        do {
-            $kode = implode('-', [
-                $institutionAlias,
-                $departmentAlias,
-                $categoryGroupAlias,
-                $categoryAlias,
-                str(mt_rand(1, 999)),
-            ]);
-        } while (Asset::where('kode', $kode)->exists());
+        // do {
+        //     $kode = implode('-', [
+        //         $institutionAlias,
+        //         $departmentAlias,
+        //         $categoryGroupAlias,
+        //         $categoryAlias,
+        //         str(mt_rand(1, 999)),
+        //     ]);
+        // } while (Asset::where('kode', $kode)->exists());
 
         $validated['kode'] = $kode;
         // dd($validated);

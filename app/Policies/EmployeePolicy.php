@@ -9,7 +9,7 @@ class EmployeePolicy
 {
     public function viewAny(User $user)
     {
-        return in_array($user->role, ['superadmin','admin']);
+        return in_array($user->role, ['superadmin', 'admin', 'subadmin']);
     }
 
     public function view(User $user, Employee $employee)
@@ -33,9 +33,10 @@ class EmployeePolicy
     }
 
     public function create(User $user)
-    {
-        return in_array($user->role, ['superadmin','admin']);
-    }
+  {
+      // Izinkan subadmin untuk mengakses form pembuatan karyawan
+      return in_array($user->role, ['superadmin', 'admin', 'subadmin']);
+  }
 
     public function update(User $user, Employee $employee)
     {

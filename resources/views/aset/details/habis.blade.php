@@ -65,9 +65,6 @@
 
                 <!-- Right Column -->
                 <div class="space-y-4">
-                    <div class="flex justify-center">
-                        <img src="https://placehold.co/300x300?text=QR+Code" alt="QR Code" class="w-64 h-64 object-contain">
-                    </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>

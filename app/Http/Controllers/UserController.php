@@ -7,16 +7,19 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Departement;
 
 use Illuminate\Support\Facades\Auth;
+use App\Models\Institution;
+
 
 class UserController extends Controller
 {
     public function __construct()
-      {
-          // Mengaktifkan UserPolicy untuk semua metode di controller ini
-          $this->authorizeResource(User::class, 'user');
-      }
+    {
+        // Mengaktifkan UserPolicy untuk semua metode di controller ini
+        $this->authorizeResource(User::class, 'user');
+    }
 
     /**
      * Display a listing of the resource.
@@ -55,30 +58,55 @@ class UserController extends Controller
 
     /**
      * Show the form for creating a new resource.
-    */
+     */
     public function create()
     {
         // $employees = Employee::all();
         // return view('user.create_user',compact('employees'));
-        $employees = Employee::all();
 
-          // Tentukan role apa yang boleh dibuat berdasarkan role user yang login
-          $creatable_role = '';
-          $user_role = Auth::user()->role;
-          if ($user_role === 'superadmin') {
-              $creatable_role = 'admin';
-          } elseif ($user_role === 'admin') {
-              $creatable_role = 'subadmin';
-          } elseif ($user_role === 'subadmin') {
-              $creatable_role = 'user';
-          }
+        // Tentukan role apa yang boleh dibuat berdasarkan role user yang login
+        $user = Auth::user();
+        $user_role = $user->role;
 
-          return view('user.create_user', compact('employees', 'creatable_role'));
+        $creatable_role = '';
+        if ($user_role === 'superadmin') {
+            $creatable_role = 'admin';
+        } elseif ($user_role === 'admin') {
+            $creatable_role = 'subadmin';
+        } elseif ($user_role === 'subadmin') {
+            $creatable_role = 'user';
+        }
+        $institutions = collect();
+        $departements = collect();
+        $employees = collect();
+
+        if ($user_role === 'superadmin') {
+            $institutions = Institution::orderBy('nama')->get();
+        }
+        elseif ($user_role === 'admin') {
+            $institutionId = $user->employee?->institution_id;
+            if ($institutionId) {
+                $departements = Departement::where('instansi_id', $institutionId)->orderBy('nama')->get();
+            }
+        }
+        elseif ($user_role === 'subadmin') {
+            $departmentId = $user->employee?->department_id;
+            if ($departmentId) {
+                $employees = Employee::where('department_id', $departmentId)
+                    ->whereDoesntHave('user')
+                    ->orderBy('nama')
+                    ->get();
+            }
+        }
+
+        return view('user.create_user', compact(
+            'creatable_role', 'institutions', 'departements', 'employees'
+        ));
     }
 
     /**
      * Store a newly created resource in storage.
-    */
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -115,7 +143,7 @@ class UserController extends Controller
 
     /**
      * Display the specified resource.
-    */
+     */
     public function show(User $user)
     {
         $user->load('employee');
@@ -124,19 +152,18 @@ class UserController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-    */
+     */
     public function edit(User $user)
     {
         $user->load('employee');
         $employees = Employee::all(); // Tambahkan ini
 
         return view('user.edit_user', compact('user', 'employees'));
-
     }
 
     /**
      * Update the specified resource in storage.
-    */
+     */
     // public function update(Request $request, User $user)
     // {
     //     $validated = $request->validate([
@@ -174,47 +201,75 @@ class UserController extends Controller
     //     return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
     // }
     public function update(Request $request, User $user)
-      {
-          $validated = $request->validate([
-              'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-              'password'    => 'nullable|min:6|confirmed',
-              'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
-          ], [
-              'email.unique'       => 'Email sudah digunakan.',
-              'email.required'     => 'Email wajib diisi.',
-              'password.min'       => 'Password minimal 6 karakter.',
-              'password.confirmed' => 'Konfirmasi password tidak cocok.',
-              'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
-              'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
-          ]);
+    {
+        $validated = $request->validate([
+            'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'password'    => 'nullable|min:6|confirmed',
+            'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+        ], [
+            'email.unique'       => 'Email sudah digunakan.',
+            'email.required'     => 'Email wajib diisi.',
+            'password.min'       => 'Password minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
+            'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+        ]);
 
-          // Penting: Jangan izinkan mengubah role saat update untuk menjaga integritas
-          // Jika role ingin diubah, prosesnya harus hapus dan buat baru.
-          $original = $user->replicate();
-          if (!empty($validated['password'])) {
-              $validated['password'] = Hash::make($validated['password']);
-          } else {
-              unset($validated['password']);
-          }
-          $user->fill($validated);
-          if (!$user->isDirty()) {
+        // Penting: Jangan izinkan mengubah role saat update untuk menjaga integritas
+        // Jika role ingin diubah, prosesnya harus hapus dan buat baru.
+        $original = $user->replicate();
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+        $user->fill($validated);
+        if (!$user->isDirty()) {
             return back()->with('info', 'Tidak ada perubahan pada data user.');
         }
-          $user->update($validated);
+        $user->update($validated);
 
-          return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
-      }
+        return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user)
     {
-        try{
+        try {
             $user->delete();
             return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil dihapus.');
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             return redirect(routeForRole('user', 'index'))->with('error', 'Gagal menghapus akun. Akun masih memiliki data peminjaman.');
         }
     }
+    public function getDepartements($institutionId)
+  {
+      // Hanya superadmin yang boleh mengakses ini
+      if (Auth::user()->role !== 'superadmin') {
+          return response()->json(['error' => 'Unauthorized'], 403);
+      }
+      $departements = Departement::where('instansi_id', $institutionId)
+          ->orderBy('nama')
+          ->get(['id', 'nama']);
+      return response()->json($departements);
+  }
+  public function getEmployees($departmentId)
+  {
+      $user = Auth::user();
+      // Admin hanya boleh mengambil dari instansinya, superadmin boleh dari mana saja
+      if ($user->role === 'admin') {
+          $department = Departement::find($departmentId);
+          if (!$department || $department->instansi_id != $user->employee?->institution_id) {
+              return response()->json(['error' => 'Unauthorized'], 403);
+          }
+      }
+
+      $employees = Employee::where('department_id', $departmentId)
+          ->whereDoesntHave('user') // Hanya ambil yang belum punya akun
+          ->orderBy('nama')
+          ->get(['id', 'nama']);
+      return response()->json($employees);
+  }
 }

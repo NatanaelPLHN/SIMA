@@ -145,7 +145,7 @@ class StockOpnameDepartmentController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.opname.show', $opname->id)->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
+            return redirect()->route(routeForRole('opname','index', $opname->id))->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());

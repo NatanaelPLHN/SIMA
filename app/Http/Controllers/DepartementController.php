@@ -19,11 +19,28 @@ class DepartementController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index()
+    // {
+    //     $departements = Departement::with(['institution', 'kepala'])->paginate(10);
+    //     return view('departement.index', compact('departements'));
+    // }
     public function index()
-    {
-        $departements = Departement::with(['institution', 'kepala'])->paginate(10);
-        return view('departement.index', compact('departements'));
-    }
+  {
+      $user = Auth::user();
+      $institutionId = $user->employee?->institution->id;
+
+      // Jika admin tidak terhubung ke institusi, jangan tampilkan apa-apa.
+      if (!$institutionId) {
+          $departements = collect(); // Membuat koleksi kosong
+      } else {
+          // Ambil hanya departemen yang instansi_id-nya cocok.
+          $departements = Departement::where('instansi_id', $institutionId)
+              ->with(['institution', 'kepala'])
+              ->paginate(10);
+      }
+
+      return view('departement.index', compact('departements'));
+  }
 
     /**
      * Show the form for creating a new resource.

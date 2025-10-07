@@ -46,6 +46,9 @@ Route::get('verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset']
 Route::get('/api/asset/{kode}', [StockOpnameDepartmentController::class, 'getAssetDetailsByCode'])->name('api.asset.details');
 
 Route::post('verify-password', [StockOpnameDepartmentController::class, 'verifyPassword'])->name('verifyPassword');
+Route::get('/api/departements/{institutionId}', [UserController::class, 'getDepartements'])->name('api.departements');
+Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployees'])->name('api.employees');
+
 
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
@@ -58,6 +61,7 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
 Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin.')->group(function () {
     // Dashboard
     Route::get('dashboard', [SubAdminDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::resource('employee', controller: EmployeeController::class);
 
     Route::resource('user', controller: UserController::class);
 
@@ -67,7 +71,9 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
     Route::get('profil', [SubAdminDashboardController::class, 'profil'])->name('profil');
-
+    Route::resource('opname', controller: StockOpnameDepartmentController::class);
+    Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
+    Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
 });
 
 // Admin routes
@@ -84,9 +90,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
     Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
-    Route::resource('opname', controller: StockOpnameDepartmentController::class);
-    Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
-    Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
+
+    Route::resource('opname', controller: StockOpnameController::class);
+    Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
+    Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
 });
 
 // Superadmin routes
@@ -106,9 +113,4 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     // routes category (kategori)
     Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->name('categories.by-group');
     Route::resource('categories', CategoryController::class);
-
-    Route::resource('opname', controller: StockOpnameController::class);
-    Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
-    Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
-
 });

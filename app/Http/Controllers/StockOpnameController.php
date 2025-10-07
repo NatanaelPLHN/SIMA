@@ -25,20 +25,23 @@ class StockOpnameController extends Controller
         // if (!$user->employee?->department?->institution) {
         //     return redirect()->route('superadmin.opname.index')->with('error', 'Informasi institusi tidak ditemukan untuk akun Anda.');
         // }
-        $institutionId = $user->employee?->department?->institution?->id;
+        $institutionId = $user->employee->institution_id;
+        // $institutionId = $user->employee->institution?->id;
+        // $institutionId = $user->employee?->department?->institution?->id;
 
         // Ambil departemen yang hanya berada di institusi superadmin
         $departements = Departement::where('instansi_id', $institutionId)->get();
 
         // Ambil semua grup kategori
-        $categoryGroups = CategoryGroup::all();
+        // $categoryGroups = CategoryGroup::all();
 
         //   return view('opname.institution.create', compact('departements', 'categoryGroups'));
 
         $sessions = StockOpnameSession::with(['scheduler', 'details'])
             ->latest()
             ->paginate(10);
-        return view('opname.institution.index', compact('sessions', 'departements', 'categoryGroups'));
+        return view('opname.institution.index', compact('sessions', 'departements'));
+        // return view('opname.institution.index', compact('sessions', 'departements', 'categoryGroups'));
     }
 
     /**
@@ -109,7 +112,7 @@ class StockOpnameController extends Controller
             ]);
         }
 
-        return redirect()->route('superadmin.opname.index')->with('success', 'Jadwal stock opname berhasil dibuat.');
+        return redirect()->route(routeForRole('opname','index'))->with('success', 'Jadwal stock opname berhasil dibuat.');
     }
 
     /**
@@ -155,7 +158,7 @@ class StockOpnameController extends Controller
 
         $stockOpnameSession->update($validated);
 
-        return redirect()->route('superadmin.opname.index')
+        return redirect()->route(routeForRole('opname','index'))
             ->with('success', 'Sesi stock opname berhasil diperbarui.');
     }
 
@@ -166,10 +169,10 @@ class StockOpnameController extends Controller
     {
         try {
             $stockOpnameSession->delete();
-            return redirect()->route('superadmin.opname.index')
+            return redirect()->route(routeForRole('opname','index'))
                 ->with('success', 'Sesi stock opname berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('superadmin.opname.index')
+            return redirect()->route(routeForRole('opname','index'))
                 ->with('error', 'Gagal menghapus sesi stock opname.');
         }
     }
@@ -212,10 +215,10 @@ class StockOpnameController extends Controller
         if ($opname->status === 'draft') {
             try {
                 $opname->delete();
-                return redirect()->route('superadmin.opname.index')
+                return redirect()->route(routeForRole('opname','index'))
                     ->with('success', 'Sesi stock opname berhasil dihapus.');
             } catch (\Exception $e) {
-                return redirect()->route('superadmin.opname.index')
+                return redirect()->route(routeForRole('opname','index'))
                     ->with('error', 'Gagal menghapus sesi stock opname.');
             }
         } elseif ($opname->status === 'dijadwalkan') {

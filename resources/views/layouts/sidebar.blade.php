@@ -37,10 +37,8 @@
                             <li><a href="{{ route('superadmin.institution.index') }}" class="block px-2 py-1 hover:text-indigo-200">Instansi</a></li>
                             <li><a href="{{ route('superadmin.user.index') }}" class="block px-2 py-1 hover:text-indigo-200">Akun</a></li>
                             <li><a href="{{ route('superadmin.employee.index') }}" class="block px-2 py-1 hover:text-indigo-200">Pegawai</a></li>
-                            {{-- <li><a href="{{ route('superadmin.departement.index') }}" class="block px-2 py-1 hover:text-indigo-200">Bidang</a></li>
-                            <li><a href="{{ route('superadmin.categories.index') }}" class="block px-2 py-1 hover:text-indigo-200">Kategori</a></li>
-                            <li><a href="{{ route('superadmin.category-groups.index') }}" class="block px-2 py-1 hover:text-indigo-200">Grup Kategori</a></li>
-                            <li><a href="{{ route('superadmin.assets.index') }}" class="block px-2 py-1 hover:text-indigo-200">Aset</a></li> --}}
+                            <li><a href="{{ route('superadmin.category-groups.index') }}" class="block px-2 py-1 hover:text-indigo-200">Kategori</a></li>
+                            <li><a href="{{ route('superadmin.categories.index') }}" class="block px-2 py-1 hover:text-indigo-200">Sub Kategori</a></li>
                         </ul>
                     </li>
                 @break
@@ -108,6 +106,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('subadmin.employee.index') }}"
+                           class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
+                            Pegawai
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('subadmin.user.index') }}"
                            class="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md text-white hover:bg-indigo-700">
                             Akun
@@ -141,10 +145,11 @@
                     <i :class="monitoringOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
                 </button>
                 <ul x-show="monitoringOpen" x-transition class="ml-6 mt-1 space-y-1">
+                    <li><a href="{{ route('subadmin.opname.index') }}" class="block px-2 py-1 hover:text-indigo-200">Stock Opname</a></li>
+
                     <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Data Peminjaman</a></li>
                     <li><a href="#" class="block px-2 py-1 hover:text-indigo-200">Mutasi Aset</a></li>
-                    <li><a href="{{ route('superadmin.opname.index') }}" class="block px-2 py-1 hover:text-indigo-200">Stock Opname</a></li>
-                </ul>
+</ul>
             </li>
 
             <!-- Drawer Report (Visible for all roles if needed) -->
