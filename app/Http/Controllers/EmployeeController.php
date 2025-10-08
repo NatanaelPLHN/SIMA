@@ -19,21 +19,18 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $employees = Employee::with(['department', 'user'])->paginate(10);
-        // return view('employee.index', compact('employees'));
         $user = auth()->user();
-        // Logika untuk memfilter data berdasarkan peran adalah logika bisnis,
-        // jadi tetap di controller. Ini sudah benar.
-        $query = Employee::with(['department.institution', 'user']);
+        $query = Employee::with(['department', 'institution', 'user']);
 
-        if ($user->role == 'admin') {
-            $query->whereHas('department.institution', function ($q) use ($user) {
+        if ($user->role == 'superadmin') {
+            $query->whereNull('department_id');
+        } elseif ($user->role == 'admin') {
+            $query->whereHas('institution', function ($q) use ($user) {
                 $q->where('id', $user->employee?->institution->id);
             });
         } elseif ($user->role == 'subadmin') {
-            // Subadmin hanya boleh lihat employee di departemennya
             $query->where('department_id', $user->employee->department_id);
         }
 
@@ -61,8 +58,9 @@ class EmployeeController extends Controller
             $institutions = Institution::where('id', $user->employee?->institution->id)->get();
             $departements = Departement::where('instansi_id', $user->employee?->institution->id)->get();
         }
+        $isInstitutionHead = false;
 
-        return view('employee.create_employee', compact('institutions', 'departements'));
+        return view('employee.create_employee', compact('institutions', 'departements', 'isInstitutionHead'));
     }
 
     /**
@@ -91,8 +89,7 @@ class EmployeeController extends Controller
             if (empty($validated['institution_id'])) {
                 return back()->withErrors(['institution_id' => 'Institusi dan Bidang wajib dipilih.'])->withInput();
             }
-        }
-        elseif ($user->role =='admin') {
+        } elseif ($user->role == 'admin') {
             $validated['institution_id'] = $user->employee?->institution->id;
             if (empty($validated['department_id'])) {
                 return back()->withErrors(['department_id' => 'Bidang wajib dipilih.'])->withInput();
@@ -125,27 +122,23 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        // $employee->load('department.institution');
-        // $institutions = Institution::all();
-        // $departements = Departement::all();
-        // return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
         $employee->load('department.institution');
-      $user = auth()->user();
-      $institutions = collect();
-      $departements = collect();
+        $user = auth()->user();
+        $institutions = collect();
+        $departements = collect();
 
-      if ($user->role == 'superadmin') {
-          $institutions = Institution::all();
-          $departements = Departement::all();
-      } elseif ($user->role == 'admin') {
-          $institutionId = $user->employee?->institution->id;
-          $institutions = Institution::where('id', $institutionId)->get();
-          $departements = Departement::where('instansi_id', $institutionId)->get();
-      }
-      // Untuk subadmin, tidak perlu mengambil data apa pun karena mereka tidak bisa mengubah departemen.
-      // Form bisa dibuat read-only untuk mereka.
+        if ($user->role == 'superadmin') {
+            $institutions = Institution::all();
+            $departements = Departement::all();
+        } elseif ($user->role == 'admin') {
+            $institutionId = $user->employee?->institution->id;
+            $institutions = Institution::where('id', $institutionId)->get();
+            $departements = Departement::where('instansi_id', $institutionId)->get();
+        }
+        $isInstitutionHead = Institution::where('kepala_instansi_id', $employee->id)->exists();
 
-      return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
+        return view('employee.edit_employee', compact('employee', 'institutions', 'departements', 'isInstitutionHead'));
+        // return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
     }
 
     /**

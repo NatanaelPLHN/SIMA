@@ -1,64 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
-@include('components.alert')
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('components/alert')
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Laravel Multi Auth')</title>
+    <title>@yield('title', 'SIM ASET')</title>
+    <script>
+    if (
+        localStorage.getItem('color-theme') === 'dark' ||
+        (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
+
+    {{-- @include('components.theme-init') --}}
+    {{-- @include('components.theme-init') --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gray-100">
-    <div x-data="{ sidebarOpen: false }" class="flex h-screen">
+<body class="bg-gray-50 text-gray-900 antialiased dark:bg-gray-900 dark:text-white">
+    @include('layouts.header')
+    @include('layouts.sidebar')
 
-        <!-- Overlay untuk mobile -->
-        <div
-            x-show="sidebarOpen"
-            @click="sidebarOpen = false"
-            class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-        ></div>
-
-        <!-- Sidebar Mobile -->
-        <div
-            x-show="sidebarOpen"
-            x-transition:enter="transition transform duration-200"
-            x-transition:enter-start="-translate-x-full"
-            x-transition:enter-end="translate-x-0"
-            x-transition:leave="transition transform duration-200"
-            x-transition:leave-start="translate-x-0"
-            x-transition:leave-end="-translate-x-full"
-            class="fixed inset-y-0 left-0 w-64 bg-indigo-800 text-white z-50 md:hidden"
-        >
-            @auth
-                @include('layouts.sidebar')
-            @endauth
-        </div>
-
-        <!-- Sidebar Desktop -->
-        <div class="hidden md:flex md:w-64 bg-indigo-800 text-white">
-            @auth
-                @include('layouts.sidebar')
-            @endauth
-        </div>
-
-        <!-- Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            @auth
-                @include('layouts.header')
-            @endauth
-
-            <main class="flex-1 overflow-y-auto p-4">
-                @yield('content')
-            </main>
-
-            @auth
-                @include('layouts.footer')
-            @endauth
-        </div>
+    <!-- Wrapper utama -->
+    <div id="main-wrapper" class="flex flex-col min-h-screen pt-16 lg:pl-64 transition-all duration-300">
+        <main class="flex-grow p-4 sm:p-6">
+            @yield('content')
+        </main>
+        <footer>
+            @include('layouts.footer')
+        </footer>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @stack('scripts')
 </body>
+
 </html>
