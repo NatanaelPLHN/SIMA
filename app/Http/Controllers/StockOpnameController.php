@@ -112,7 +112,7 @@ class StockOpnameController extends Controller
             ]);
         }
 
-        return redirect()->route(routeForRole('opname','index'))->with('success', 'Jadwal stock opname berhasil dibuat.');
+        return redirect(routeForRole('opname','index'))->with('success', 'Jadwal stock opname berhasil dibuat.');
     }
 
     /**
@@ -158,7 +158,7 @@ class StockOpnameController extends Controller
 
         $stockOpnameSession->update($validated);
 
-        return redirect()->route(routeForRole('opname','index'))
+        return redirect(routeForRole('opname','index'))
             ->with('success', 'Sesi stock opname berhasil diperbarui.');
     }
 
@@ -169,10 +169,10 @@ class StockOpnameController extends Controller
     {
         try {
             $stockOpnameSession->delete();
-            return redirect()->route(routeForRole('opname','index'))
+            return redirect(routeForRole('opname','index'))
                 ->with('success', 'Sesi stock opname berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route(routeForRole('opname','index'))
+            return redirect(routeForRole('opname','index'))
                 ->with('error', 'Gagal menghapus sesi stock opname.');
         }
     }
@@ -215,10 +215,10 @@ class StockOpnameController extends Controller
         if ($opname->status === 'draft') {
             try {
                 $opname->delete();
-                return redirect()->route(routeForRole('opname','index'))
+                return redirect(routeForRole('opname','index'))
                     ->with('success', 'Sesi stock opname berhasil dihapus.');
             } catch (\Exception $e) {
-                return redirect()->route(routeForRole('opname','index'))
+                return redirect(routeForRole('opname','index'))
                     ->with('error', 'Gagal menghapus sesi stock opname.');
             }
         } elseif ($opname->status === 'dijadwalkan') {
