@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Daftar Pegawai')
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 @section('content')
-    <div class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
+    <div
+        class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
         <div class="w-full mb-1">
             <!-- Breadcrumb -->
             <div class="mb-4">
@@ -70,9 +71,10 @@
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
+
                 </div>
+
             </div>
-        </div>
 
         <!-- Data Table -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -134,6 +136,8 @@
                 {{ $employees->links() }}
             </table>
         </div>
+        </div>
+
     </div>
 
     <!-- Pagination Footer -->

@@ -19,7 +19,7 @@
                     <div class="text-sm">Status: {{ $opname->status }}</div>
                 </div>
                 @if ($opname->status == 'draft')
-                    <form id="start-form" action="{{ route('superadmin.opname.start', $opname->id) }}" method="POST"
+                    <form id="start-form" action="{{ routeForRole('opname', 'start', $opname->id) }}" method="POST"
                         enctype="multipart/form-data" class="contents">
                         @csrf
                         <div class="w-full md:w-1/3">
@@ -34,7 +34,8 @@
                     </form>
                     @endif
                     @if ($opname->status == 'draft' || $opname->status == 'dijadwalkan' )
-                    <form id="cancel-form" action="{{ route('superadmin.opname.cancel', $opname->id) }}" method="POST"
+
+                    <form id="cancel-form" action="{{ routeForRole('opname', 'cancel', $opname->id) }}" method="POST"
                         enctype="multipart/form-data" class="contents">
                         @csrf
                         <button type="submit"
