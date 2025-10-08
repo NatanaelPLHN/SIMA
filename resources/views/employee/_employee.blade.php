@@ -61,8 +61,7 @@
 focus:border-indigo-500">
                 <option value="">Pilih Instansi</option>
                 @foreach ($institutions as $institution)
-                    <option value="{{ $institution->id }}" @selected(old('institution_id', $employee->department->instansi_id ?? '') ==
-$institution->id)>
+                    <option value="{{ $institution->id }}" @selected(old('institution_id', $employee->department->instansi_id ?? '') == $institution->id)>
                         {{ $institution->nama }}
                     </option>
                 @endforeach
@@ -71,14 +70,19 @@ $institution->id)>
         <div class="mt-4">
             <label for="department_id" class="block text-sm font-medium text-gray-700">Bidang</label>
             <select name="department_id" id="department_id" x-model="selectedDepartment"
-                :disabled="!selectedInstitution"
+                :disabled="!selectedInstitution || {{ isset($isInstitutionHead) && $isInstitutionHead ? 'true' : 'false' }}"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3
-  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100">
+ focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100">
                 <option value="">Pilih Bidang</option>
                 <template x-for="department in filteredDepartments" :key="department.id">
-                    <option :value="department.id" x-text="department.nama" :selected="department.id == selectedDepartment"></option>
+                    <option :value="department.id" x-text="department.nama"
+                        :selected="department.id == selectedDepartment"></option>
                 </template>
             </select>
+            @if (isset($isInstitutionHead) && $isInstitutionHead)
+                <small class="text-red-500">Tidak dapat mengubah bidang karena karyawan ini adalah Kepala
+                    Instansi.</small>
+            @endif
         </div>
     @elseif ($isAdmin)
         <!-- Tampilan untuk Admin -->
@@ -105,9 +109,9 @@ focus:border-indigo-500">
         <!-- Tampilan untuk Subadmin (Tidak ada perubahan di sini) -->
         <div class="mt-4">
             <label class="block text-sm font-medium text-gray-700">Instansi</label>
-                <div class="mt-1 p-3 bg-indigo-100 border border-indigo-200 rounded-md">
-                    <p class="font-semibold text-indigo-800">{{ $user->employee?->institution->nama }}</p>
-                </div>
+            <div class="mt-1 p-3 bg-indigo-100 border border-indigo-200 rounded-md">
+                <p class="font-semibold text-indigo-800">{{ $user->employee?->institution->nama }}</p>
+            </div>
         </div>
         <div class="mt-4">
             <label class="block text-sm font-medium text-gray-700">Bidang</label>
