@@ -20,23 +20,83 @@ class EmployeeController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $user = auth()->user();
-        $query = Employee::with(['department', 'institution', 'user']);
+{
+    $user = auth()->user();
 
-        if ($user->role == 'superadmin') {
-            $query->whereNull('department_id');
-        } elseif ($user->role == 'admin') {
-            $query->whereHas('institution', function ($q) use ($user) {
-                $q->where('id', $user->employee?->institution->id);
-            });
-        } elseif ($user->role == 'subadmin') {
-            $query->where('department_id', $user->employee->department_id);
-        }
+    // Ambil parameter query
+    $search = $request->get('search');
+    $sort = $request->get('sort', 'nama');
+    $direction = $request->get('direction', 'asc');
 
-        $employees = $query->paginate(10);
-        return view('employee.index', compact('employees'));
+    // Validasi kolom sorting yang diizinkan
+    $allowedSorts = ['nip', 'nama', 'alamat', 'telepon', 'email', 'bidang'];
+    if (!in_array($sort, $allowedSorts)) {
+        $sort = 'nama';
     }
+    if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+        $direction = 'asc';
+    }
+
+    // Mulai query dengan relasi
+    $query = Employee::with(['department', 'institution', 'user']);
+
+    // === Filter berdasarkan role ===
+    if ($user->role === 'superadmin') {
+        $query->whereNull('department_id');
+    } elseif ($user->role === 'admin') {
+        $institutionId = $user->employee?->institution_id;
+        if ($institutionId) {
+            $query->whereHas('institution', fn($q) => $q->where('id', $institutionId));
+        } else {
+            $query->whereRaw('1 = 0'); // Tidak ada data
+        }
+    } elseif ($user->role === 'subadmin') {
+        $departmentId = $user->employee?->department_id;
+        if ($departmentId) {
+            $query->where('department_id', $departmentId);
+        } else {
+            $query->whereRaw('1 = 0');
+        }
+    }
+
+    // === Pencarian ===
+    $query->when($search, function ($q) use ($search) {
+        $q->where(function ($sub) use ($search) {
+            $sub->where('nama', 'like', "%{$search}%")
+                ->orWhere('nip', 'like', "%{$search}%")
+                ->orWhere('alamat', 'like', "%{$search}%")
+                ->orWhere('telepon', 'like', "%{$search}%")
+                ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"))
+                ->orWhereHas('department', fn($d) => $d->where('nama', 'like', "%{$search}%"))
+                ->orWhereHas('institution', fn($i) => $i->where('nama', 'like', "%{$search}%"));
+        });
+    });
+
+    // === Sorting ===
+    if ($sort === 'email') {
+        $query->join('users', 'employees.id', '=', 'users.karyawan_id')
+              ->orderBy('users.email', $direction)
+              ->select('employees.*')
+              ->distinct();
+    } elseif ($sort === 'bidang') {
+        // ✅ Perbaikan: gunakan 'departments' (bukan 'departements')
+        $query->join('departments', 'employees.department_id', '=', 'departments.id')
+              ->orderBy('departments.nama', $direction)
+              ->select('employees.*')
+              ->distinct();
+    } else {
+        $query->orderBy($sort, $direction);
+    }
+
+    // Pagination dengan append query string
+    $employees = $query->paginate(10)->appends([
+        'search' => $search,
+        'sort' => $sort,
+        'direction' => $direction,
+    ]);
+
+    return view('employee.index', compact('employees'));
+}
 
     /**
      * Show the form for creating a new resource.

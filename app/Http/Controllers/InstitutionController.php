@@ -18,15 +18,55 @@ class InstitutionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $institution = Institution::with('employees')->find(1);
-        // dd($institution->employees);
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama'); // default sort by 'nama'
+        $direction = $request->get('direction', 'asc');
 
-        $institutions = Institution::with('kepala')->paginate(10);
+        // Kolom yang diizinkan untuk sorting
+        $allowedSorts = ['nama', 'alamat', 'telepon', 'email', 'kepala'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        $query = Institution::with('kepala'); // relasi kepala institusi
+
+        // === Filter pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('telepon', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('kepala', fn($k) => $k->where('nama', 'like', "%{$search}%"));
+            });
+        });
+
+        // === Sorting ===
+        if ($sort === 'kepala') {
+            // Sorting berdasarkan nama kepala institusi → join ke employees
+            $query->join('employees', 'institutions.kepala_instansi_id', '=', 'employees.id')
+                ->orderBy('employees.nama', $direction)
+                ->select('institutions.*')
+                ->distinct();
+        } else {
+            // Kolom langsung di tabel institutions
+            $query->orderBy($sort, $direction);
+        }
+
+        // Pagination + append query params
+        $institutions = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+
         return view('institution.index', compact('institutions'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -74,7 +114,6 @@ class InstitutionController extends Controller
         Institution::create($validated);
 
         return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil ditambahkan.');
-
     }
 
     /**
@@ -86,12 +125,12 @@ class InstitutionController extends Controller
     }
 
     public function edit(Institution $institution)
-{
-    // employees directly tied to this institution
-    $employees = $institution->employees;
+    {
+        // employees directly tied to this institution
+        $employees = $institution->employees;
 
-    return view('institution.edit_institution', compact('institution','employees'));
-}
+        return view('institution.edit_institution', compact('institution', 'employees'));
+    }
 
 
     /**
@@ -120,7 +159,7 @@ class InstitutionController extends Controller
             $employee = Employee::find($request->kepala_instansi_id);
             // dd($employee->department?);
             if ($employee && $employee->institution?->id != $institution->id) {
-            // if ($employee && $employee->department?->instansi_id != $institution->id) {
+                // if ($employee && $employee->department?->instansi_id != $institution->id) {
                 return redirect()->back()
                     ->withInput()
                     ->withErrors(['kepala_instansi_id' => 'Kepala instansi harus merupakan anggota instansi ini.']);
@@ -145,7 +184,6 @@ class InstitutionController extends Controller
         $institution->update($validated);
 
         return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil diperbarui.');
-
     }
 
     /**
@@ -156,7 +194,6 @@ class InstitutionController extends Controller
         try {
             $institution->delete();
             return redirect(routeForRole('institution', 'index'))->with('success', 'Instansi berhasil dihapus.');
-
         } catch (\Exception $e) {
             return redirect(routeForRole('institution', 'index'))->with('error', 'Gagal menghapus instansi. Instansi masih digunakan dalam data lain.');
         }
