@@ -1,21 +1,29 @@
 @csrf
+
+<!-- NIP -->
 <div>
     <label for="nip" class="block text-sm font-medium text-gray-700 mb-1">NIP<span
             class="text-red-500">*</span></label>
     <input type="number" id="nip" min="0" name="nip" value="{{ old('nip', $employee->nip ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
+
+<!-- Nama -->
 <div>
     <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama<span
             class="text-red-500">*</span></label>
     <input type="text" id="nama" name="nama" value="{{ old('nama', $employee->nama ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
+
+<!-- Alamat -->
 <div>
     <label for="alamat" class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
     <input type="text" id="alamat" name="alamat" value="{{ old('alamat', $employee->alamat ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
+
+<!-- Telepon -->
 <div>
     <label for="telepon" class="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
     <input type="number" id="telepon" min="0" name="telepon"

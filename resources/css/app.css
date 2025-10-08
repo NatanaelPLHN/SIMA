@@ -1,6 +1,6 @@
+@import "select2/dist/css/select2.min.css";
 @import 'tailwindcss';
 @import "@fortawesome/fontawesome-free/css/all.min.css";
-@import "select2/dist/css/select2.min.css";
 @import "flowbite/src/themes/default";
 
 @tailwind base;
@@ -14,4 +14,106 @@
 
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+    .sidebar-expanded #sidebar {
+        @apply translate-x-0;
+    }
+    .sidebar-collapsed #sidebar {
+        @apply -translate-x-full;
+    }
+    .sidebar-expanded #main-wrapper {
+        @apply lg:pl-64;
+    }
+    .sidebar-collapsed #main-wrapper {
+        @apply lg:pl-0;
+    }
+}
+
+/* select2-dark.css */
+/* ===== SELECT2 CUSTOM STYLING FOR DARK MODE & UNIFORM HEIGHT ===== */
+
+/* Container utama Select2 */
+/* ===== SELECT2 UNIFORM HEIGHT & WIDTH (MATCH INPUTS) ===== */
+
+/* Container utama */
+/* .select2-container {
+    @apply w-full;
+} */
+
+/* Selection single */
+.select2-container--default .select2-selection--single {
+    @apply h-10 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500;
+    /* Force height & padding */
+    height: 2.5rem !important; /* = 40px */
+    padding: 0 !important;
+    line-height: 2.5rem !important;
+    box-sizing: border-box !important;
+}
+
+/* Rendered text */
+
+
+/* Arrow */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 2.5rem !important;
+    top: 0 !important;
+    right: 0.75rem !important;
+    width: 2rem !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #9ca3af transparent transparent !important;
+    border-width: 6px 6px 0 !important;
+}
+
+/* Dropdown list */
+.select2-dropdown {
+    @apply bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-md shadow-lg;
+}
+
+.select2-results__option {
+    @apply py-2 px-4 text-gray-900 dark:text-white;
+}
+
+.select2-results__option--highlighted[aria-selected] {
+    @apply bg-indigo-600 text-white;
+}
+
+/* Search input di dropdown */
+.select2-search--dropdown input {
+    @apply bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white;
+    padding: 0.5rem 0.75rem !important;
+}
+
+/* Dark mode support */
+.dark .select2-container--default .select2-selection--single {
+    @apply bg-gray-800 border-gray-600 text-white;
+}
+
+.dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+    @apply text-white;
+}
+
+.dark .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #9ca3af transparent transparent !important;
+}
+
+.dark .select2-dropdown {
+    @apply bg-gray-800 border-gray-600;
+}
+
+.dark .select2-results__option {
+    @apply text-white;
+}
+
+.dark .select2-results__option--highlighted[aria-selected] {
+    @apply bg-indigo-600;
+}
+
+.dark .select2-search--dropdown input {
+    @apply bg-gray-700 text-white border-gray-600;
+}
+
+
 

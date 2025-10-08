@@ -19,7 +19,7 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $query = Employee::with(['department', 'institution', 'user']);

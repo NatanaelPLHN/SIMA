@@ -16,12 +16,14 @@
                     Batal
                 </a>
                 <button type="submit"
-                    class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors">
+                    class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-600 dark:focus:ring-offset-gray-800 transition-colors">
                     Simpan
                 </button>
             </div>
-
         </form>
-
     </div>
+    </div>
+    </div>
+
+
 @endsection
