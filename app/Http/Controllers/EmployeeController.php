@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Institution;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -16,9 +17,6 @@ class EmployeeController extends Controller
         $this->authorizeResource(Employee::class, 'employee');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
 {
     $user = auth()->user();
@@ -98,9 +96,6 @@ class EmployeeController extends Controller
     return view('employee.index', compact('employees'));
 }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         // $institutions = Institution::all();
@@ -123,9 +118,6 @@ class EmployeeController extends Controller
         return view('employee.create_employee', compact('institutions', 'departements', 'isInstitutionHead'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -136,24 +128,20 @@ class EmployeeController extends Controller
             'telepon' => 'nullable|string|max:20',
             'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
-        ], [
-            'nip.unique' => 'NIP sudah digunakan.',
-            'nip.required' => 'NIP wajib diisi.',
-            'nama.required' => 'Nama wajib diisi.',
-            // 'institution_id.exists' => 'Institusi tidak ditemukan.',
-            // 'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
-        // Logika bisnis dan pengisian data otomatis berdasarkan peran
-        // employee?->institution->id;
+
+        // Business rules per role
         if ($user->role == 'superadmin') {
             if (empty($validated['institution_id'])) {
                 return back()->withErrors(['institution_id' => 'Institusi dan Bidang wajib dipilih.'])->withInput();
             }
         } elseif ($user->role == 'admin') {
             $validated['institution_id'] = $user->employee?->institution->id;
+
             if (empty($validated['department_id'])) {
                 return back()->withErrors(['department_id' => 'Bidang wajib dipilih.'])->withInput();
             }
+
             $department = Departement::find($validated['department_id']);
             if (!$department || $department->instansi_id != $user->employee?->institution->id) {
                 return back()->withErrors(['department_id' => 'Anda hanya dapat memilih bidang dari institusi Anda.'])->withInput();
@@ -163,23 +151,25 @@ class EmployeeController extends Controller
             $validated['department_id'] = $user->employee->department_id;
         }
 
-        Employee::create($validated);
+        // ✅ Use DB transaction to ensure atomicity
+        try {
+            DB::transaction(function () use ($validated) {
+                Employee::create($validated);
+            });
 
-        return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil ditambahkan.');
+            return redirect(routeForRole('employee', 'index'))
+                ->with('success', 'Karyawan berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menambahkan karyawan: ' . $e->getMessage())->withInput();
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Employee $employee)
     {
         $employee->load('department'); // Tambahkan ini
         return view('employees.show', compact('employee'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Employee $employee)
     {
         $employee->load('department.institution');
@@ -201,9 +191,6 @@ class EmployeeController extends Controller
         // return view('employee.edit_employee', compact('employee', 'institutions', 'departements'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Employee $employee)
     {
         $oldDepartmentId = $employee->department_id;
@@ -214,46 +201,44 @@ class EmployeeController extends Controller
             'telepon' => 'nullable|string|max:20',
             'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
-        ], [
-            'nip.unique' => 'NIP sudah digunakan.',
-            'nip.required' => 'NIP wajib diisi.',
-            'nama.required' => 'Nama wajib diisi.',
-            'institution_id.exists' => 'Institusi tidak ditemukan.',
-            'department_id.exists' => 'Bidang tidak ditemukan.',
         ]);
-        // Cek apakah departemen karyawan berubah
-        // dan apakah karyawan tersebut adalah kepala di departemen lamanya.
-        if ($oldDepartmentId && $oldDepartmentId != $request->department_id) {
-            $oldDepartment = Departement::find($oldDepartmentId);
 
-            // Jika departemen lama ada dan ID karyawan sama dengan kepala idang
-            if ($oldDepartment && $oldDepartment->kepala_bidang_id == $employee->id) {
-                // Hapus jabatan kepala bidang dari departemen lama
-                $oldDepartment->kepala_bidang_id = null;
-                $oldDepartment->save();
-            }
-        }
-        $original = $employee->replicate();
-        $employee->fill($validated);
-        if (!$employee->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data employee.');
-        }
-        $employee->save();
-        $employee->update($validated);
+        try {
+            DB::transaction(function () use ($employee, $validated, $oldDepartmentId, $request) {
+                // If department changed, and employee was head of old one — remove them
+                if ($oldDepartmentId && $oldDepartmentId != $request->department_id) {
+                    $oldDepartment = Departement::find($oldDepartmentId);
+                    if ($oldDepartment && $oldDepartment->kepala_bidang_id == $employee->id) {
+                        $oldDepartment->update(['kepala_bidang_id' => null]);
+                    }
+                }
 
-        return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil diperbarui.');
+                $employee->fill($validated);
+                if ($employee->isDirty()) {
+                    $employee->save();
+                }
+            });
+
+            return redirect(routeForRole('employee', 'index'))
+                ->with('success', 'Karyawan berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage())->withInput();
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Employee $employee)
     {
         try {
-            $employee->delete();
-            return redirect(routeForRole('employee', 'index'))->with('success', 'Karyawan berhasil dihapus.');
+            DB::transaction(function () use ($employee) {
+                // Future-proof: if we need to unlink or cascade other data later
+                $employee->delete();
+            });
+
+            return redirect(routeForRole('employee', 'index'))
+                ->with('success', 'Karyawan berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect(routeForRole('employee', 'index'))->with('error', 'Gagal menghapus karyawan. Karyawan masih memiliki data peminjaman.');
+            return redirect(routeForRole('employee', 'index'))
+                ->with('error', 'Gagal menghapus karyawan. ' . $e->getMessage());
         }
     }
 }

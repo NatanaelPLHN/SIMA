@@ -6,8 +6,10 @@ use App\Models\Departement;
 use App\Models\Institution;
 use App\Models\Employee;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class DepartementController extends Controller
 {
@@ -16,107 +18,126 @@ class DepartementController extends Controller
         $this->authorizeResource(Departement::class, 'departement');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index()
-    // {
-    //     $departements = Departement::with(['institution', 'kepala'])->paginate(10);
-    //     return view('departement.index', compact('departements'));
-    // }
     public function index()
-  {
-      $user = Auth::user();
-      $institutionId = $user->employee?->institution->id;
+    {
+        $user = Auth::user();
+        $institutionId = $user->employee?->institution?->id;
 
-      // Jika admin tidak terhubung ke institusi, jangan tampilkan apa-apa.
-      if (!$institutionId) {
-          $departements = collect(); // Membuat koleksi kosong
-      } else {
-          // Ambil hanya departemen yang instansi_id-nya cocok.
-          $departements = Departement::where('instansi_id', $institutionId)
-              ->with(['institution', 'kepala'])
-              ->paginate(10);
-      }
+        // Jika admin tidak terhubung ke institusi, jangan tampilkan apa-apa.
+        if (!$institutionId) {
+            $departements = collect(); // Membuat koleksi kosong
+        } else {
+            // Ambil hanya departemen yang instansi_id-nya cocok.
+            $departements = Departement::where('instansi_id', $institutionId)
+                ->with(['institution', 'kepala'])
+                ->paginate(10);
+        }
 
-      return view('departement.index', compact('departements'));
-  }
+        return view('departement.index', compact('departements'));
+    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     $institutions = Institution::all();
-    //     $employees = collect();
-    //     return view('departement.create_departement', compact('institutions', 'employees'));
-    // }
     public function create()
     {
+        // Keep employees empty for create (you can load via AJAX if needed)
         $employees = collect();
 
         return view('departement.create_departement', compact('employees'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'kepala_bidang_id' => 'nullable|exists:employees,id',
-            'lokasi' => 'nullable|string|max:255',
-            // 'instansi_id' => 'required|exists:institutions,id',
-            'alias' => 'required|string|max:255|unique:departements,alias',
-        ], [
-            'nama.required' => 'Nama bidang wajib diisi.',
-            'alias.required' => 'Alias bidang wajib diisi.',
-            // 'instansi_id.required' => 'Instansi wajib dipilih.',
-            // 'instansi_id.exists' => 'Instansi tidak ditemukan.',
-            'alias.unique' => 'Alias ini sudah digunakan.',
-            'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
-        ]);
+        try {
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255',
+                'kepala_bidang_id' => 'nullable|exists:employees,id',
+                'lokasi' => 'nullable|string|max:255',
+                'alias' => 'required|string|max:255|unique:departements,alias',
+            ], [
+                'nama.required' => 'Nama bidang wajib diisi.',
+                'alias.required' => 'Alias bidang wajib diisi.',
+                'alias.unique' => 'Alias ini sudah digunakan.',
+                'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
+            ]);
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                ], 422);
+            }
+            throw $e;
+        }
+
         // 2. Ambil ID institusi dari user yang sedang login
-        $institutionId = Auth::user()->employee?->institution->id;
+        $institutionId = Auth::user()->employee?->institution?->id;
 
         if (!$institutionId) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Akun Anda tidak terhubung dengan institusi manapun.'], 403);
+            }
             return redirect()->back()->with('error', 'Akun Anda tidak terhubung dengan institusi manapun.');
         }
+
         // Validasi: kepala_bidang harus null saat create karena bidang belum ada
-        if ($request->kepala_bidang) {
+        if ($request->filled('kepala_bidang_id')) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['kepala_bidang_id' => ['Kepala bidang dapat dipilih setelah bidang dibuat.']]
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['kepala_bidang' => 'Kepala bidang dapat dipilih setelah bidang dibuat.']);
+                ->withErrors(['kepala_bidang_id' => 'Kepala bidang dapat dipilih setelah bidang dibuat.']);
         }
+
         // Validasi custom: nama dan instansi harus unique bersama
         $existing = Departement::where('nama', $request->nama)
             ->where('instansi_id', $institutionId)
             ->first();
 
         if ($existing) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['nama' => ['Nama bidang sudah ada untuk instansi ini.']]
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['nama' => 'Nama bidang sudah ada untuk instansi ini.']);
         }
-        $validated['instansi_id'] = $institutionId;
-        $departement = Departement::create($validated);
 
-        return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil ditambahkan.');
+        $validated['instansi_id'] = $institutionId;
+
+        DB::beginTransaction();
+        try {
+            $departement = Departement::create($validated);
+            DB::commit();
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'departement' => $departement], 201);
+            }
+
+            return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to create departement: ' . $e->getMessage(), ['exception' => $e, 'payload' => $validated]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Gagal menambahkan bidang. Silakan coba lagi.'], 500);
+            }
+
+            return redirect()->back()->withInput()->with('error', 'Gagal menambahkan bidang.');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Departement $departement)
     {
         $departement->load(['institution', 'kepala', 'employees']);
         return view('departement.show', compact('departement'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Departement $departement)
     {
         $institutions = Institution::all();
@@ -125,64 +146,114 @@ class DepartementController extends Controller
         return view('departement.edit_departement', compact('departement', 'institutions', 'employees'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Departement $departement)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'kepala_bidang_id' => 'nullable|exists:employees,id',
-            'lokasi' => 'nullable|string|max:255',
-            'instansi_id' => 'required|exists:institutions,id',
-            // 'Alias' => 'required|string|max:255',
-        ], [
-            'nama.required' => 'Nama bidang wajib diisi.',
-            'instansi_id.required' => 'Instansi wajib dipilih.',
-            'instansi_id.exists' => 'Instansi tidak ditemukan.',
-            'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
-        ]);
+        try {
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255',
+                'kepala_bidang_id' => 'nullable|exists:employees,id',
+                'lokasi' => 'nullable|string|max:255',
+                'instansi_id' => 'required|exists:institutions,id',
+                // 'alias' => 'nullable|string|max:255', // alias update handled elsewhere if required
+            ], [
+                'nama.required' => 'Nama bidang wajib diisi.',
+                'instansi_id.required' => 'Instansi wajib dipilih.',
+                'instansi_id.exists' => 'Instansi tidak ditemukan.',
+                'kepala_bidang_id.exists' => 'Kepala bidang tidak ditemukan.',
+            ]);
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+            }
+            throw $e;
+        }
 
         // Validasi tambahan: pastikan kepala_bidang adalah anggota departement ini
-        if ($request->kepala_bidang_id) {
+        if ($request->filled('kepala_bidang_id')) {
             $employee = Employee::find($request->kepala_bidang_id);
             if ($employee && $employee->department_id != $departement->id) {
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['kepala_bidang_id' => ['Kepala bidang harus merupakan anggota departement ini.']]
+                    ], 422);
+                }
                 return redirect()->back()
                     ->withInput()
                     ->withErrors(['kepala_bidang_id' => 'Kepala bidang harus merupakan anggota departement ini.']);
             }
         }
-        // Validasi custom: nama dan instansi harus unique bersama
+
+        // Validasi custom: nama dan instansi harus unique bersama (kecualikan record sekarang)
         $existing = Departement::where('nama', $request->nama)
             ->where('instansi_id', $request->instansi_id)
-            ->where('id', '!=', $departement->id) // Kecualikan record yang sedang diupdate
+            ->where('id', '!=', $departement->id)
             ->first();
 
         if ($existing) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['nama' => ['Nama departement sudah ada untuk instansi ini.']]
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['nama' => 'Nama departement sudah ada untuk instansi ini.']);
         }
-        $original = $departement->replicate();
-        $departement->fill($validated);
-        if (!$departement->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data departement.');
-        }
-        $departement->save();
-        $departement->update($validated);
 
-        return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil diperbarui.');
+        DB::beginTransaction();
+        try {
+            $original = $departement->replicate();
+            $departement->fill($validated);
+
+            if (!$departement->isDirty()) {
+                DB::rollBack();
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json(['success' => true, 'info' => 'Tidak ada perubahan pada data departement.']);
+                }
+                return back()->with('info', 'Tidak ada perubahan pada data departement.');
+            }
+
+            $departement->save();
+            DB::commit();
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'departement' => $departement]);
+            }
+
+            return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update departement: ' . $e->getMessage(), ['exception' => $e, 'departement_id' => $departement->id, 'payload' => $validated]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Gagal memperbarui bidang.'], 500);
+            }
+
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui bidang.');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Departement $departement)
     {
         try {
-            $departement->delete();
-            return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil dihapus.');
+            // Prevent deletion if there are employees or other related data
+            if ($departement->employees()->count() > 0) {
+                return redirect(routeForRole('departement', 'index'))->with('error', 'Tidak dapat menghapus departement yang masih memiliki pegawai.');
+            }
+
+            DB::beginTransaction();
+            try {
+                $departement->delete();
+                DB::commit();
+                return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil dihapus.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
         } catch (\Exception $e) {
+            Log::error('Failed to delete departement: ' . $e->getMessage(), ['exception' => $e, 'departement_id' => $departement->id]);
             return redirect(routeForRole('departement', 'index'))->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
         }
     }
