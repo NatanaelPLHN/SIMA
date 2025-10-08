@@ -71,9 +71,10 @@
                         class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                         Tambah
                     </a>
+
                 </div>
+
             </div>
-        </div>
 
         <!-- Data Table -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -135,6 +136,8 @@
                 {{ $employees->links() }}
             </table>
         </div>
+        </div>
+
     </div>
 
     <!-- Pagination Footer -->

@@ -22,7 +22,8 @@ class CategorySeeder extends Seeder
 
                 Category::create([
                     'nama' => $nama,
-                    'alias' => Str::slug($nama) . '-' . $group->id,
+                    'alias' => $group->id,
+                    // 'alias' => Str::slug($nama) . '-' . $group->id,
                     'deskripsi' => "Kategori $i untuk grup " . $group->nama,
                     'category_group_id' => $group->id,
                 ]);

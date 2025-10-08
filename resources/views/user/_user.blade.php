@@ -68,7 +68,7 @@
         {{-- proble di for each --}}
         @foreach($employees as $employee)
             <option value="{{ $employee->id }}" {{ old('karyawan_id', $user->karyawan_id ?? '') == $employee->id ? 'selected' : '' }}>
-                {{ $employee->nama }}
+                {{ $employee->nama }} ( {{ $employee->institution->nama }} )
             </option>
             {{-- <option >
                 asep
