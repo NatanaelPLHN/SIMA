@@ -171,16 +171,46 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    // ORIGINAL------------------------------
+
+    // public function edit(User $user)
+    // {
+    //     $login = Auth::user();
+    //     $user->load('employee');
+    //     $employees = Employee::all(); // Tambahkan ini
+    //     // $employees = Employee::with(['department', 'institution', 'user']);
+
+    //     return view('user.edit_user', compact('user', 'employees', 'login'));
+    // }
     public function edit(User $user)
     {
         $login = Auth::user();
         $user->load('employee');
-        $employees = Employee::all(); // Tambahkan ini
-        // $employees = Employee::with(['department', 'institution', 'user']);
+
+        $query = Employee::query();
+
+        // Query HANYA mengambil karyawan yang BELUM punya akun,
+        // ATAU karyawan yang saat ini terhubung dengan akun INI.
+        $query->where(function ($q) use ($user) {
+             $q->whereDoesntHave('user')
+               ->orWhere('id', $user->karyawan_id);
+         });
+
+        // Terapkan filter role (ini harus ditambahkan setelah filter user_id)
+        if ($login->role === 'superadmin') {
+            $query->where('institution_id', $login->employee->institution_id);
+        } elseif ($login->role === 'admin') {
+            $query->where('institution_id', $login->employee->institution_id)
+                ->where('id', '!=', $login->employee->id);
+        } elseif ($login->role === 'subadmin') {
+            $query->where('department_id', $login->employee->department_id)
+                ->where('id', '!=', $login->employee->id);
+        }
+
+        $employees = $query->orderBy('nama')->get();
 
         return view('user.edit_user', compact('user', 'employees', 'login'));
     }
-
     /**
      * Update the specified resource in storage.
      */
