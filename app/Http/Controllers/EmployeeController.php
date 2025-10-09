@@ -86,7 +86,7 @@ class EmployeeController extends Controller
         'direction' => $direction,
     ]);
 
-        return view('employee.index', compact('employees'));
+        return view('employee.index', compact('employees' ,'user'));
     }
 
     public function create()

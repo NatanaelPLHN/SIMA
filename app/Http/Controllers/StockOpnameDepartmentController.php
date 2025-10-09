@@ -56,6 +56,9 @@ class StockOpnameDepartmentController extends Controller
      */
     public function show(StockOpnameSession $opname)
     {
+        if (in_array($opname->status, ['draft', 'cancelled','dijadwalkan'])) {
+            abort(404);
+        }
         // Gunakan $opname karena route model binding
         $opname->load(['details', 'scheduler']); // Eager load relasi untuk efisiensi
         return view('opname.bidang.show', compact('opname'));
@@ -145,7 +148,7 @@ class StockOpnameDepartmentController extends Controller
 
             DB::commit();
 
-            return redirect(routeForRole('opname','index', $opname->id))->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
+            return redirect(routeForRole('opname', 'index', $opname->id))->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());

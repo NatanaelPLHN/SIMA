@@ -5,7 +5,8 @@
 @section('content')
     <h1 class="text-lg font-semibold text-gray-800">Stock Opname</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <form id="opname-form" action="{{ route('admin.opname.update', $opname->id) }}" method="POST"
+        {{-- {{  }} --}}
+        <form id="opname-form" action="{{ routeForRole('opname', 'update', $opname->id) }}" method="POST"
             enctype="multipart/form-data" class="contents">
             @method('PUT')
             @csrf
@@ -19,7 +20,7 @@
                         <div class="text-sm">Status: {{ $opname->status }}</div>
                         <div class="text-sm">Catatan: {{ $opname->catatan }}</div>
                     </div>
-                    @if ($opname->status != 'selesai')
+                    @if ($opname->status == 'proses')
                         <button type="submit" id="finish-opname-btn"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Selesai

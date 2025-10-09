@@ -55,6 +55,18 @@ class StockOpnameController extends Controller
             'jenis_aset' => 'required|string',
             'catatan' => 'nullable|string',
         ]);
+        $existingSession = StockOpnameSession::where('departement_id', $request->departement_id)
+            ->whereNotIn('status', ['selesai', 'cancelled'])
+            ->whereHas('details.asset', function ($query) use ($request) {
+                $query->where('jenis_aset', $request->jenis_aset);
+            })
+            ->exists();
+
+        if ($existingSession) {
+            return back()
+                ->with('error', 'Sesi opname aktif untuk departemen dan jenis aset ini sudah ada.')
+                ->withInput();
+        }
         $user = auth()->user();
         // dd($user);
         $departement = Departement::find($request->departement_id);
@@ -83,7 +95,7 @@ class StockOpnameController extends Controller
         }
         // 3. Cari semua Aset yang cocok dengan kriteria
         $assetsToOpname = Asset::where('departement_id', $request->departement_id)
-            ->where('jenis_aset',$request->jenis_aset)
+            ->where('jenis_aset', $request->jenis_aset)
             ->get();
         // $assetsToOpname = Asset::where('departement_id', $request->departement_id)
         //     ->whereHas('category', function ($query) use ($request) {
@@ -109,7 +121,7 @@ class StockOpnameController extends Controller
             ]);
         }
 
-        return redirect(routeForRole('opname','index'))->with('success', 'Jadwal stock opname berhasil dibuat.');
+        return redirect(routeForRole('opname', 'index'))->with('success', 'Jadwal stock opname berhasil dibuat.');
     }
 
     /**
@@ -155,7 +167,7 @@ class StockOpnameController extends Controller
 
         $stockOpnameSession->update($validated);
 
-        return redirect(routeForRole('opname','index'))
+        return redirect(routeForRole('opname', 'index'))
             ->with('success', 'Sesi stock opname berhasil diperbarui.');
     }
 
@@ -166,10 +178,10 @@ class StockOpnameController extends Controller
     {
         try {
             $stockOpnameSession->delete();
-            return redirect(routeForRole('opname','index'))
+            return redirect(routeForRole('opname', 'index'))
                 ->with('success', 'Sesi stock opname berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect(routeForRole('opname','index'))
+            return redirect(routeForRole('opname', 'index'))
                 ->with('error', 'Gagal menghapus sesi stock opname.');
         }
     }
@@ -212,10 +224,10 @@ class StockOpnameController extends Controller
         if ($opname->status === 'draft') {
             try {
                 $opname->delete();
-                return redirect(routeForRole('opname','index'))
+                return redirect(routeForRole('opname', 'index'))
                     ->with('success', 'Sesi stock opname berhasil dihapus.');
             } catch (\Exception $e) {
-                return redirect(routeForRole('opname','index'))
+                return redirect(routeForRole('opname', 'index'))
                     ->with('error', 'Gagal menghapus sesi stock opname.');
             }
         } elseif ($opname->status === 'dijadwalkan') {

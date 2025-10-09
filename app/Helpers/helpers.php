@@ -17,7 +17,7 @@ if (!function_exists('isAsetLocked')) {
             ->whereHas('details.asset', function ($query) use ($jenis_aset) {
                 $query->where('jenis_aset', $jenis_aset);
             })
-            ->where('status', 'proses')
+            ->whereIn('status', ['proses', 'dijadwalkan'])
             ->exists();
     }
 }

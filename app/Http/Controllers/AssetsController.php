@@ -24,9 +24,10 @@ class AssetsController extends Controller
     }
     public function index()
     {
-        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
-        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
-        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
+        $user = auth()->user();
+        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->where('departement_id', $user->employee?->department_id)->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
+        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('departement_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
+        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('departement_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
 
         return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
@@ -85,6 +86,12 @@ class AssetsController extends Controller
             'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
         ]);
 
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $validated['jenis_aset'])) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
+
         // LOGIKA BARU SESUAI JENIS ASET
         if ($validated['jenis_aset'] === 'habis_pakai') {
             $validated['status'] = ($validated['jumlah'] == 0) ? 'habis' : 'tersedia';
@@ -92,7 +99,6 @@ class AssetsController extends Controller
             $validated['jumlah'] = ($request->status === 'hilang') ? 0 : 1;
         }
 
-        $user = auth()->user();
 
         $institutionAlias = $user->employee?->department?->institution?->alias;
         $departmentAlias = $user->employee?->department?->alias;
@@ -216,6 +222,13 @@ class AssetsController extends Controller
     }
     public function edit(Asset $asset)
     {
+
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $asset->jenis_aset)) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
+
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
         $groupCategories = CategoryGroup::with('categories')->get();
 
@@ -308,6 +321,11 @@ class AssetsController extends Controller
 
     public function destroy(Asset $asset)
     {
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $asset->jenis_aset)) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menghapus data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         // determine QR code path
         $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
 
