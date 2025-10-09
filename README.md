@@ -1,61 +1,117 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<a id="readme-top"></a>
+
+<div align="center">
+
+<!-- <a href="https://github.com/othneildrew/Best-README-Template">
+  <img src="images/logo.png" alt="Logo" width="80" height="80">
+</a> -->
+
+# SIMA  
+**Sistem Manajemen Aset**
+
+<br>
+
+![last-commit](https://img.shields.io/github/last-commit/NatanaelPLHN/SIMA?style=flat&logo=git&logoColor=white&color=0080ff)
+![repo-top-language](https://img.shields.io/github/languages/top/NatanaelPLHN/SIMA?style=flat&color=0080ff)
+![repo-language-count](https://img.shields.io/github/languages/count/NatanaelPLHN/SIMA?style=flat&color=0080ff)
+
+</div>
+
+
+
+
+<!-- TABLE OF CONTENTS -->
+<!-- <details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details> -->
+
+
+
+<!-- ABOUT THE PROJECT -->
+## 🧩 Deskripsi Proyek
+
+**SIMA (Sistem Manajemen Aset)** adalah sebuah **sistem manajemen aset** yang dirancang untuk mempermudah proses pengelolaan, pelacakan, dan audit aset di lingkungan organisasi.  
+Sistem ini menyediakan platform terintegrasi untuk menangani **inventaris aset**, **stock opname**, dan **logging data aset** dengan fokus pada skalabilitas, keamanan, dan kemudahan penggunaan.
+
+### ✨ Fitur Utama
+
+- 🛠️ **Arsitektur Modular**  
+  Dibangun dengan struktur yang terorganisir menggunakan controller, model, view, dan policy, sehingga mudah dikembangkan dan dipelihara dalam jangka panjang.
+
+<!-- - 🎯 **Manajemen Siklus Hidup Aset**  
+  Mendukung pelacakan detail, pencatatan (seeding), dan verifikasi aset berdasarkan kategori maupun departemen. -->
+
+- 🔐 **Kontrol Akses Berbasis Peran**  
+  Menyediakan sistem izin pengguna yang aman dengan middleware dan policy untuk mengelola peran seperti admin, subadmin, dan user.
+
+- 🚀 **Integrasi Frontend Modern**  
+  Menggunakan **Vite**, dan **TailwindCSS** untuk pengembangan cepat, gaya _interface_ yang rapi, serta kinerja yang optimal.
+
+<!-- - 💾 **Penyimpanan Data yang Dapat Dikonfigurasi**  
+  Mendukung berbagai sistem basis data, caching, dan layanan eksternal agar fleksibel di berbagai lingkungan. -->
+
+- 🌐 **Dashboard Berbasis Pengguna**  
+  Menyediakan antarmuka yang intuitif bagi administrator dan pengguna untuk melihat data aset, melacak pergerakan stok, serta mengelola informasi organisasi.
+
+---
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+## 🧰 Dibangun Dengan Alat dan Teknologi Berikut
+<br>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img alt="JSON" src="https://img.shields.io/badge/JSON-000000.svg?style=flat&logo=JSON&logoColor=white">
+  <img alt="Markdown" src="https://img.shields.io/badge/Markdown-000000.svg?style=flat&logo=Markdown&logoColor=white">
+  <img alt="npm" src="https://img.shields.io/badge/npm-CB3837.svg?style=flat&logo=npm&logoColor=white">
+  <br>
+  <img alt="Autoprefixer" src="https://img.shields.io/badge/Autoprefixer-DD3735.svg?style=flat&logo=Autoprefixer&logoColor=white">
+  <img alt="Composer" src="https://img.shields.io/badge/Composer-885630.svg?style=flat&logo=Composer&logoColor=white">
+  <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=flat&logo=JavaScript&logoColor=black">
+  <br>
+  <img alt="jQuery" src="https://img.shields.io/badge/jQuery-0769AD.svg?style=flat&logo=jQuery&logoColor=white">
+  <img alt="XML" src="https://img.shields.io/badge/XML-005FAD.svg?style=flat&logo=XML&logoColor=white">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4.svg?style=flat&logo=PHP&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF.svg?style=flat&logo=Vite&logoColor=white">
+  <img alt="Axios" src="https://img.shields.io/badge/Axios-5A29E4.svg?style=flat&logo=Axios&logoColor=white">
 </p>
 
-## About Laravel
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<!-- GETTING STARTED -->
+## Getting Started
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Panduan instalasi dan konfigurasi untuk project Laravel ini.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Prerequisites
 
-## Learning Laravel
+Sebelum memulai, pastikan Anda telah menginstal:
+* PHP (versi yang kompatibel dengan Laravel)
+* Node.js & NPM
+* Composer
+* MySQL (melalui XAMPP atau Laragon)
+* Git
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

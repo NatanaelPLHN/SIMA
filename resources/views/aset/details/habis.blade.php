@@ -29,14 +29,14 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Register:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->habis_pakai->register ?? '?' }}
+                                {{ $asset->habisPakai->register ?? '?' }}
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Satuan:</label>
                             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
-                                {{ $asset->habis_pakai->satuan ?? '?' }}
+                                {{ $asset->habisPakai->satuan ?? '?' }}
                             </div>
                         </div>
 

@@ -23,6 +23,11 @@ class StockOpnameSession extends Model
         // 'stock_opname_id',
 
     ];
+    protected $casts = [
+        'tanggal_dijadwalkan' => 'datetime',
+        'tanggal_dimulai' => 'datetime',
+        'tanggal_selesai' => 'datetime',
+    ];
 
     // The user who scheduled the opname
     public function scheduler()

@@ -35,7 +35,7 @@
     {{-- Grup Kategori --}}
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Grup Kategori</label>
-        @if (Route::is('admin.assets.edit'))
+        @if (Route::is('subadmin.assets.edit'))
             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                 {{ $asset->category->CategoryGroup->nama ?? '-' }}
             </div>
@@ -55,7 +55,7 @@
     {{-- Kategori --}}
     <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-        @if (Route::is('admin.assets.edit'))
+        @if (Route::is('subadmin.assets.edit'))
             <div class="px-3 py-2 bg-gray-100 rounded-md border border-gray-200">
                 {{ $asset->category->nama ?? '-' }}
             </div>

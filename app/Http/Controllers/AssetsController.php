@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class AssetsController extends Controller
 {
@@ -23,24 +24,41 @@ class AssetsController extends Controller
     }
     public function index()
     {
-        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
-        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
-        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
+        $user = auth()->user();
+        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->where('departement_id', $user->employee?->department_id)->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
+        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('departement_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
+        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('departement_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
 
         return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
     public function create_gerak()
     {
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, 'bergerak')) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
         return view('aset.forms.create_gerak', compact('groupCategories'));
     }
     public function create_tidak()
     {
+
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, 'tidak_bergerak')) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
         return view('aset.forms.create_tidak_bergerak', compact('groupCategories'));
     }
     public function create_habis()
     {
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, 'habis_pakai')) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
         return view('aset.forms.create_habis', compact('groupCategories'));
     }
@@ -67,15 +85,20 @@ class AssetsController extends Controller
             'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
             'nomor_serial.unique' => 'Nomor serial sudah digunakan.',
         ]);
+
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $validated['jenis_aset'])) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
+
         // LOGIKA BARU SESUAI JENIS ASET
         if ($validated['jenis_aset'] === 'habis_pakai') {
-            // Jika jumlah 0, statusnya 'habis', selain itu 'tersedia'
             $validated['status'] = ($validated['jumlah'] == 0) ? 'habis' : 'tersedia';
         } else { // Untuk 'bergerak' dan 'tidak_bergerak'
-            // Jika status 'hilang', jumlahnya 0, selain itu 1
             $validated['jumlah'] = ($request->status === 'hilang') ? 0 : 1;
         }
-        $user = auth()->user();
+
 
         $institutionAlias = $user->employee?->department?->institution?->alias;
         $departmentAlias = $user->employee?->department?->alias;
@@ -84,109 +107,112 @@ class AssetsController extends Controller
         $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
         $categoryAlias       = $category->id; // category alias = ID
 
-        // $kode = implode('-', [$institutionAlias, $departmentAlias, $categoryGroupAlias, $categoryAlias, str(mt_rand(1, 999)),]);
-        // 1. Cari aset terakhir dengan kombinasi yang sama
         $lastAsset = Asset::where('departement_id', $user->employee?->department?->id)
             ->where('category_id', $validated['category_id'])
-            ->latest('id') // Urutkan berdasarkan ID atau created_at untuk mendapatkan yang terbaru
+            ->latest('id')
             ->first();
-        // $lastAsset = Asset::where('institution_id', $user->employee?->department?->institution?->id)
-        //     ->where('departement_id', $validated['departement_id'])
-        //     ->where('category_id', $validated['category_id'])
-        //     ->latest('id') // Urutkan berdasarkan ID atau created_at untuk mendapatkan yang terbaru
-        //     ->first();
 
-
-        // 2. Tentukan nomor urut berikutnya
-        $nextNumber = 1; // Default jika ini adalah aset pertama
+        $nextNumber = 1;
         if ($lastAsset) {
-            // Jika ada aset sebelumnya, ambil nomor urut terakhir dari kode
             $parts = explode('-', $lastAsset->kode);
             $lastNumber = (int) end($parts);
             $nextNumber = $lastNumber + 1;
         }
 
-        // 3. Format nomor urut dengan padding (misal: 001, 002, dst.)
-        // $paddedNextNumber = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-
-        // 4. Buat kode final yang unik dan berurutan
         $kode = implode('-', [
             $institutionAlias,
             $departmentAlias,
             $categoryGroupAlias,
             $categoryAlias,
             $nextNumber,
-            // $paddedNextNumber,
         ]);
+
         $departement_id = $user->employee?->department?->id;
-        // dd($user);
         $validated['departement_id'] = $departement_id;
-        // do {
-        //     $kode = implode('-', [
-        //         $institutionAlias,
-        //         $departmentAlias,
-        //         $categoryGroupAlias,
-        //         $categoryAlias,
-        //         str(mt_rand(1, 999)),
-        //     ]);
-        // } while (Asset::where('kode', $kode)->exists());
-
         $validated['kode'] = $kode;
-        // dd($validated);
-        $asset = Asset::create($validated);
 
-        // handle details table
-        if ($validated['jenis_aset'] === 'bergerak') {
-            $assetBergerak = AsetBergerak::create([
-                'aset_id' => $asset->id,
-                'merk' => $request->merk,
-                'tipe' => $request->tipe,
-                'nomor_serial' => $request->nomor_serial,
-                'tahun_produksi' => $request->tahun_produksi,
-            ]);
-            $qrCodePath = 'qrcodes\\' . $asset->kode . '.svg';
-            $fullPath = storage_path("app\public\\" . $qrCodePath);
+        // Use DB transaction. Generate QR only AFTER successful commit to avoid orphan files.
+        DB::beginTransaction();
+        try {
+            $asset = Asset::create($validated);
 
-            if (!file_exists(dirname($fullPath))) {
-                mkdir(dirname($fullPath), 0755, true);
-            }
-            QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
-            $assetBergerak->update(['qr_code_path' => $qrCodePath]);
-        }
-
-        if ($validated['jenis_aset'] === 'tidak_bergerak') {
-            $assetTidak = AsetTidakBergerak::create([
-                'aset_id' => $asset->id,
-                'ukuran' => $request->ukuran,
-                'bahan' => $request->bahan,
-            ]);
-            $qrCodePath = 'qrcodes\\' . $asset->kode . '.svg';
-            $fullPath = storage_path("app\public\\" . $qrCodePath);
-
-            if (!file_exists(dirname($fullPath))) {
-                mkdir(dirname($fullPath), 0755, true);
+            // handle details table (create records inside transaction, but don't write QR file yet)
+            if ($validated['jenis_aset'] === 'bergerak') {
+                $assetBergerak = AsetBergerak::create([
+                    'aset_id' => $asset->id,
+                    'merk' => $request->merk,
+                    'tipe' => $request->tipe,
+                    'nomor_serial' => $request->nomor_serial,
+                    'tahun_produksi' => $request->tahun_produksi,
+                    // qr_code_path will be set after commit
+                ]);
             }
 
-            QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
-            $assetTidak->update(['qr_code_path' => $qrCodePath]);
-        }
+            if ($validated['jenis_aset'] === 'tidak_bergerak') {
+                $assetTidak = AsetTidakBergerak::create([
+                    'aset_id' => $asset->id,
+                    'ukuran' => $request->ukuran,
+                    'bahan' => $request->bahan,
+                    // qr_code_path will be set after commit
+                ]);
+            }
 
-        if ($validated['jenis_aset'] === 'habis_pakai') {
-            AsetHabisPakai::create([
-                'aset_id' => $asset->id,
-                'register' => $request->register,
-                'satuan' => $request->satuan,
-            ]);
-        }
-        // $prefix = request()->is('superadmin/*') ? 'superadmin' : 'admin';
+            if ($validated['jenis_aset'] === 'habis_pakai') {
+                AsetHabisPakai::create([
+                    'aset_id' => $asset->id,
+                    'register' => $request->register,
+                    'satuan' => $request->satuan,
+                ]);
+            }
 
-        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil ditambahkan.');
+            DB::commit();
+
+            // After commit -> generate QR and update the bergerak/tidak_bergerak record with path
+            if ($validated['jenis_aset'] === 'bergerak') {
+                $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
+                $fullPath = storage_path("app/public/" . $qrCodePath);
+
+                if (!file_exists(dirname($fullPath))) {
+                    mkdir(dirname($fullPath), 0755, true);
+                }
+                QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
+
+                // update the bergerak record
+                $asset->bergerak()->update(['qr_code_path' => $qrCodePath]);
+            }
+
+            if ($validated['jenis_aset'] === 'tidak_bergerak') {
+                $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
+                $fullPath = storage_path("app/public/" . $qrCodePath);
+
+                if (!file_exists(dirname($fullPath))) {
+                    mkdir(dirname($fullPath), 0755, true);
+                }
+                QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
+
+                $asset->tidakBergerak()->update(['qr_code_path' => $qrCodePath]);
+            }
+
+            return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to store asset: ' . $e->getMessage(), ['exception' => $e]);
+            return back()->withInput()->with('error', 'Gagal menambahkan aset. Silakan coba lagi.');
+        }
     }
 
 
     public function show(Asset $asset)
     {
+
+        $user = auth()->user();
+
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
+
+        if ($asset->departement_id != $user->employee->department_id) {
+            abort(404);
+            // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
 
         if ($asset->jenis_aset === 'bergerak') {
             return view('aset.details.bergerak', compact('asset'));
@@ -204,7 +230,19 @@ class AssetsController extends Controller
     }
     public function edit(Asset $asset)
     {
+
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $asset->jenis_aset)) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
+
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
+
+        if ($asset->departement_id != $user->employee->department_id) {
+            abort(404);
+            // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
 
         if ($asset->jenis_aset === 'bergerak') {
@@ -218,8 +256,6 @@ class AssetsController extends Controller
         if ($asset->jenis_aset === 'habis_pakai') {
             return view('aset.forms.edit_habis', compact('asset', 'groupCategories'));
         }
-
-        abort(404);
     }
 
     public function update(Request $request, Asset $asset)
@@ -233,71 +269,86 @@ class AssetsController extends Controller
             'lokasi_terakhir' => 'nullable|string',
             'status' => 'nullable|in:tersedia,dipakai,rusak,hilang,habis',
         ]);
+
         // LOGIKA BARU SESUAI JENIS ASET
         if ($asset->jenis_aset === 'habis_pakai') {
-            $validated['status'] = ($request->jumlah == 0) ? 'habis' :
-                'tersedia';
+            $validated['status'] = ($request->jumlah == 0) ? 'habis' : 'tersedia';
         } else { // Untuk 'bergerak' dan 'tidak_bergerak'
             $validated['jumlah'] = ($request->status === 'hilang') ? 0 : 1;
         }
-        $original = $asset->replicate();
-        $asset->fill($validated);
-        if (!$asset->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
-        }
 
-        $asset->save();
-
-        if ($asset->jenis_aset === 'bergerak') {
-            $asset->bergerak()->update([
-                'merk' => $request->merk,
-                'tipe' => $request->tipe,
-                'nomor_serial' => $request->nomor_serial,
-                'tahun_produksi' => $request->tahun_produksi,
-            ]);
-            if ($asset->bergerak->isDirty()) {
-                $asset->bergerak->save();
+        DB::beginTransaction();
+        try {
+            $original = $asset->replicate();
+            $asset->fill($validated);
+            $detailModel = null;
+            if ($asset->jenis_aset === 'bergerak') {
+                $asset->bergerak->fill($request->only([
+                    'merk',
+                    'tipe',
+                    'nomor_serial',
+                    'tahun_produksi'
+                ]));
+                $detailModel = $asset->bergerak;
+            } elseif ($asset->jenis_aset === 'tidak_bergerak') {
+                $asset->tidakBergerak->fill($request->only(['ukuran', 'bahan']));
+                $detailModel = $asset->tidakBergerak;
+            } elseif ($asset->jenis_aset === 'habis_pakai') {
+                $asset->habisPakai->fill($request->only(['register', 'satuan']));
+                $detailModel = $asset->habisPakai;
             }
-        }
 
-        if ($asset->jenis_aset === 'tidak_bergerak') {
-            $asset->tidakBergerak()->update([
-                'ukuran' => $request->ukuran,
-                'bahan' => $request->bahan,
-            ]);
-            if ($asset->tidakBergerak->isDirty()) {
-                $asset->tidakBergerak->save();
+            // 2. Cek apakah ADA PERUBAHAN di model utama ATAU di model detailnya
+            $isAssetDirty = $asset->isDirty();
+            $isDetailDirty = $detailModel ? $detailModel->isDirty() : false;
+
+            if (!$isAssetDirty && !$isDetailDirty) {
+                DB::rollBack();
+                return back()->with('info', 'Tidak ada perubahan pada data aset.');
             }
-        }
 
-        if ($asset->jenis_aset === 'habis_pakai') {
-            $asset->habisPakai()->update([
-                'register' => $request->register,
-                'satuan' => $request->satuan,
-            ]);
-            if ($asset->habisPakai->isDirty()) {
-                $asset->habisPakai->save();
+            // 3. Jika ada perubahan, simpan semuanya
+            if ($isAssetDirty) {
+                $asset->save();
             }
-        }
+            if ($isDetailDirty) {
+                $detailModel->save();
+            }
 
-        return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil diperbarui.');
+            DB::commit();
+            return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update asset: ' . $e->getMessage(), ['exception' => $e, 'asset_id' => $asset->id]);
+            return back()->withInput()->with('error', 'Gagal memperbarui aset. Silakan coba lagi.');
+        }
     }
 
     public function destroy(Asset $asset)
     {
-        // Tentukan path file QR code berdasarkan kode aset.
-        // Pastikan path ini konsisten dengan cara Anda menyimpannya di method store().
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $asset->jenis_aset)) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menghapus data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
+        // determine QR code path
         $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
 
-        // Periksa apakah file QR ada di disk 'public' (storage/app/public) dan hapus jika ada.
-        if (Storage::disk('public')->exists($qrCodePath)) {
-            Storage::disk('public')->delete($qrCodePath);
-        }
+        DB::beginTransaction();
         try {
             $asset->delete();
+            DB::commit();
+
+            // delete QR file after successful DB deletion
+            if (Storage::disk('public')->exists($qrCodePath)) {
+                Storage::disk('public')->delete($qrCodePath);
+            }
+
             return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect(routeForRole('assets', 'index'))->with('error', 'Gagal menghapus Aset. Aset masih memiliki data peminjaman.');
+            DB::rollBack();
+            Log::error('Failed to delete asset: ' . $e->getMessage(), ['exception' => $e, 'asset_id' => $asset->id]);
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Gagal menghapus Aset. Aset masih memiliki data peminjaman atau terjadi kesalahan.');
         }
     }
 

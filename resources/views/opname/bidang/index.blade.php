@@ -46,7 +46,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($sessions as $index => $session)
-                        @if ($session->departement->id == $user->employee?->department?->id && $session->status != 'draft')
+                        @if ($session->departement->id == $user->employee?->department?->id && !in_array($session->status, ['draft', 'cancelled']))
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
@@ -71,12 +71,12 @@
                                     </a> --}}
                                     @if ($session->status == 'dijadwalkan')
                                         <button type="button" class="start-opname-btn"
-                                            data-start-url="{{ route('admin.opname.startOpname', $session->id) }}"
-                                            data-show-url="{{ route('admin.opname.show', $session->id) }}">
+                                            data-start-url="{{ routeForRole('opname', 'startOpname', $session->id) }}"
+                                            data-show-url="{{ routeForRole('opname', 'show', $session->id) }}">
                                             <i class="fas fa-play text-green-600 hover:text-green-800"></i>
                                         </button>
                                     @else
-                                        <a href="{{ route('admin.opname.show', $session->id) }}">
+                                        <a href="{{ routeForRole('opname', 'show', $session->id) }}">
                                             <i class="fas fa-eye text-blue-600 hover:text-blue-800"></i>
                                         </a>
                                     @endif

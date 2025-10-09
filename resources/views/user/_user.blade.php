@@ -67,12 +67,14 @@
         <option value="">Tidak ada</option>
         {{-- proble di for each --}}
         @foreach($employees as $employee)
-            <option value="{{ $employee->id }}" {{ old('karyawan_id', $user->karyawan_id ?? '') == $employee->id ? 'selected' : '' }}>
-                {{ $employee->nama }}
-            </option>
-            {{-- <option >
-                asep
-            </option> --}}
+        <option value="{{ $employee->id }}" {{ old('karyawan_id', $user->karyawan_id ?? '') == $employee->id ? 'selected' : '' }}>
+            @if ($login->role == 'superadmin')
+            {{ $employee->nama }} ( {{ $employee->institution->nama ?? $user->employee->institution->nama }} )
+            @elseif ($login->role == 'admin')
+            {{-- {{ $employee->nama }} --}}
+            {{ $employee->nama }} ( {{ $employee->department->nama ?? $user->employee->department->nama ?? ''}})
+            @endif
+        </option>
         @endforeach
     </select>
 

@@ -16,6 +16,8 @@ class InstansiSeeder extends Seeder
             'email' => 'disdik@kotax.go.id',
             'alamat' => 'Jl. Merdeka No. 1, Kota X',
             'alias' => 'Diknas',
+            'kepala_instansi_id' => null,
+
         ]);
 
         Institution::create([
@@ -25,6 +27,7 @@ class InstansiSeeder extends Seeder
             'email' => 'dinkes@kotax.go.id',
             'alamat' => 'Jl. Sehat No. 10, Kota X',
             'alias' => 'DinKes',
+            'kepala_instansi_id' => null,
         ]);
     }
 }

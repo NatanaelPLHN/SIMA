@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CategoryGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CategoryGroupController extends Controller
 {
@@ -42,18 +44,7 @@ class CategoryGroupController extends Controller
                 'alias.required' => 'Alias wajib diisi.',
                 'alias.unique' => 'Alias sudah digunakan.',
             ]);
-
-            $categoryGroup = CategoryGroup::create($validated);
-
-            // Handle AJAX request (dari SweetAlert2)
-             session()->flash('success', ' grup Kategori berhasil ditambahkan!');
-
-            return response()->json(['success' => true]);
-    
-
-            // Handle regular form submission
-            } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation error untuk AJAX
+        } catch (ValidationException $e) {
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -61,14 +52,25 @@ class CategoryGroupController extends Controller
                     'errors' => $e->errors()
                 ], 422);
             }
+            throw $e;
+        }
 
-            throw $e; // Biarkan Laravel menangani validation error untuk form biasa
+        DB::beginTransaction();
+        try {
+            $categoryGroup = CategoryGroup::create($validated);
+            DB::commit();
 
+            session()->flash('success', 'Grup Kategori berhasil ditambahkan!');
+
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'category_group' => $categoryGroup], 201);
+            }
+
+            return redirect()->route('superadmin.category-groups.index')->with('success', 'Grup Kategori berhasil ditambahkan!');
         } catch (\Exception $e) {
-            Log::error('Error creating category group: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
+            DB::rollBack();
+            Log::error('Error creating category group: ' . $e->getMessage(), ['exception' => $e, 'payload' => $validated]);
 
-            // Handle AJAX error
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -76,7 +78,6 @@ class CategoryGroupController extends Controller
                 ], 500);
             }
 
-            // Handle regular form error
             return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data group kategori.');
         }
     }
@@ -102,54 +103,64 @@ class CategoryGroupController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, CategoryGroup $categoryGroup)
-{
-    try {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255|unique:category_groups,nama,' . $categoryGroup->id,
-            'deskripsi' => 'nullable|string',
-            'alias' => 'required|string|max:255|unique:category_groups,alias,' . $categoryGroup->id,
-        ], [
-            'nama.required' => 'Nama group kategori wajib diisi.',
-            'nama.unique' => 'Nama group kategori sudah digunakan.',
-            'alias.required' => 'Alias wajib diisi.',
-            'alias.unique' => 'Alias sudah digunakan.',
-        ]);
-
-        $categoryGroup->fill($validated);
-        if (!$categoryGroup->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
-        }
-        $categoryGroup->save();
-
-
-
-        // $category->update($validated);
-
-        session()->flash('success', ' Grup Kategori berhasil di ubah');
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal.',
-                'errors' => $e->errors()
-            ], 422);
-        }
-        throw $e;
-
-    } catch (\Exception $e) {
-        Log::error('Error updating category group: ' . $e->getMessage());
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.'
-            ], 500);
+    {
+        try {
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255|unique:category_groups,nama,' . $categoryGroup->id,
+                'deskripsi' => 'nullable|string',
+                'alias' => 'required|string|max:255|unique:category_groups,alias,' . $categoryGroup->id,
+            ], [
+                'nama.required' => 'Nama group kategori wajib diisi.',
+                'nama.unique' => 'Nama group kategori sudah digunakan.',
+                'alias.required' => 'Alias wajib diisi.',
+                'alias.unique' => 'Alias sudah digunakan.',
+            ]);
+        } catch (ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal.',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         }
 
-        return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data group kategori.');
+        DB::beginTransaction();
+        try {
+            $categoryGroup->fill($validated);
+            if (!$categoryGroup->isDirty()) {
+                DB::rollBack();
+                if ($request->ajax()) {
+                    return response()->json(['success' => true, 'info' => 'Tidak ada perubahan pada data grup kategori.']);
+                }
+                return back()->with('info', 'Tidak ada perubahan pada data aset.');
+            }
+
+            $categoryGroup->save();
+            DB::commit();
+
+            session()->flash('success', 'Grup Kategori berhasil di ubah');
+
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'category_group' => $categoryGroup]);
+            }
+
+            return redirect()->route('superadmin.category-groups.index')->with('success', 'Grup Kategori berhasil di ubah');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating category group: ' . $e->getMessage(), ['exception' => $e, 'category_group_id' => $categoryGroup->id, 'payload' => $validated]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat memperbarui data.'
+                ], 500);
+            }
+
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data group kategori.');
+        }
     }
-}
 
     /**
      * Remove the specified resource from storage.
@@ -162,9 +173,18 @@ class CategoryGroupController extends Controller
                 return redirect()->route('superadmin.category-groups.index')->with('error', 'Tidak dapat menghapus group kategori karena masih digunakan oleh kategori.');
             }
 
-            $categoryGroup->delete();
-            return redirect()->route('superadmin.category-groups.index')->with('success', 'Group kategori berhasil dihapus.');
+            DB::beginTransaction();
+            try {
+                $categoryGroup->delete();
+                DB::commit();
+
+                return redirect()->route('superadmin.category-groups.index')->with('success', 'Group kategori berhasil dihapus.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
         } catch (\Exception $e) {
+            Log::error('Error deleting category group: ' . $e->getMessage(), ['exception' => $e, 'category_group_id' => $categoryGroup->id]);
             return redirect()->route('superadmin.category-groups.index')->with('error', 'Gagal menghapus group kategori.');
         }
     }
