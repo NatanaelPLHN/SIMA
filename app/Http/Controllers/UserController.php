@@ -41,11 +41,15 @@ class UserController extends Controller
             // Superadmin hanya melihat daftar admin
             $query->where('role', 'admin');
         } elseif ($user->role === 'admin') {
-            // Admin hanya melihat daftar subadmin
-            $query->where('role', 'subadmin');
+            $query->where('role', 'subadmin')
+                ->whereHas('employee.institution', function ($q) use ($user) {
+                    $q->where('id', $user->employee->institution_id);
+                });
         } elseif ($user->role === 'subadmin') {
-            // Subadmin hanya melihat daftar user
-            $query->where('role', 'user');
+            $query->where('role', 'user')
+                ->whereHas('employee.department', function ($q) use ($user) {
+                    $q->where('id', $user->employee->department_id);
+                });
         } else {
             // Jika rolenya aneh, jangan tampilkan apa-apa
             $query->whereRaw('1 = 0');
@@ -65,8 +69,8 @@ class UserController extends Controller
         // return view('user.create_user',compact('employees'));
 
         // Tentukan role apa yang boleh dibuat berdasarkan role user yang login
-        $user = Auth::user();
-        $user_role = $user->role;
+        $login = Auth::user();
+        $user_role = $login->role;
 
         $employees = collect();
         $creatable_role = '';
@@ -83,7 +87,7 @@ class UserController extends Controller
         } elseif ($user_role === 'admin') {
             $creatable_role = 'subadmin';
             // Ambil semua ID karyawan yang merupakan kepala departemen di instansi admin
-            $kepalaDepartemenIds = Departement::where('instansi_id', $user->employee->institution_id)
+            $kepalaDepartemenIds = Departement::where('instansi_id', $login->employee->institution_id)
                 ->whereNotNull('kepala_bidang_id')
                 ->pluck('kepala_bidang_id');
 
@@ -95,33 +99,13 @@ class UserController extends Controller
         } elseif ($user_role === 'subadmin') {
             $creatable_role = 'user';
             // Ambil karyawan di departemen yang sama dengan subadmin, yang belum punya akun
-            $employees = Employee::where('department_id', $user->employee->department_id)
+            $employees = Employee::where('department_id', $login->employee->department_id)
                 ->whereDoesntHave('user')
                 ->orderBy('nama')
                 ->get();
         }
-        // $institutions = collect();
-        // $departements = collect();
 
-        // if ($user_role === 'superadmin') {
-        //     $institutions = Institution::orderBy('nama')->get();
-        // } elseif ($user_role === 'admin') {
-        //     $institutionId = $user->employee?->institution_id;
-        //     if ($institutionId) {
-        //         $departements = Departement::where('instansi_id', $institutionId)->orderBy('nama')->get();
-        //     }
-        // } elseif ($user_role === 'subadmin') {
-        //     $departmentId = $user->employee?->department_id;
-        //     if ($departmentId) {
-        //         $employees = Employee::where('department_id', $departmentId)
-        //             ->whereDoesntHave('user')
-        //             ->orderBy('nama')
-        //             ->get();
-        //     }
-        // }
-
-        // return view('user.create_user', compact('creatable_role','institutions','departements','employees'));
-        return view('user.create_user', compact('creatable_role', 'employees'));
+        return view('user.create_user', compact('creatable_role', 'employees', 'login'));
     }
 
     /**
@@ -189,10 +173,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $login = Auth::user();
         $user->load('employee');
         $employees = Employee::all(); // Tambahkan ini
+        // $employees = Employee::with(['department', 'institution', 'user']);
 
-        return view('user.edit_user', compact('user', 'employees'));
+        return view('user.edit_user', compact('user', 'employees', 'login'));
     }
 
     /**

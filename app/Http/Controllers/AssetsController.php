@@ -31,16 +31,32 @@ class AssetsController extends Controller
     }
     public function create_gerak()
     {
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, 'bergerak')) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
         return view('aset.forms.create_gerak', compact('groupCategories'));
     }
     public function create_tidak()
     {
+
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, 'tidak_bergerak')) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
         return view('aset.forms.create_tidak_bergerak', compact('groupCategories'));
     }
     public function create_habis()
     {
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, 'habis_pakai')) {
+            return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
         return view('aset.forms.create_habis', compact('groupCategories'));
     }

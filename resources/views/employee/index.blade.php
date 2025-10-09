@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Daftar Pegawai')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 @section('content')
     <div
@@ -43,24 +43,20 @@
             <!-- Controls: Entries, Search, Add Button -->
             <div class="items-center justify-between block sm:flex">
                 <div class="flex items-center mb-4 sm:mb-0">
-                    <form method="GET" action="{{ route('superadmin.employee.index') }}" class="flex items-center space-x-2 sm:pl-4 mt-2 sm:mt-0">
+                    <form method="GET" action="{{ route('superadmin.employee.index') }}"
+                        class="flex items-center space-x-2 sm:pl-4 mt-2 sm:mt-0">
                         <div class="relative w-48 sm:w-64">
-                            <input
-                                type="text"
-                                name="search"
-                                id="pegawai-search"
-                                value="{{ request('search') }}"
+                            <input type="text" name="search" id="pegawai-search" value="{{ request('search') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Cari nama, NIP, dll..."
-                            >
+                                placeholder="Cari nama, NIP, dll...">
                         </div>
-                        @if(request('search'))
+                        @if (request('search'))
                             <a href="{{ route('superadmin.employee.index') }}"
                                 class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">
                                 Clear
                             </a>
                         @endif
-                        </form>
+                    </form>
                 </div>
 
                 <div class="flex items-center space-x-2">
@@ -76,66 +72,79 @@
 
             </div>
 
-        <!-- Data Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-indigo-800">
-                    <tr>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            No</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            NIP</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Nama Pegawai</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Email</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Alamat</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Telepon</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Bidang</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                            Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($employees as $index => $pegawai)
+            <!-- Data Table -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-indigo-800">
                         <tr>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $index + 1 }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $pegawai->nip }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $pegawai->nama }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $pegawai->user->email ?? '-' }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $pegawai->alamat ?? '-' }}</td>
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $pegawai->telepon ?? '-' }}</td>
-                            {{-- <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">{{ $pegawai->bidang->nama ?? '-' }}</td> --}}
-                            <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
-                                {{ $pegawai->department->nama ?? '-' }}</td>
-                            <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
-                                <div class="flex items-center justify-center gap-x-3">
-                                    <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                        href="{{ routeForRole('employee', 'edit', $pegawai->id) }}"></a>
-                                    <form method="POST" action="{{ routeForRole('employee', 'destroy', $pegawai->id) }}"
-                                        class="delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="fas fa-trash text-red-600 hover:text-red-800"
-                                            type="submit"></button>
-                                    </form>
-                                </div>
-                            </td>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                No</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                NIP</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Nama Pegawai</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Email</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Alamat</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Telepon</th>
+                            @if ($user->role == 'superadmin')
+                                <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Instansi</th>
+                            @elseif ($user->role == 'admin')
+                                <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Bidang</th>
+                            @endif
+                            <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                {{ $employees->links() }}
-            </table>
-        </div>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($employees as $index => $pegawai)
+                            <tr>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $index + 1 }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $pegawai->nip }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $pegawai->nama }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $pegawai->user->email ?? '-' }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $pegawai->alamat ?? '-' }}</td>
+                                <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                    {{ $pegawai->telepon ?? '-' }}</td>
+                                @if ($user->role == 'superadmin')
+                                    {{-- <th
+                                        class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                        Instansi</th> --}}
+                                    <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                        {{ $pegawai->institution->nama ?? '-' }}</td>
+                                @elseif ($user->role == 'admin')
+                                    <td class="text-center px-4 py-3 text-sm text-gray-900 whitespace-normal break-words">
+                                        {{ $pegawai->department->nama ?? '-' }}</td>
+                                @endif
+                                <td class="text-center px-4 py-3 text-sm whitespace-normal break-words">
+                                    <div class="flex items-center justify-center gap-x-3">
+                                        <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
+                                            href="{{ routeForRole('employee', 'edit', $pegawai->id) }}"></a>
+                                        <form method="POST"
+                                            action="{{ routeForRole('employee', 'destroy', $pegawai->id) }}"
+                                            class="delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="fas fa-trash text-red-600 hover:text-red-800"
+                                                type="submit"></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    {{ $employees->links() }}
+                </table>
+            </div>
         </div>
 
     </div>

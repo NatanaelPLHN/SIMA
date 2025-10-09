@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class UserControllerCopy extends Controller
 {
     /**
      * Display a listing of the resource.

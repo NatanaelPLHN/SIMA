@@ -30,12 +30,14 @@ class EmployeeController extends Controller
             $query->whereHas('institution', function ($q) use ($user) {
                 $q->where('id', $user->employee?->institution->id);
             });
+            $query->where('id', '!=', $user->employee?->id);
         } elseif ($user->role == 'subadmin') {
             $query->where('department_id', $user->employee->department_id);
+            $query->where('id', '!=', $user->employee?->id);
         }
 
         $employees = $query->paginate(10);
-        return view('employee.index', compact('employees'));
+        return view('employee.index', compact('employees','user'));
     }
 
     /**

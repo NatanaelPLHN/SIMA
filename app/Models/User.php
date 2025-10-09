@@ -44,7 +44,7 @@ class User extends Authenticatable
     // User scheduled stock opnames
     public function scheduledStockOpnames()
     {
-        return $this->hasMany(StockOpname::class, 'scheduled_by');
+        return $this->hasMany(StockOpnameSession::class, 'scheduled_by');
     }
 
     // User performed checks (as checker)

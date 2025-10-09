@@ -54,7 +54,7 @@ class EmployeePolicy
             return $user->employee &&
                 $user->employee->department &&
                 $employee->department &&
-                $user->employee->department->instansi_id === $employee->department->instansi_id;
+                $user->employee->department_id === $employee->department_id;
         }
 
         return $this->view($user, $employee);
@@ -67,9 +67,15 @@ class EmployeePolicy
         }
         if ($user->role === 'admin') {
             return $user->employee &&
+                $user->employee &&
+                $employee &&
+                $user->employee->institution_id === $employee->institution_id;
+        }
+        if ($user->role === 'subadmin') {
+            return $user->employee &&
                 $user->employee->department &&
                 $employee->department &&
-                $user->employee->department->instansi_id === $employee->department->instansi_id;
+                $user->employee->department_id === $employee->department_id;
         }
 
         return $this->update($user, $employee);

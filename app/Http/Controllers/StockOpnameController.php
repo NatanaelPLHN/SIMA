@@ -62,6 +62,9 @@ class StockOpnameController extends Controller
         if ($departement->kepala == null) {
             return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
         }
+        if ($departement->kepala->user == null) {
+            return back()->with('info', 'Kepala Departemen ini belum memiliki akun.')->withInput();
+        }
         // $categoryGroup = CategoryGroup::find($request->category_group_id);
         // dd($session);
 
@@ -102,7 +105,7 @@ class StockOpnameController extends Controller
                 'jumlah_fisik' => 0, // Default 0, akan diisi saat pengecekan
                 'status_lama' => $asset->status, // Status default
                 'status_fisik' => 'tersedia', // Status default
-                'checked_by' => $departement->kepala->id, // Penanggung jawab awal
+                'checked_by' => $departement->kepala->user->id, // Penanggung jawab awal
             ]);
         }
 
