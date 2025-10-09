@@ -117,7 +117,7 @@
     </div>
 
     <!-- QR Scanner Modal -->
-    <div id="qr-scanner-modal" class="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div id="qr-scanner-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Scan QR Code</h2>
             <div id="qr-reader" class="w-full"></div>
@@ -131,7 +131,7 @@ transition-colors">
 
     {{-- PERUBAHAN 2: Menambahkan HTML untuk Modal Update Aset --}}
     <div id="update-asset-modal"
-        class="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 id="modal-title" class="text-xl font-semibold text-gray-800 mb-2">Update Aset</h2>
             <p id="modal-asset-info" class="text-sm text-gray-600 mb-4"></p>
@@ -158,28 +158,38 @@ transition-colors">
 
 @push('scripts')
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Pastikan
+ SweetAlert juga ada jika belum --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Elemen-elemen Modal Pemindai QR
+            // --- SEMUA ELEMEN YANG DIBUTUHKAN ---
             const scanButton = document.getElementById('scan-qr-button');
             const qrScannerModal = document.getElementById('qr-scanner-modal');
             const closeQrModalButton = document.getElementById('close-modal-button');
-            let html5QrCode;
+            const qrReaderDiv = document.getElementById('qr-reader');
 
-            // Elemen-elemen Modal Update Aset
             const updateAssetModal = document.getElementById('update-asset-modal');
-            const modalTitle = document.getElementById('modal-title');
             const modalAssetInfo = document.getElementById('modal-asset-info');
             const modalDynamicContent = document.getElementById('modal-dynamic-content');
             const modalSaveButton = document.getElementById('modal-save-button');
             const modalCancelButton = document.getElementById('modal-cancel-button');
 
-            // --- LOGIKA PEMINDAI QR ---
+            const opnameForm = document.getElementById('opname-form');
+            const finishButton = document.getElementById('finish-opname-btn');
 
+            let html5QrCode = null; // Variabel untuk menyimpan instance scanner
+
+            // --- LOGIKA PEMINDAI QR (YANG DIPERBARUI) ---
+
+            // Fungsi untuk membuka modal dan memulai kamera
             function startScanning() {
+                if (!html5QrCode) {
+                    html5QrCode = new Html5Qrcode("qr-reader");
+                }
+
                 qrScannerModal.classList.remove('hidden');
-                html5QrCode = new Html5Qrcode("qr-reader");
+
                 const config = {
                     fps: 10,
                     qrbox: {
@@ -187,53 +197,68 @@ transition-colors">
                         height: 250
                     }
                 };
+
+                // Mulai kamera
                 html5QrCode.start({
                         facingMode: "environment"
-                    }, config, qrCodeSuccessCallback)
+                    }, config, onScanSuccess)
                     .catch(err => {
-                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
-                        stopScanning();
+                        console.error("Gagal memulai kamera.", err);
+                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin akses kamera pada browser.");
+                        stopScanning(); // Tutup modal jika gagal
                     });
             }
 
+            // Fungsi untuk menghentikan kamera dan menutup modal
             function stopScanning() {
                 if (html5QrCode && html5QrCode.isScanning) {
-                    html5QrCode.stop().catch(err => console.error("Gagal menghentikan pemindaian.", err));
+                    html5QrCode.stop().catch(err => {
+                        console.error("Gagal menghentikan pemindaian dengan benar.", err);
+                    });
                 }
                 qrScannerModal.classList.add('hidden');
             }
 
-            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                stopScanning();
+            // Fungsi yang dijalankan ketika QR code berhasil dipindai
+            const onScanSuccess = (decodedText, decodedResult) => {
+                stopScanning(); // Langsung hentikan kamera dan tutup modal QR
+
                 let assetCode;
                 try {
+                    // Coba parsing sebagai URL, karena QR Anda berisi URL
                     const url = new URL(decodedText);
                     const pathParts = url.pathname.split('/');
                     assetCode = pathParts[pathParts.length - 1];
                 } catch (e) {
+                    // Jika bukan URL, anggap teksnya adalah kodenya langsung
                     assetCode = decodedText;
                 }
-                console.log(`[DEBUG] 2. Kode Aset Ditemukan: ${assetCode}`);
-                fetchAssetData(assetCode);
+
+                console.log(`Kode Aset dari QR: ${assetCode}`);
+                fetchAssetData(assetCode); // Panggil fungsi untuk menampilkan modal update
             };
 
-            scanButton.addEventListener('click', startScanning);
-            closeQrModalButton.addEventListener('click', stopScanning);
+            // Tambahkan event listener ke tombol
+            if (scanButton) {
+                scanButton.addEventListener('click', startScanning);
+            }
+            if (closeQrModalButton) {
+                closeQrModalButton.addEventListener('click', stopScanning);
+            }
 
-            // --- LOGIKA MODAL UPDATE ASET ---
+            // --- SISA KODE ANDA (LOGIKA MODAL UPDATE & FINISH BUTTON) TETAP SAMA ---
+            // (Kode di bawah ini adalah kode Anda yang sudah ada, tidak perlu diubah)
 
             async function fetchAssetData(assetCode) {
-                // PERBAIKAN: Gunakan backtick untuk template literal
                 const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
                 if (!targetRow) {
-                    console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
                     alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
                     return;
                 }
 
                 try {
+                    // Pastikan route ini ada di web.php atau api.php Anda
                     const response = await fetch(`/api/asset/${assetCode}`);
-                    console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(errorData.message || 'Gagal mengambil data aset.');
@@ -247,26 +272,26 @@ transition-colors">
 
             function showUpdateModal(asset, targetRow) {
                 modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
-                modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
+                modalDynamicContent.innerHTML = '';
 
                 if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
-                    const currentStatus = targetRow.querySelector('select[name^="statuses"]').value;
+                    const currentStatus = targetRow.querySelector('select[name^="statuses"]').
+                    value;
                     const selectHTML = `
-                    <label for="modal-status" class="block text-sm font-medium text-gray-700">Status Fisik</label>
-                    <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
-focus:ring-2 focus:ring-indigo-500">
-                        <option value="tersedia" ${currentStatus === 'tersedia' ? 'selected' : ''}>Tersedia</option>
-                        <option value="dipakai" ${currentStatus === 'dipakai' ? 'selected' : ''}>Dipakai</option>
-                        <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
-                        <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
-                    </select>`;
+                     <label for="modal-status" class="block text-sm font-medium text-gray-700"> Status Fisik</label>
+                     <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                         <option value="tersedia" ${currentStatus === 'tersedia' ? 'selected' : ''}>Tersedia</option>
+                         <option value="dipakai" ${currentStatus === 'dipakai' ? 'selected' : '' }>Dipakai</option>
+                         <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
+                         <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
+                     </select>`;
                     modalDynamicContent.innerHTML = selectHTML;
                 } else if (asset.jenis_aset === 'habis_pakai') {
                     const currentJumlah = targetRow.querySelector('input[name^="jumlah_fisik"]').value;
-                    const inputHTML = `
-                    <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
-                    <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2
-py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
+                    const inputHTML =
+                        `
+                     <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
+                     <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
                     modalDynamicContent.innerHTML = inputHTML;
                 }
 
@@ -282,18 +307,14 @@ py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
 
             modalSaveButton.addEventListener('click', function() {
                 const assetCode = this.dataset.assetCode;
-                // PERBAIKAN: Gunakan backtick untuk template literal
                 const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-
                 const modalInput = modalDynamicContent.querySelector('select, input');
                 const newValue = modalInput.value;
 
                 if (modalInput.id === 'modal-status') {
-                    const targetSelect = targetRow.querySelector('select[name^="statuses"]');
-                    targetSelect.value = newValue;
+                    targetRow.querySelector('select[name^="statuses"]').value = newValue;
                 } else if (modalInput.id === 'modal-jumlah') {
-                    const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
-                    targetInput.value = newValue;
+                    targetRow.querySelector('input[name^="jumlah_fisik"]').value = newValue;
                 }
 
                 targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
@@ -303,74 +324,73 @@ py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
 
                 hideUpdateModal();
             });
-        });
-        const opnameForm = document.getElementById('opname-form');
-        const finishButton = document.getElementById('finish-opname-btn');
 
-        if (finishButton) {
-            finishButton.addEventListener('click', function(event) {
-                // 1. Mencegah form dikirim secara otomatis
-                event.preventDefault();
-
-                // 2. Tampilkan SweetAlert untuk input password
-                Swal.fire({
-                    title: 'Konfirmasi Penyelesaian',
-                    text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
-                    input: 'password',
-                    inputAttributes: {
-                        autocapitalize: 'off'
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Verifikasi & Selesaikan',
-                    cancelButtonText: 'Batal',
-                    showLoaderOnConfirm: true,
-                    preConfirm: (password) => {
-                        // 3. Kirim password ke API verifikasi
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content');
-                        return fetch('{{ route('verifyPassword') }}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken
-                                },
-                                body: JSON.stringify({
-                                    password: password
+            if (finishButton) {
+                finishButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    Swal.fire({
+                        title: 'Konfirmasi Penyelesaian',
+                        text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
+                        input: 'password',
+                        inputAttributes: {
+                            autocapitalize: 'off'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Verifikasi & Selesaikan',
+                        cancelButtonText: 'Batal',
+                        showLoaderOnConfirm: true,
+                        preConfirm: (password) => {
+                            const csrfToken = document.querySelector(
+                                'meta[name="csrf-token"]'
+                            ).getAttribute('content');
+                            return fetch('{{ route('verifyPassword') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken
+                                    },
+                                    body: JSON.stringify({
+                                        password: password
+                                    })
                                 })
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    // Jika password salah, lempar error untuk ditampilkan
-                                    return response.json().then(err => {
-                                        throw new Error(err.message)
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .catch(error => {
-                                Swal.showValidationMessage(
-                                    `Verifikasi gagal: ${error.message}`
-                                );
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw new Error(err.message)
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .catch(error => {
+                                    Swal.showValidationMessage(
+                                        `Verifikasi gagal: ${error.message}`
+                                    );
+                                });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Terverifikasi!',
+                                text: 'Menyelesaikan sesi stock opname...',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+
+                            }).then(() => {
+                                opnameForm.submit();
+
                             });
-                    },
-                    allowOutsideClick: () => !Swal.isLoading()
-                }).then((result) => {
-                    // 4. Jika verifikasi berhasil (result.value tidak kosong)
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Terverifikasi!',
-                            text: 'Menyelesaikan sesi stock opname...',
-                            icon: 'success',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // 5. Kirim form opname yang asli
-                            opnameForm.submit();
-                        });
-                    }
+
+                        }
+
+                    });
+
                 });
-            });
-        }
+
+            }
+
+        });
     </script>
 @endpush

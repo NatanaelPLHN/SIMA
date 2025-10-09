@@ -2,8 +2,9 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start">
-                <button id="toggleSidebarMobile" aria-expanded="true" aria-controls="sidebar" class="p-2 text-gray-600 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 
-           dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700 
+                <button id="toggleSidebarMobile" aria-expanded="true" aria-controls="sidebar"
+                    class="p-2 text-gray-600 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100
+           dark:focus:bg-gray-700 focus:ring-2 focus:ring-gray-100 dark:focus:ring-gray-700
            dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ">
 
                     <!-- Hamburger -->
@@ -55,34 +56,47 @@
                         Notifications
                     </div>
                     <div>
-                        <a href="#"
-                            class="flex px-4 py-3 border-b-2 hover:bg-gray-300 dark:hover:bg-gray-600 dark:border-gray-600">
-                            <div class="flex-shrink-0">
-                                <img class="rounded-full w-11 h-11" src="/images/users/bonnie-green.png"
-                                    alt="Jese image">
-                                <div
-                                    class="absolute flex items-center justify-center w-5 h-5 ml-6 -mt-5 border border-white rounded-full bg-primary-700 dark:border-gray-700">
-                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
-                                        </path>
-                                        <path
-                                            d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
-                                        </path>
-                                    </svg>
-                                </div>
+                        @if (isset($notifications) && $notifications->count() > 0)
+                            @foreach ($notifications as $notification)
+                                <a href="{{ routeForRole('opname', 'index') }}"
+                                    class="flex px-4 py-3 border-b-2 hover:bg-gray-300 dark:hover:bg-gray-600 dark:border-gray-600">
+                                    <div class="flex-shrink-0">
+                                        <!-- Icon bisa disesuaikan -->
+                                        <div
+                                            class="absolute flex items-center justify-center w-5 h-5 ml-6
+                                   -mt-5 bg-blue-500 border border-white rounded-full">
+                                            <svg class="w-3 h-3 text-white" aria-hidden="true"
+                                                xmlns=
+                                   "http://www.w3.org/2000/svg"
+                                                fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10
+                                   0Zm3.932 13.885-2.014-2.014a1 1 0 0 0-1.414 0l-2.014 2.014a1 1 0 0 1-1.414-1.414l2.014-2.014a1 1
+                                   0 0 0 0-1.414L6.07 7.028a1 1 0 1 1 1.414-1.414l2.014 2.014a1 1 0 0 0 1.414 0l2.014-2.014a1 1 0 1
+                                   1 1.414 1.414L12.914 8.97a1 1 0 0 0 0 1.414l2.014 2.014a1 1 0 0 1-1.414 1.414Z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="w-full pl-3">
+                                        <div
+                                            class="text-gray-500 font-normal text-sm mb-1.5
+                                   dark:text-gray-400">
+                                            Opname baru dijadwalkan untuk <span
+                                                class="font-semibold
+                                   text-gray-900 dark:text-white">{{ $notification->departement->nama ?? 'Departemen' }}</span>.
+                                        </div>
+                                        <div
+                                            class="text-xs font-medium text-primary-700
+                                   dark:text-primary-400">
+                                            {{ $notification->tanggal_dijadwalkan->diffForHumans() }}
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        @else
+                            <div class="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
+                                Tidak ada notifikasi baru.
                             </div>
-                            <div class="w-full pl-3">
-                                <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">New message
-                                    from <span class="font-semibold text-gray-900 dark:text-white">Bonnie Green</span>:
-                                    "Hey, what's up? All set
-                                    for the presentation?"</div>
-                                <div class="text-xs font-medium text-primary-700 dark:text-primary-400">a few moments
-                                    ago</div>
-                            </div>
-                        </a>
-
+                        @endif
 
                     </div>
                     <a href="#"
@@ -119,7 +133,8 @@
                     </div>
                     <div class="grid grid-cols-3 gap-4 p-4">
 
-                        <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <a href="#"
+                            class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
                             <svg class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400" fill="currentColor"
                                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -128,7 +143,8 @@
                             </svg>
                             <div class="text-sm font-medium text-gray-900 dark:text-white">Users</div>
                         </a>
-                        <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <a href="#"
+                            class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
                             <svg class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400" fill="currentColor"
                                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
@@ -137,7 +153,8 @@
                             </svg>
                             <div class="text-sm font-medium text-gray-900 dark:text-white">Profile</div>
                         </a>
-                        <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <a href="#"
+                            class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
                             <svg class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400" fill="currentColor"
                                 viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
@@ -146,7 +163,8 @@
                             </svg>
                             <div class="text-sm font-medium text-gray-900 dark:text-white">Settings</div>
                         </a>
-                        <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <a href="#"
+                            class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
                             <svg class="mx-auto mb-1 text-gray-500 w-7 h-7 dark:text-gray-400" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -158,16 +176,15 @@
                     </div>
                 </div>
                 <div x-data="{
-        darkMode: localStorage.getItem('color-theme')
-            ? localStorage.getItem('color-theme') === 'dark'
-            : window.matchMedia('(prefers-color-scheme: dark)').matches,
+                    darkMode: localStorage.getItem('color-theme') ?
+                        localStorage.getItem('color-theme') === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches,
 
-        toggle() {
-            this.darkMode = !this.darkMode;
-            document.documentElement.classList.toggle('dark', this.darkMode);
-            localStorage.setItem('color-theme', this.darkMode ? 'dark' : 'light');
-        }
-    }" x-init="document.documentElement.classList.toggle('dark', darkMode)">
+                    toggle() {
+                        this.darkMode = !this.darkMode;
+                        document.documentElement.classList.toggle('dark', this.darkMode);
+                        localStorage.setItem('color-theme', this.darkMode ? 'dark' : 'light');
+                    }
+                }" x-init="document.documentElement.classList.toggle('dark', darkMode)">
                     <button @click="toggle" class="p-2 rounded-lg  border-gray-300 dark:border-gray-600">
                         <template x-if="darkMode">
                             <i class="fas fa-sun text-yellow-400"></i>
@@ -190,9 +207,10 @@
                 <div class="flex items-center ml-3">
                     <div>
                         <button type="button" id="user-menu-button-2" aria-expanded="false"
-                            data-dropdown-toggle="dropdown-2" class="flex items-center justify-center w-10 h-10 text-sm 
-               bg-gray-200 text-gray-800 hover:bg-gray-300 
-               dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 
+                            data-dropdown-toggle="dropdown-2"
+                            class="flex items-center justify-center w-10 h-10 text-sm
+               bg-gray-200 text-gray-800 hover:bg-gray-300
+               dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700
                rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 transition-colors">
                             <span class="sr-only">Open user menu</span>
                             <!-- Ikon User (SVG) -->
@@ -218,7 +236,7 @@
 
                         <ul class="py-1" role="none">
                             <li>
-                                @if(auth()->user()->role === 'admin')
+                                @if (auth()->user()->role === 'admin')
                                     <a href="{{ route('admin.profil') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                         role="menuitem">Profile</a>

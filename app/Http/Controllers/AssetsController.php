@@ -256,7 +256,6 @@ class AssetsController extends Controller
         if ($asset->jenis_aset === 'habis_pakai') {
             return view('aset.forms.edit_habis', compact('asset', 'groupCategories'));
         }
-
     }
 
     public function update(Request $request, Asset $asset)
@@ -282,45 +281,39 @@ class AssetsController extends Controller
         try {
             $original = $asset->replicate();
             $asset->fill($validated);
+            $detailModel = null;
+            if ($asset->jenis_aset === 'bergerak') {
+                $asset->bergerak->fill($request->only([
+                    'merk',
+                    'tipe',
+                    'nomor_serial',
+                    'tahun_produksi'
+                ]));
+                $detailModel = $asset->bergerak;
+            } elseif ($asset->jenis_aset === 'tidak_bergerak') {
+                $asset->tidakBergerak->fill($request->only(['ukuran', 'bahan']));
+                $detailModel = $asset->tidakBergerak;
+            } elseif ($asset->jenis_aset === 'habis_pakai') {
+                $asset->habisPakai->fill($request->only(['register', 'satuan']));
+                $detailModel = $asset->habisPakai;
+            }
 
-            $asset->save();
-            if (!$asset->isDirty() ) {
+            // 2. Cek apakah ADA PERUBAHAN di model utama ATAU di model detailnya
+            $isAssetDirty = $asset->isDirty();
+            $isDetailDirty = $detailModel ? $detailModel->isDirty() : false;
+
+            if (!$isAssetDirty && !$isDetailDirty) {
                 DB::rollBack();
                 return back()->with('info', 'Tidak ada perubahan pada data aset.');
             }
 
-            if ($asset->jenis_aset === 'bergerak') {
-                $asset->bergerak()->update([
-                    'merk' => $request->merk,
-                    'tipe' => $request->tipe,
-                    'nomor_serial' => $request->nomor_serial,
-                    'tahun_produksi' => $request->tahun_produksi,
-                ]);
-                if ($asset->bergerak->isDirty()) {
-                    $asset->bergerak->save();
-                }
+            // 3. Jika ada perubahan, simpan semuanya
+            if ($isAssetDirty) {
+                $asset->save();
             }
-
-            if ($asset->jenis_aset === 'tidak_bergerak') {
-                $asset->tidakBergerak()->update([
-                    'ukuran' => $request->ukuran,
-                    'bahan' => $request->bahan,
-                ]);
-                if ($asset->tidakBergerak->isDirty()) {
-                    $asset->tidakBergerak->save();
-                }
+            if ($isDetailDirty) {
+                $detailModel->save();
             }
-
-            if ($asset->jenis_aset === 'habis_pakai') {
-                $asset->habisPakai()->update([
-                    'register' => $request->register,
-                    'satuan' => $request->satuan,
-                ]);
-                if ($asset->habisPakai->isDirty()) {
-                    $asset->habisPakai->save();
-                }
-            }
-
 
             DB::commit();
             return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil diperbarui.');

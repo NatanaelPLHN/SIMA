@@ -8,6 +8,9 @@ use App\Observers\DepartementObserver;
 use App\Observers\InstitutionObserver;
 use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Support\Facades\View;
+use App\Http\View\Composers\NotificationComposer;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -25,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Departement::observe(DepartementObserver::class);
         Institution::observe(InstitutionObserver::class);
+        View::composer('layouts.header', NotificationComposer::class);
     }
 }
