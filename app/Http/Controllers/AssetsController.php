@@ -204,7 +204,15 @@ class AssetsController extends Controller
 
     public function show(Asset $asset)
     {
+
+        $user = auth()->user();
+
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
+
+        if ($asset->departement_id != $user->employee->department_id) {
+            abort(404);
+            // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
 
         if ($asset->jenis_aset === 'bergerak') {
             return view('aset.details.bergerak', compact('asset'));
@@ -230,6 +238,11 @@ class AssetsController extends Controller
         }
 
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
+
+        if ($asset->departement_id != $user->employee->department_id) {
+            abort(404);
+            // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         $groupCategories = CategoryGroup::with('categories')->get();
 
         if ($asset->jenis_aset === 'bergerak') {
@@ -244,7 +257,6 @@ class AssetsController extends Controller
             return view('aset.forms.edit_habis', compact('asset', 'groupCategories'));
         }
 
-        abort(404);
     }
 
     public function update(Request $request, Asset $asset)
