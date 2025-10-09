@@ -13,6 +13,7 @@ use App\Models\CategoryGroup;
 use App\Models\User;
 use App\Models\StockOpnameSession;
 use Illuminate\Http\JsonResponse;
+use Carbon\Carbon;
 
 use Illuminate\Support\Facades\DB;
 
@@ -56,7 +57,7 @@ class StockOpnameDepartmentController extends Controller
      */
     public function show(StockOpnameSession $opname)
     {
-        if (in_array($opname->status, ['draft', 'cancelled','dijadwalkan'])) {
+        if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
             abort(404);
         }
         // Gunakan $opname karena route model binding
@@ -202,6 +203,12 @@ class StockOpnameDepartmentController extends Controller
     }
     public function startOpname(StockOpnameSession $session)
     {
+        // Cek apakah tanggal hari ini sudah sesuai atau melewati tanggal yang dijadwalkan.
+        // Carbon::today() akan mengabaikan jam, jadi opname bisa dimulai kapan saja pada hari H.
+        if (Carbon::today()->lt($session->tanggal_dijadwalkan)) {
+            return response()->json(['message' => 'Belum saatnya, opname dijadwalkan pada ' .
+                $session->tanggal_dijadwalkan->format('d-m-Y') . '.'], 403); // 403 Forbidden
+        }
         // Hanya ubah status jika masih 'dijadwalkan' untuk mencegah perubahan ganda
         if ($session->status === 'dijadwalkan') {
             $session->status = 'proses';
