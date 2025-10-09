@@ -58,7 +58,7 @@
                     <div>
                         @if (isset($notifications) && $notifications->count() > 0)
                             @foreach ($notifications as $notification)
-                                <a href="{{ routeForRole('opname', 'show', $notification->id) }}"
+                                <a href="{{ routeForRole('opname', 'index') }}"
                                     class="flex px-4 py-3 border-b-2 hover:bg-gray-300 dark:hover:bg-gray-600 dark:border-gray-600">
                                     <div class="flex-shrink-0">
                                         <!-- Icon bisa disesuaikan -->
