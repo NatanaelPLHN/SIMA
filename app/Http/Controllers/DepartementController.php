@@ -237,6 +237,13 @@ class DepartementController extends Controller
 
     public function destroy(Departement $departement)
     {
+        // KEKNYA BISA DI ATUR DI MIGRATION RELASI NYA
+        // Cek apakah ada employee yang masih terhubung dengan instansi ini.
+        if ($departement->employees()->exists()) {
+            return redirect(routeForRole('departement', 'index'))
+                ->with('error', 'Gagal menghapus: Masih ada karyawan yang terdaftar di departement ini.');
+        }
+
         try {
             // Prevent deletion if there are employees or other related data
             if ($departement->employees()->count() > 0) {

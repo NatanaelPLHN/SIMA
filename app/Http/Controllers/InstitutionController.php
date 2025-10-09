@@ -161,6 +161,12 @@ class InstitutionController extends Controller
 
     public function destroy(Institution $institution)
     {
+        // KEKNYA BISA DI ATUR DI MIGRATION RELASI NYA
+        // Cek apakah ada employee yang masih terhubung dengan instansi ini.
+        if ($institution->employees()->exists()) {
+            return redirect(routeForRole('institution', 'index'))
+                ->with('error', 'Gagal menghapus: Masih ada karyawan yang terdaftar di instansi ini.');
+        }
         try {
             DB::transaction(function () use ($institution) {
                 $institution->delete();
