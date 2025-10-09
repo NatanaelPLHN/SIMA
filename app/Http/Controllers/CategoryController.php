@@ -6,6 +6,9 @@ use App\Models\Category;
 use App\Models\CategoryGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB; // <-- added
+use Illuminate\Validation\ValidationException; // <-- added
+
 class CategoryController extends Controller
 {
     /**
@@ -23,18 +26,16 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        
         // $categories = Category::all(); // atau kosong dulu kalau mau AJAX
         $groupCategories = CategoryGroup::all();
-        return view('categories.create', compact( 'groupCategories'));
+        return view('categories.create', compact('groupCategories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-
+    {
         $validated = $request->validate([
             'nama' => 'required|string|max:255|unique:categories,nama',
             'deskripsi' => 'nullable|string',
@@ -42,14 +43,33 @@ class CategoryController extends Controller
             'alias' => 'required|string|max:255|unique:categories,alias',
         ]);
 
-       Category::create($validated);
+        DB::beginTransaction();
+        try {
+            $category = Category::create($validated);
+            DB::commit();
 
-    session()->flash('success', 'Kategori berhasil ditambahkan!');
+            session()->flash('success', 'Kategori berhasil ditambahkan!');
 
-    return response()->json(['success' => true]);
-         
-} /**
-     * Display the   specified resource.
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'category' => $category], 201);
+            }
+
+            // fallback for non-AJAX requests
+            return redirect()->route('superadmin.categories.index')->with('success', 'Kategori berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to store category: ' . $e->getMessage(), ['exception' => $e, 'payload' => $validated]);
+
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Gagal menambahkan kategori.'], 500);
+            }
+
+            return back()->withInput()->with('error', 'Gagal menambahkan kategori.');
+        }
+    }
+
+    /**
+     * Display the specified resource.
      */
     public function show(Category $category)
     {
@@ -62,7 +82,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $categoryGroups = CategoryGroup::all();
+        // fixed variable name to match other views
+        $groupCategories = CategoryGroup::all();
         return view('categories.edit', compact('category', 'groupCategories'));
     }
 
@@ -72,43 +93,63 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         try {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255|unique:categories,nama,' . $category->id,
-            'deskripsi' => 'nullable|string',
-            'category_group_id' => 'required|exists:category_groups,id',
-            'alias' => 'required|string|max:255|unique:categories,alias,' . $category->id,
-        ], [
-            'nama.required' => 'Nama kategori wajib diisi.',
-            'nama.unique' => 'Nama kategori sudah digunakan.',
-            'category_group_id.required' => 'Group kategori wajib dipilih.',
-            'alias.required' => 'Alias wajib diisi.',
-            'alias.unique' => 'Alias sudah digunakan.',
-        ]);
-        $category->fill($validated);
-        if (!$category->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255|unique:categories,nama,' . $category->id,
+                'deskripsi' => 'nullable|string',
+                'category_group_id' => 'required|exists:category_groups,id',
+                'alias' => 'required|string|max:255|unique:categories,alias,' . $category->id,
+            ], [
+                'nama.required' => 'Nama kategori wajib diisi.',
+                'nama.unique' => 'Nama kategori sudah digunakan.',
+                'category_group_id.required' => 'Group kategori wajib dipilih.',
+                'alias.required' => 'Alias wajib diisi.',
+                'alias.unique' => 'Alias sudah digunakan.',
+            ]);
+        } catch (ValidationException $e) {
+            // return validation errors as JSON if AJAX, otherwise rethrow so Laravel handles it (redirect + errors)
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         }
-        $category->save();
 
+        DB::beginTransaction();
+        try {
+            $category->fill($validated);
 
+            if (!$category->isDirty()) {
+                DB::rollBack();
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => true, 'info' => 'Tidak ada perubahan pada data kategori.']);
+                }
+                return back()->with('info', 'Tidak ada perubahan pada data aset.');
+            }
 
-        // $category->update($validated);
+            $category->save();
+            DB::commit();
 
-        session()->flash('success', 'Kategori berhasil di ubah');
+            session()->flash('success', 'Kategori berhasil di ubah');
 
-    return response()->json(['success' => true]);}   
-    catch (\Illuminate\Validation\ValidationException $e) {
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors()
-            ], 422);
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'category' => $category]);
+            }
+
+            return redirect()->route('superadmin.categories.index')->with('success', 'Kategori berhasil di ubah');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update category: ' . $e->getMessage(), ['exception' => $e, 'category_id' => $category->id, 'payload' => $validated]);
+
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Gagal memperbarui kategori.'], 500);
+            }
+
+            return back()->withInput()->with('error', 'Gagal memperbarui kategori.');
         }
-        throw $e;
     }
-}
-    
-    
+
     /**
      * Remove the specified resource from storage.
      */
@@ -116,16 +157,26 @@ class CategoryController extends Controller
     {
         try {
             // Cek apakah kategori memiliki child atau aset
-
             if ($category->assets()->count() > 0) {
                 return redirect()->route('superadmin.categories.index')->with('error', 'Tidak dapat menghapus kategori yang digunakan oleh aset.');
             }
-            $category->delete();
-            return redirect()->route('superadmin.categories.index')->with('success', 'Kategori berhasil dihapus.');
+
+            DB::beginTransaction();
+            try {
+                $category->delete();
+                DB::commit();
+
+                return redirect()->route('superadmin.categories.index')->with('success', 'Kategori berhasil dihapus.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
         } catch (\Exception $e) {
+            Log::error('Failed to delete category: ' . $e->getMessage(), ['exception' => $e, 'category_id' => $category->id]);
             return redirect()->route('superadmin.categories.index')->with('error', 'Gagal menghapus kategori.');
         }
     }
+
     public function getByGroup(Request $request)
     {
         $groupId = $request->get('group_id');
