@@ -40,6 +40,7 @@ class StockOpnameController extends Controller
     {
         $request->validate([
             'tanggal_dijadwalkan' => 'required|date',
+            'tanggal_deadline' => 'required|date|after_or_equal:tanggal_dijadwalkan',
             'departement_id' => 'required|exists:departements,id',
             'jenis_aset' => 'required|string',
             'catatan' => 'nullable|string',
@@ -76,6 +77,7 @@ class StockOpnameController extends Controller
                     'scheduled_by' => $user->id,
                     'departement_id' => $request->departement_id,
                     'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
+                    'tanggal_deadline' => $request->tanggal_deadline,
                     'status' => 'draft',
                     'catatan' => $request->catatan ?? '',
                 ]);
@@ -99,7 +101,7 @@ class StockOpnameController extends Controller
                         'jumlah_sistem' => $asset->jumlah,
                         'jumlah_fisik' => 0,
                         'status_lama' => $asset->status,
-                        'status_fisik' => 'tersedia',
+                        'status_fisik' => $asset->status,
                         'checked_by' => $departement->kepala->user->id,
                     ]);
                 }

@@ -55,7 +55,9 @@ Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployee
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
     Route::get('dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-    Route::get('profil', [UserDashboardController::class, 'profil'])->name('profil');
+    // Route::get('profil', [UserDashboardController::class, 'profil'])->name('profil');
+    Route::resource('profile', controller: ProfileController::class);
+
 });
 
 // SubAdmin routes
@@ -67,11 +69,14 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::resource('user', controller: UserController::class);
 
     Route::resource('assets', controller: AssetsController::class);
+
+    Route::resource('profile', controller: ProfileController::class);
+
     // Custom create forms untuk masing-masing tipe asset
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
-    Route::get('profil', [SubAdminDashboardController::class, 'profil'])->name('profil');
+    // Route::get('profil', [SubAdminDashboardController::class, 'profil'])->name('profil');
     Route::resource('opname', controller: StockOpnameDepartmentController::class);
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
@@ -103,7 +108,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
     // Route::get('qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
-    Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
+    // Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
+    Route::resource('profile', controller: ProfileController::class);
 
     // routes institution (institusi)
     Route::resource('institution', controller: InstitutionController::class);

@@ -174,7 +174,7 @@ public function store(Request $request)
 
         // Terapkan filter role (ini harus ditambahkan setelah filter user_id)
         if ($login->role === 'superadmin') {
-            $query->where('institution_id', $login->employee->institution_id);
+            $query->where('institution_id', $user->employee->institution_id);
         } elseif ($login->role === 'admin') {
             $query->where('institution_id', $login->employee->institution_id)
                 ->where('id', '!=', $login->employee->id);

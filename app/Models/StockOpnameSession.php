@@ -16,6 +16,7 @@ class StockOpnameSession extends Model
         'scheduled_by',
         'departement_id',
         'tanggal_dijadwalkan',
+        'tanggal_deadline',
         'tanggal_dimulai',
         'tanggal_selesai',
         'status',
@@ -25,6 +26,7 @@ class StockOpnameSession extends Model
     ];
     protected $casts = [
         'tanggal_dijadwalkan' => 'datetime',
+        'tanggal_deadline' => 'datetime',
         'tanggal_dimulai' => 'datetime',
         'tanggal_selesai' => 'datetime',
     ];
