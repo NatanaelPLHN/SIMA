@@ -2,6 +2,7 @@
 
 @section('title', 'Daftar Pegawai')
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 @section('content')
     <div
@@ -49,6 +50,7 @@
                             <input type="text" name="search" id="Pegawai-search" value="{{ request('search') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, NIP, dll...">
+                                placeholder="Cari nama, NIP, dll...">
                         </div>
                         @if(request('search'))
                             <a href="{{ routeForRole('employee', 'index') }}"
@@ -56,6 +58,7 @@
                                 Clear
                             </a>
                         @endif
+                    </form>
                     </form>
                 </div>
                  {{-- <div class="flex items-center ml-auto space-x-2 sm:space-x-3">

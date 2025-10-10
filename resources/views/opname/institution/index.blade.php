@@ -78,7 +78,7 @@
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bidang</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kategori
+                    <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Jenis Aset
                     </th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
@@ -92,7 +92,13 @@
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
                     <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->departement->nama }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
+                    @if ( $session->details->first()?->asset->jenis_aset  =='bergerak')
+                    <td class="px-4 py-3 text-sm text-gray-900">Bergerak</td>
+                    @elseif ( $session->details->first()?->asset->jenis_aset  =='tidak_bergerak')
+                    <td class="px-4 py-3 text-sm text-gray-900">Tidak Bergerak</td>
+                    @elseif ( $session->details->first()?->asset->jenis_aset =='habis_pakai'  )
+                    <td class="px-4 py-3 text-sm text-gray-900">Habis Pakai</td>
+                    @endif
                     <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td>
 
                     <td class="px-4 py-3 text-sm">

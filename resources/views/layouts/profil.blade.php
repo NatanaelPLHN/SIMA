@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-6xl mx-auto py-6">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+
         <!-- Profile Card -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
             <!-- Header dengan gradient -->
@@ -42,11 +42,11 @@
                             $institution = auth()->user()->employee?->institution?->nama ?? '';
                         @endphp
 
-                        @if($role === 'admin' && $institution)
+                        @if(auth()->user()->role === 'admin' && $institution)
                             Admin {{ $institution }}
-                        @elseif($role === 'subadmin' && $department)
+                        @elseif(auth()->user()->role === 'subadmin' && $department)
                             Admin {{ $department }}
-                        @elseif($role === 'superadmin')
+                        @elseif(auth()->user()->role === 'superadmin')
                             Super Admin SIMA
                         @else
                             User SIMA
@@ -59,7 +59,7 @@
         <!-- Change Password Card -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
             <h3 class="text-xl font-semibold text-indigo-800 dark:text-indigo-300 mb-6">Ganti Password</h3>
-            
+
             <form class="space-y-5">
                 <!-- Old Password -->
                 <div>

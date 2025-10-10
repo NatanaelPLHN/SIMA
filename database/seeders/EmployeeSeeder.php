@@ -31,6 +31,7 @@ class EmployeeSeeder extends Seeder
             'alamat' => 'Jl. Perjuangan',
             'telepon' => '085865748901',
             'department_id' => 1,
+            'institution_id' => 1,
         ]);
         $k4 = Employee::create([
             'nip' => '19800203004',
@@ -38,6 +39,7 @@ class EmployeeSeeder extends Seeder
             'alamat' => 'Jl. Perjuangan',
             'telepon' => '085865748901',
             'department_id' => 2,
+            'institution_id' => 2,
         ]);
 
         // Update Kepala Bidang
