@@ -65,6 +65,7 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     // Dashboard
     Route::get('dashboard', [SubAdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::resource('employee', controller: EmployeeController::class);
+    Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
@@ -86,6 +87,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::resource('departement', controller: DepartementController::class);
     Route::resource('employee', controller: EmployeeController::class);
+    Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
@@ -109,6 +111,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('institution', controller: InstitutionController::class);
     Route::resource('user', controller: UserController::class);
     Route::resource('employee', controller: EmployeeController::class);
+    Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
     Route::resource('profile', controller: ProfileController::class);
 
     // routes category-groups (grup kategori)

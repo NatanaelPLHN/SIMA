@@ -7,8 +7,10 @@ use App\Models\Departement;
 use Illuminate\Http\Request;
 
 use App\Models\Institution;
+use App\Imports\EmployeesImport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
 {
@@ -233,5 +235,17 @@ class EmployeeController extends Controller
             return redirect(routeForRole('employee', 'index'))
                 ->with('error', 'Gagal menghapus karyawan. ' . $e->getMessage());
         }
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        // Excel::import(new UsersImport, 'users.xlsx');
+        Excel::import(new EmployeesImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Employees imported successfully!');
     }
 }
