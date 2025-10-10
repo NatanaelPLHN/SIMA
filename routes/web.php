@@ -80,6 +80,8 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::resource('opname', controller: StockOpnameDepartmentController::class);
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
+
+    Route::post('/opname/detail/{detail}/update-item', [App\Http\Controllers\StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
 });
 
 // Admin routes
