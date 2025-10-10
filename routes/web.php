@@ -50,12 +50,14 @@ Route::post('verify-password', [StockOpnameDepartmentController::class, 'verifyP
 Route::get('/api/departements/{institutionId}', [UserController::class, 'getDepartements'])->name('api.departements');
 Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployees'])->name('api.employees');
 
+//import
+Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
 
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
     Route::get('dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-    Route::get('profil', [UserDashboardController::class, 'profil'])->name('profil');
+    Route::resource('profile', controller: ProfileController::class);
 });
 
 // SubAdmin routes
@@ -63,15 +65,15 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     // Dashboard
     Route::get('dashboard', [SubAdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::resource('employee', controller: EmployeeController::class);
-
     Route::resource('user', controller: UserController::class);
+    Route::resource('profile', controller: ProfileController::class);
 
     Route::resource('assets', controller: AssetsController::class);
     // Custom create forms untuk masing-masing tipe asset
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
-    Route::get('profil', [SubAdminDashboardController::class, 'profil'])->name('profil');
+
     Route::resource('opname', controller: StockOpnameDepartmentController::class);
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
@@ -85,14 +87,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('departement', controller: DepartementController::class);
     Route::resource('employee', controller: EmployeeController::class);
     Route::resource('user', controller: UserController::class);
+    Route::resource('profile', controller: ProfileController::class);
 
     Route::resource('borrowing', controller: BorrowingController::class);
     Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
     Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
-
-    // Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
-    Route::resource('profile', controller: ProfileController::class);
 
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
@@ -103,13 +103,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
     // Route::get('qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
-    Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
+    // Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
 
     // routes institution (institusi)
     Route::resource('institution', controller: InstitutionController::class);
     Route::resource('user', controller: UserController::class);
     Route::resource('employee', controller: EmployeeController::class);
-
+    Route::resource('profile', controller: ProfileController::class);
 
     // routes category-groups (grup kategori)
     Route::resource('category-groups', CategoryGroupController::class);
