@@ -16,6 +16,7 @@ use App\Http\Controllers\SuperAdminDashboardController;
 use App\Http\Controllers\SubAdminDashboardController;
 use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\StockOpnameDepartmentController;
+use App\Http\Controllers\ProfileController;
 // use App\Http\Controllers\StockOpname;
 
 // Redirect root ke login
@@ -88,8 +89,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('borrowing', controller: BorrowingController::class);
     Route::get('peminjaman', [AdminDashboardController::class, 'peminjaman'])->name('peminjaman');
     Route::get('peminjaman/pinjam', [AdminDashboardController::class, 'pinjam'])->name('pinjam');
-    Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
     Route::get('bergerak', [AdminDashboardController::class, 'bergerak'])->name('bergerak');
+
+    // Route::get('profil', [AdminDashboardController::class, 'profil'])->name('profil');
+    Route::resource('profile', controller: ProfileController::class);
 
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
@@ -99,7 +102,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // Superadmin routes
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('dashboard', [SuperAdminDashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
+    // Route::get('qr', [SuperAdminDashboardController::class, 'qr'])->name('qr');
     Route::get('profil', [SuperAdminDashboardController::class, 'profil'])->name('profil');
 
     // routes institution (institusi)
