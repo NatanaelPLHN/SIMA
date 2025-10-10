@@ -18,9 +18,11 @@ return new class extends Migration
             $table->foreignId('scheduled_by')->constrained('users')->cascadeOnDelete();
             $table->foreignId('departement_id')->constrained('departements')->cascadeOnDelete();
             $table->dateTime('tanggal_dijadwalkan');
+            $table->dateTime('tanggal_deadline');
             $table->dateTime('tanggal_dimulai')->nullable();
             $table->dateTime('tanggal_selesai')->nullable();
             $table->enum('status', ['draft','cancelled','dijadwalkan','proses','selesai'])->default('draft');
+            // $table->enum('status', ['Draft','Cancelled','Dijadwalkan','Proses','Selesai'])->default('Draft');
             $table->text('catatan');
             $table->timestamps();
         });

@@ -46,7 +46,7 @@ class AssetSeeder extends Seeder
             'nilai_pembelian'  => 3000000,
             'lokasi_terakhir'  => 'Ruang Administrasi',
             'status'           => 'tersedia',
-            'departement_id'   => 2,
+            'departement_id'   => 1,
         ]);
 
         AsetTidakBergerak::create([

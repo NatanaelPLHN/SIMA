@@ -70,6 +70,9 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::resource('profile', controller: ProfileController::class);
 
     Route::resource('assets', controller: AssetsController::class);
+
+    Route::resource('profile', controller: ProfileController::class);
+
     // Custom create forms untuk masing-masing tipe asset
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');

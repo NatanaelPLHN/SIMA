@@ -46,13 +46,20 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($sessions as $index => $session)
-                        @if ($session->departement->id == $user->employee?->department?->id && !in_array($session->status, ['draft', 'cancelled']))
+                        @if (
+                            $session->departement->id == $user->employee?->department?->id &&
+                                !in_array($session->status, ['draft', 'cancelled']))
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900">
-                                    {{ $session->details->first()?->asset->category->categoryGroup->nama }}</td>
+                                @if ($session->details->first()?->asset->jenis_aset == 'bergerak')
+                                    <td class="px-4 py-3 text-sm text-gray-900">Bergerak</td>
+                                @elseif ($session->details->first()?->asset->jenis_aset == 'tidak_bergerak')
+                                    <td class="px-4 py-3 text-sm text-gray-900">Tidak Bergerak</td>
+                                @elseif ($session->details->first()?->asset->jenis_aset == 'habis_pakai')
+                                    <td class="px-4 py-3 text-sm text-gray-900">Habis Pakai</td>
+                                @endif
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->catatan }}</td>
                                 {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td> --}}
                                 <td class="px-4 py-3 text-sm text-gray-900">
