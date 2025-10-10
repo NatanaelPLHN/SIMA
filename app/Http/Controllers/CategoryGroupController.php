@@ -11,9 +11,42 @@ class CategoryGroupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categoryGroups = CategoryGroup::withCount('categories')->latest()->paginate(10);
+        // Ambil parameter dari request
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        $direction = $request->get('direction', 'asc');
+
+        // Validasi kolom sorting yang diizinkan
+        $allowedSorts = ['nama', 'created_at'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        // Mulai query dengan relasi (jika diperlukan, misalnya untuk menghitung kategori)
+        $query = CategoryGroup::withCount('categories');
+
+        // === Pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where('nama', 'like', "%{$search}%")
+            ->orWhere('deskripsi', 'like', "%{$search}%")
+            ->orWhere('alias', 'like', "%{$search}%");
+        });
+
+        // === Sorting ===
+        $query->orderBy($sort, $direction);
+
+        // Pagination dengan append query string agar tetap ada di halaman berikutnya
+        $categoryGroups = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+
         return view('category_groups.category_groups', compact('categoryGroups'));
     }
 
@@ -101,54 +134,42 @@ class CategoryGroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CategoryGroup $categoryGroup)
+   public function update(Request $request, CategoryGroup $categoryGroup)
 {
-    try {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:255|unique:category_groups,nama,' . $categoryGroup->id,
-            'deskripsi' => 'nullable|string',
-            'alias' => 'required|string|max:255|unique:category_groups,alias,' . $categoryGroup->id,
-        ], [
-            'nama.required' => 'Nama group kategori wajib diisi.',
-            'nama.unique' => 'Nama group kategori sudah digunakan.',
-            'alias.required' => 'Alias wajib diisi.',
-            'alias.unique' => 'Alias sudah digunakan.',
-        ]);
+    $validated = $request->validate([
+        'nama' => 'required|string|max:255|unique:category_groups,nama,' . $categoryGroup->id,
+        'deskripsi' => 'nullable|string',
+        'alias' => 'required|string|max:255|unique:category_groups,alias,' . $categoryGroup->id,
+    ], [
+        'nama.required' => 'Nama grup kategori wajib diisi.',
+        'nama.unique' => 'Nama grup kategori sudah digunakan.',
+        'alias.required' => 'Alias wajib diisi.',
+        'alias.unique' => 'Alias sudah digunakan.',
+    ]);
 
-        $categoryGroup->fill($validated);
-        if (!$categoryGroup->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
-        }
-        $categoryGroup->save();
+    $categoryGroup->fill($validated);
 
-
-
-        // $category->update($validated);
-
-        session()->flash('success', ' Grup Kategori berhasil di ubah');
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
+    if (!$categoryGroup->isDirty()) {
         if ($request->ajax()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi gagal.',
-                'errors' => $e->errors()
-            ], 422);
+                'message' => 'Tidak ada perubahan pada data.',
+                'no_changes' => true
+            ]);
         }
-        throw $e;
-
-    } catch (\Exception $e) {
-        Log::error('Error updating category group: ' . $e->getMessage());
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui data.'
-            ], 500);
-        }
-
-        return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data group kategori.');
+        return back()->with('info', 'Tidak ada perubahan pada data.');
     }
+
+    $categoryGroup->save();
+
+    if ($request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Grup Kategori berhasil diubah.'
+        ]);
+    }
+
+    return back()->with('success', 'Grup Kategori berhasil diubah.');
 }
 
     /**

@@ -11,10 +11,53 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::with('categoryGroup')->latest()->paginate(15);
+        // Ambil parameter query
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        $direction = $request->get('direction', 'asc');
+
+        // Validasi kolom sorting yang diizinkan
+        $allowedSorts = ['nama', 'category_group_id'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        // Mulai query dengan relasi
+        $query = Category::with('categoryGroup');
+
+        // === Pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhereHas('categoryGroup', fn($cg) => $cg->where('nama', 'like', "%{$search}%"));
+            });
+        });
+
+        // === Sorting ===
+        if ($sort === 'category_group_id') {
+            $query->join('category_groups', 'categories.category_group_id', '=', 'category_groups.id')
+                  ->orderBy('category_groups.nama', $direction)
+                  ->select('categories.*')
+                  ->distinct();
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        // Pagination dengan append query string
+        $categories = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+
+        // Ambil semua grup kategori untuk dropdown/filter (jika diperlukan di view)
         $groupCategories = CategoryGroup::all();
+
         return view('categories.index', compact('categories', 'groupCategories'));
     }
 
@@ -34,12 +77,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
 {
-
+    try {
         $validated = $request->validate([
             'nama' => 'required|string|max:255|unique:categories,nama',
             'deskripsi' => 'nullable|string',
             'category_group_id' => 'required|exists:category_groups,id',
             'alias' => 'required|string|max:255|unique:categories,alias',
+        ], [
+            'nama.required' => 'Nama kategori wajib diisi.',
+            'nama.unique' => 'Nama kategori sudah digunakan.',
+            'category_group_id.required' => 'Group kategori wajib dipilih.',
+            'alias.required' => 'Alias wajib diisi.',
+            'alias.unique' => 'Alias sudah digunakan.',
         ]);
 
        Category::create($validated);
@@ -47,8 +96,34 @@ class CategoryController extends Controller
     session()->flash('success', 'Kategori berhasil ditambahkan!');
 
     return response()->json(['success' => true]);
-         
-} /**
+    } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation error untuk AJAX
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal.',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            throw $e; // Biarkan Laravel menangani validation error untuk form biasa
+
+        } catch (\Exception $e) {
+            Log::error('Error creating category group: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            // Handle AJAX error
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan data group kategori. Silakan coba lagi.'
+                ], 500);
+            }
+
+            // Handle regular form error
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data group kategori.');
+        }
+    } /**
      * Display the   specified resource.
      */
     public function show(Category $category)
@@ -71,7 +146,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        try {
+        
         $validated = $request->validate([
             'nama' => 'required|string|max:255|unique:categories,nama,' . $category->id,
             'deskripsi' => 'nullable|string',
@@ -85,27 +160,26 @@ class CategoryController extends Controller
             'alias.unique' => 'Alias sudah digunakan.',
         ]);
         $category->fill($validated);
+        
         if (!$category->isDirty()) {
-            return back()->with('info', 'Tidak ada perubahan pada data aset.');
-        }
-        $category->save();
-
-
-
-        // $category->update($validated);
-
-        session()->flash('success', 'Kategori berhasil di ubah');
-
-    return response()->json(['success' => true]);}   
-    catch (\Illuminate\Validation\ValidationException $e) {
-        if ($request->expectsJson()) {
+        if ($request->ajax()) {
             return response()->json([
                 'success' => false,
-                'errors' => $e->errors()
-            ], 422);
+                'message' => 'Tidak ada perubahan pada data.',
+            ]);
         }
-        throw $e;
+        return back()->with('info', 'Tidak ada perubahan pada data.');
     }
+
+    $category->save();
+
+    if ($request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Kategori berhasil diubah.'
+        ]);
+    }
+    return back()->with('success', 'Kategori berhasil diubah.');
 }
     
     

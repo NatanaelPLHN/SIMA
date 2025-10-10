@@ -65,12 +65,12 @@ class EmployeePolicy
         if ($user->role === 'superadmin') {
             return true;
         }
-        if ($user->role === 'admin') {
-            return $user->employee &&
-                $user->employee->department &&
-                $employee->department &&
-                $user->employee->department->instansi_id === $employee->department->instansi_id;
-        }
+        // if ($user->role === 'admin') {
+        //     return $user->employee &&
+        //         $user->employee->department &&
+        //         $employee->department &&
+        //         $user->employee->department->instansi_id === $employee->department->instansi_id;
+        // }
 
         return $this->update($user, $employee);
     }

@@ -27,7 +27,7 @@
                 </div>
                 <div class="flex items-center text-gray-700 dark:text-gray-300">
                     <i class="fas fa-building w-6 text-indigo-500"></i>
-                    <span class="ml-2">{{ auth()->user()->employee->department->institution->nama ?? '-' }}</span>
+                    <span class="ml-2">{{ auth()->user()->employee->institution->nama ?? '-' }}</span>
                 </div>
                 <div class="flex items-center text-gray-700 dark:text-gray-300">
                     <i class="fas fa-sitemap w-6 text-indigo-500"></i>
@@ -39,7 +39,7 @@
                         @php
                             $role = auth()->user()->role;
                             $department = auth()->user()->employee?->department?->nama ?? '';
-                            $institution = auth()->user()->employee?->department?->institution?->nama ?? '';
+                            $institution = auth()->user()->employee?->institution?->nama ?? '';
                         @endphp
 
                         @if($role === 'admin' && $institution)
