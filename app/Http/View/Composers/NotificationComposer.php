@@ -28,7 +28,7 @@ class NotificationComposer
 
             if ($department) {
                 // Ambil sesi opname yang dijadwalkan untuk departemen tersebut
-                $notifications = StockOpnameSession::where('departement_id', $department
+                $notifications = StockOpnameSession::where('department_id', $department
                     ->id)
                     ->where('status', 'dijadwalkan')
                     ->latest('tanggal_dijadwalkan')

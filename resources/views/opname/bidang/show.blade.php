@@ -69,8 +69,11 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($opname->details as $index => $detail)
-                            {{-- PERUBAHAN 1: Menambahkan atribut data-asset-code pada <tr> --}}
-                            <tr data-asset-code="{{ $detail->asset->kode ?? '' }}">
+                            {{-- PERUBAHAN 1: Menambahkan atribut data-asset-code pada <tr> dan data-update-url --}}
+                            <tr
+                                data-asset-code="{{ $detail->asset->kode ?? '' }}"
+                                data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}"
+                            >
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->kode ?? '-' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->nama_aset ?? '-' }}</td>
@@ -160,217 +163,373 @@ transition-colors">
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elemen-elemen Modal Pemindai QR
-            const scanButton = document.getElementById('scan-qr-button');
-            const qrScannerModal = document.getElementById('qr-scanner-modal');
-            const closeQrModalButton = document.getElementById('close-modal-button');
-            let html5QrCode;
+        // Bungkus seluruh logic agar tidak terjadi redeclare variabel global
+        (function () {
+            document.addEventListener('DOMContentLoaded', function () {
+                // --- DEKLARASI ELEMEN UTAMA (hanya sekali) ---
+                const opnameForm = document.getElementById('opname-form');
+                const finishButton = document.getElementById('finish-opname-btn');
+                const scanButton = document.getElementById('scan-qr-button');
+                const qrScannerModal = document.getElementById('qr-scanner-modal');
+                const closeQrModalButton = document.getElementById('close-modal-button');
+                let html5QrCode = null;
 
-            // Elemen-elemen Modal Update Aset
-            const updateAssetModal = document.getElementById('update-asset-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalAssetInfo = document.getElementById('modal-asset-info');
-            const modalDynamicContent = document.getElementById('modal-dynamic-content');
-            const modalSaveButton = document.getElementById('modal-save-button');
-            const modalCancelButton = document.getElementById('modal-cancel-button');
+                const updateAssetModal = document.getElementById('update-asset-modal');
+                const modalTitle = document.getElementById('modal-title');
+                const modalAssetInfo = document.getElementById('modal-asset-info');
+                const modalDynamicContent = document.getElementById('modal-dynamic-content');
+                const modalSaveButton = document.getElementById('modal-save-button');
+                const modalCancelButton = document.getElementById('modal-cancel-button');
 
-            // --- LOGIKA PEMINDAI QR ---
+                // --- LOGIKA AUTO-SAVE ---
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : null;
 
-            function startScanning() {
-                qrScannerModal.classList.remove('hidden');
-                html5QrCode = new Html5Qrcode("qr-reader");
-                const config = {
-                    fps: 10,
-                    qrbox: {
-                        width: 250,
-                        height: 250
+                const autoSaveStatus = document.createElement('div');
+                autoSaveStatus.className =
+                    'text-sm text-gray-500 fixed bottom-4 right-4 bg-gray-100 px-3 py-1 rounded-lg shadow-md';
+                autoSaveStatus.style.display = 'none';
+                document.body.appendChild(autoSaveStatus);
+
+                let debounceTimerMap = {};
+
+                function showAutoSave(text, persistent = false) {
+                    autoSaveStatus.textContent = text;
+                    autoSaveStatus.style.display = 'block';
+                    if (!persistent) {
+                        setTimeout(() => {
+                            autoSaveStatus.style.display = 'none';
+                        }, 1800);
                     }
-                };
-                html5QrCode.start({
+                }
+
+                async function sendPatch(url, payload, opts = { keepalive: false }) {
+                    return await fetch(url, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(payload),
+                        credentials: 'same-origin',
+                        keepalive: opts.keepalive === true
+                    });
+                }
+
+                const localPrefix = 'opname_pending_';
+                function savePending(detailId, url, payload) {
+                    try {
+                        localStorage.setItem(localPrefix + detailId, JSON.stringify({ url, payload, ts: Date.now() }));
+                    } catch (e) {
+                        console.warn('Gagal menyimpan ke localStorage', e);
+                    }
+                }
+
+                function removePending(detailId) {
+                    localStorage.removeItem(localPrefix + detailId);
+                }
+
+                async function flushPendingItem(detailId, useKeepalive = false) {
+                    const raw = localStorage.getItem(localPrefix + detailId);
+                    if (!raw) return false;
+                    let parsed;
+                    try { parsed = JSON.parse(raw); } catch (e) { removePending(detailId); return false; }
+                    try {
+                        const res = await sendPatch(parsed.url, parsed.payload, { keepalive: useKeepalive });
+                        if (res.ok) {
+                            removePending(detailId);
+                            return true;
+                        }
+                        return false;
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                async function flushAllPending(useKeepalive = false) {
+                    const keys = Object.keys(localStorage).filter(k => k.startsWith(localPrefix));
+                    if (!keys.length) return;
+                    showAutoSave('Menyinkronkan perubahan...', true);
+                    for (const k of keys) {
+                        const detailId = k.replace(localPrefix, '');
+                        await flushPendingItem(detailId, useKeepalive);
+                    }
+                    showAutoSave('Sinkronisasi selesai.');
+                }
+
+                // Attach auto-save change handler
+                function handleChangeEvent(e) {
+                    const inputElement = e.target;
+                    if (!inputElement.closest('#opname-form')) return; // safety
+                    const row = inputElement.closest('tr');
+                    if (!row) return;
+                    const url = row.dataset.updateUrl;
+                    if (!url) return;
+
+                    const inputName = inputElement.name || '';
+                    const detailIdMatch = inputName.match(/\d+/);
+                    if (!detailIdMatch) return;
+                    const detailId = detailIdMatch[0];
+
+                    const payload = {};
+                    if (inputName.includes('statuses')) {
+                        payload.status_fisik = inputElement.value;
+                    } else if (inputName.includes('jumlah_fisik')) {
+                        payload.jumlah_fisik = Number(inputElement.value);
+                    } else {
+                        return;
+                    }
+
+                    // debounce per detail
+                    if (debounceTimerMap[detailId]) clearTimeout(debounceTimerMap[detailId]);
+                    debounceTimerMap[detailId] = setTimeout(async () => {
+                        showAutoSave('Menyimpan...');
+                        try {
+                            const res = await sendPatch(url, payload);
+                            if (!res.ok) {
+                                const body = await res.json().catch(() => ({ message: res.statusText }));
+                                console.warn('Server error autosave:', body);
+                                savePending(detailId, url, payload);
+                                showAutoSave('Gagal tersimpan — disimpan sementara');
+                                return;
+                            }
+                            const data = await res.json().catch(() => ({}));
+                            removePending(detailId);
+                            showAutoSave(`Tersimpan (${data.timestamp || new Date().toLocaleTimeString()})`);
+                        } catch (err) {
+                            console.error('Autosave network error', err);
+                            savePending(detailId, url, payload);
+                            showAutoSave('Gagal tersimpan — disimpan sementara');
+                        }
+                    }, 800);
+                }
+
+                // Attach listeners to inputs/selects
+                function attachAutoSaveListeners() {
+                    document.querySelectorAll('select[name^="statuses"], input[name^="jumlah_fisik"]').forEach(el => {
+                        // remove previous to avoid duplicate listeners
+                        el.removeEventListener('change', handleChangeEvent);
+                        el.addEventListener('change', handleChangeEvent);
+                        if (el.tagName.toLowerCase() === 'input') {
+                            el.removeEventListener('blur', handleChangeEvent);
+                            el.addEventListener('blur', handleChangeEvent);
+                        }
+                    });
+                }
+
+                // flush pending on online
+                window.addEventListener('online', () => {
+                    flushAllPending(false);
+                });
+
+                // beforeunload try best-effort using keepalive
+                window.addEventListener('beforeunload', () => {
+                    // clear pending debounce timers to let immediate saves run if any
+                    Object.values(debounceTimerMap).forEach(t => clearTimeout(t));
+                    flushAllPending(true);
+                });
+
+                // initial attach
+                attachAutoSaveListeners();
+                // attempt flush any pending on load
+                flushAllPending(false);
+
+                // --- LOGIKA PEMINDAI QR ---
+                function startScanning() {
+                    qrScannerModal.classList.remove('hidden');
+                    html5QrCode = new Html5Qrcode("qr-reader");
+                    const config = {
+                        fps: 10,
+                        qrbox: {
+                            width: 250,
+                            height: 250
+                        }
+                    };
+                    html5QrCode.start({
                         facingMode: "environment"
                     }, config, qrCodeSuccessCallback)
                     .catch(err => {
                         alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
-                        stopScanning();
+                        try { stopScanning(); } catch(e) {}
                     });
-            }
-
-            function stopScanning() {
-                if (html5QrCode && html5QrCode.isScanning) {
-                    html5QrCode.stop().catch(err => console.error("Gagal menghentikan pemindaian.", err));
-                }
-                qrScannerModal.classList.add('hidden');
-            }
-
-            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                stopScanning();
-                let assetCode;
-                try {
-                    const url = new URL(decodedText);
-                    const pathParts = url.pathname.split('/');
-                    assetCode = pathParts[pathParts.length - 1];
-                } catch (e) {
-                    assetCode = decodedText;
-                }
-                console.log(`[DEBUG] 2. Kode Aset Ditemukan: ${assetCode}`);
-                fetchAssetData(assetCode);
-            };
-
-            scanButton.addEventListener('click', startScanning);
-            closeQrModalButton.addEventListener('click', stopScanning);
-
-            // --- LOGIKA MODAL UPDATE ASET ---
-
-            async function fetchAssetData(assetCode) {
-                // PERBAIKAN: Gunakan backtick untuk template literal
-                const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-                if (!targetRow) {
-                    console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
-                    alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
-                    return;
                 }
 
-                try {
-                    const response = await fetch(`/api/asset/${assetCode}`);
-                    console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Gagal mengambil data aset.');
+                function stopScanning() {
+                    if (html5QrCode && typeof html5QrCode.stop === 'function') {
+                        html5QrCode.stop().catch(err => console.error("Gagal menghentikan pemindaian.", err));
                     }
-                    const asset = await response.json();
-                    showUpdateModal(asset, targetRow);
-                } catch (error) {
-                    alert(error.message);
-                }
-            }
-
-            function showUpdateModal(asset, targetRow) {
-                modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
-                modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
-
-                if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
-                    const currentStatus = targetRow.querySelector('select[name^="statuses"]').value;
-                    const selectHTML = `
-                    <label for="modal-status" class="block text-sm font-medium text-gray-700">Status Fisik</label>
-                    <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none
-focus:ring-2 focus:ring-indigo-500">
-                        <option value="tersedia" ${currentStatus === 'tersedia' ? 'selected' : ''}>Tersedia</option>
-                        <option value="dipakai" ${currentStatus === 'dipakai' ? 'selected' : ''}>Dipakai</option>
-                        <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
-                        <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
-                    </select>`;
-                    modalDynamicContent.innerHTML = selectHTML;
-                } else if (asset.jenis_aset === 'habis_pakai') {
-                    const currentJumlah = targetRow.querySelector('input[name^="jumlah_fisik"]').value;
-                    const inputHTML = `
-                    <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
-                    <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2
-py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
-                    modalDynamicContent.innerHTML = inputHTML;
+                    qrScannerModal.classList.add('hidden');
                 }
 
-                modalSaveButton.dataset.assetCode = asset.kode;
-                updateAssetModal.classList.remove('hidden');
-            }
-
-            function hideUpdateModal() {
-                updateAssetModal.classList.add('hidden');
-            }
-
-            modalCancelButton.addEventListener('click', hideUpdateModal);
-
-            modalSaveButton.addEventListener('click', function() {
-                const assetCode = this.dataset.assetCode;
-                // PERBAIKAN: Gunakan backtick untuk template literal
-                const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-
-                const modalInput = modalDynamicContent.querySelector('select, input');
-                const newValue = modalInput.value;
-
-                if (modalInput.id === 'modal-status') {
-                    const targetSelect = targetRow.querySelector('select[name^="statuses"]');
-                    targetSelect.value = newValue;
-                } else if (modalInput.id === 'modal-jumlah') {
-                    const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
-                    targetInput.value = newValue;
-                }
-
-                targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
-                setTimeout(() => {
-                    targetRow.classList.remove('bg-yellow-200');
-                }, 1000);
-
-                hideUpdateModal();
-            });
-        });
-        const opnameForm = document.getElementById('opname-form');
-        const finishButton = document.getElementById('finish-opname-btn');
-
-        if (finishButton) {
-            finishButton.addEventListener('click', function(event) {
-                // 1. Mencegah form dikirim secara otomatis
-                event.preventDefault();
-
-                // 2. Tampilkan SweetAlert untuk input password
-                Swal.fire({
-                    title: 'Konfirmasi Penyelesaian',
-                    text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
-                    input: 'password',
-                    inputAttributes: {
-                        autocapitalize: 'off'
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Verifikasi & Selesaikan',
-                    cancelButtonText: 'Batal',
-                    showLoaderOnConfirm: true,
-                    preConfirm: (password) => {
-                        // 3. Kirim password ke API verifikasi
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content');
-                        return fetch('{{ route('verifyPassword') }}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': csrfToken
-                                },
-                                body: JSON.stringify({
-                                    password: password
-                                })
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    // Jika password salah, lempar error untuk ditampilkan
-                                    return response.json().then(err => {
-                                        throw new Error(err.message)
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .catch(error => {
-                                Swal.showValidationMessage(
-                                    `Verifikasi gagal: ${error.message}`
-                                );
-                            });
-                    },
-                    allowOutsideClick: () => !Swal.isLoading()
-                }).then((result) => {
-                    // 4. Jika verifikasi berhasil (result.value tidak kosong)
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Terverifikasi!',
-                            text: 'Menyelesaikan sesi stock opname...',
-                            icon: 'success',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // 5. Kirim form opname yang asli
-                            opnameForm.submit();
-                        });
+                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                    try { stopScanning(); } catch(e) {}
+                    let assetCode;
+                    try {
+                        const url = new URL(decodedText);
+                        const pathParts = url.pathname.split('/');
+                        assetCode = pathParts[pathParts.length - 1];
+                    } catch (e) {
+                        assetCode = decodedText;
                     }
+                    console.log(`[DEBUG] 2. Kode Aset Ditemukan: ${assetCode}`);
+                    fetchAssetData(assetCode);
+                };
+
+                if (scanButton) scanButton.addEventListener('click', startScanning);
+                if (closeQrModalButton) closeQrModalButton.addEventListener('click', stopScanning);
+
+                // --- LOGIKA MODAL UPDATE ASET ---
+                async function fetchAssetData(assetCode) {
+                    const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
+                    if (!targetRow) {
+                        console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
+                        alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/asset/${assetCode}`, { credentials: 'same-origin' });
+                        console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                            throw new Error(errorData.message || 'Gagal mengambil data aset.');
+                        }
+                        const asset = await response.json();
+                        showUpdateModal(asset, targetRow);
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                }
+
+                function showUpdateModal(asset, targetRow) {
+                    modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
+                    modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
+
+                    if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
+                        const currentStatus = (targetRow.querySelector('select[name^="statuses"]') || {}).value || '';
+                        const selectHTML = `
+                        <label for="modal-status" class="block text-sm font-medium text-gray-700">Status Fisik</label>
+                        <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="tersedia" ${currentStatus === 'tersedia' ? 'selected' : ''}>Tersedia</option>
+                            <option value="dipakai" ${currentStatus === 'dipakai' ? 'selected' : ''}>Dipakai</option>
+                            <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
+                            <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
+                        </select>`;
+                        modalDynamicContent.innerHTML = selectHTML;
+                    } else if (asset.jenis_aset === 'habis_pakai') {
+                        const currentJumlah = (targetRow.querySelector('input[name^="jumlah_fisik"]') || {}).value || '';
+                        const inputHTML = `
+                        <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
+                        <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
+                        modalDynamicContent.innerHTML = inputHTML;
+                    }
+
+                    modalSaveButton.dataset.assetCode = asset.kode;
+                    updateAssetModal.classList.remove('hidden');
+                }
+
+                function hideUpdateModal() {
+                    updateAssetModal.classList.add('hidden');
+                }
+
+                if (modalCancelButton) modalCancelButton.addEventListener('click', hideUpdateModal);
+
+                if (modalSaveButton) modalSaveButton.addEventListener('click', function () {
+                    const assetCode = this.dataset.assetCode;
+                    const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
+
+                    const modalInput = modalDynamicContent.querySelector('select, input');
+                    if (!modalInput) return;
+                    const newValue = modalInput.value;
+
+                    if (modalInput.id === 'modal-status') {
+                        const targetSelect = targetRow.querySelector('select[name^="statuses"]');
+                        if (targetSelect) {
+                            targetSelect.value = newValue;
+                            // trigger change to fire autosave
+                            targetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    } else if (modalInput.id === 'modal-jumlah') {
+                        const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
+                        if (targetInput) {
+                            targetInput.value = newValue;
+                            // trigger blur or change to fire autosave
+                            targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+
+                    targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
+                    setTimeout(() => {
+                        targetRow.classList.remove('bg-yellow-200');
+                    }, 1000);
+
+                    hideUpdateModal();
                 });
+
+                // --- LOGIKA TOMBOL SELESAI (SWEETALERT) ---
+                if (finishButton) {
+                    finishButton.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        Swal.fire({
+                            title: 'Konfirmasi Penyelesaian',
+                            text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
+                            input: 'password',
+                            inputAttributes: {
+                                autocapitalize: 'off'
+                            },
+                            showCancelButton: true,
+                            confirmButtonText: 'Verifikasi & Selesaikan',
+                            cancelButtonText: 'Batal',
+                            showLoaderOnConfirm: true,
+                            preConfirm: (password) => {
+                                const csrf = csrfToken;
+                                return fetch('{{ route('verifyPassword') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': csrf
+                                        },
+                                        credentials: 'same-origin',
+                                        body: JSON.stringify({
+                                            password: password
+                                        })
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            return response.json().then(err => {
+                                                throw new Error(err.message)
+                                            });
+                                        }
+                                        return response.json();
+                                    })
+                                    .catch(error => {
+                                        Swal.showValidationMessage(
+                                            `Verifikasi gagal: ${error.message}`);
+                                    });
+                            },
+                            allowOutsideClick: () => !Swal.isLoading()
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Terverifikasi!',
+                                    text: 'Menyelesaikan sesi stock opname...',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    opnameForm.submit();
+                                });
+                            }
+                        });
+                    });
+                }
+
+                // If dynamic DOM changes could occur, reattach listeners:
+                // You can call attachAutoSaveListeners() after rows update
             });
-        }
+        })();
     </script>
 @endpush

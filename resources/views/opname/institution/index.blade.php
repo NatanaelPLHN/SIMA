@@ -27,8 +27,8 @@
                         </div>
 
                         <div class="w-full md:w-2/5">
-                            <label for="departement_id" class="text-sm font-medium text-gray-700">Bidang</label>
-                            <select id="departement_id" name="departement_id"
+                            <label for="department_id" class="text-sm font-medium text-gray-700">Bidang</label>
+                            <select id="department_id" name="department_id"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Pilih Bidang</option>
                                 @foreach ($departements as $bidang)

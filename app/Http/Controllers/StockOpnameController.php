@@ -41,12 +41,12 @@ class StockOpnameController extends Controller
         $request->validate([
             'tanggal_dijadwalkan' => 'required|date',
             'tanggal_deadline' => 'required|date|after_or_equal:tanggal_dijadwalkan',
-            'departement_id' => 'required|exists:departements,id',
+            'department_id' => 'required|exists:departements,id',
             'jenis_aset' => 'required|string',
             'catatan' => 'nullable|string',
         ]);
 
-        $existingSession = StockOpnameSession::where('departement_id', $request->departement_id)
+        $existingSession = StockOpnameSession::where('department_id', $request->department_id)
             ->whereNotIn('status', ['selesai', 'cancelled'])
             ->whereHas('details.asset', function ($query) use ($request) {
                 $query->where('jenis_aset', $request->jenis_aset);
@@ -60,7 +60,7 @@ class StockOpnameController extends Controller
         }
 
         $user = auth()->user();
-        $departement = Departement::find($request->departement_id);
+        $departement = Departement::find($request->department_id);
 
         if ($departement->kepala == null) {
             return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
@@ -75,7 +75,7 @@ class StockOpnameController extends Controller
                 $session = StockOpnameSession::create([
                     'nama' => 'Opname ' . $departement->nama . ' - ' . $request->jenis_aset . ' (' . $request->tanggal_dijadwalkan . ')',
                     'scheduled_by' => $user->id,
-                    'departement_id' => $request->departement_id,
+                    'department_id' => $request->department_id,
                     'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
                     'tanggal_deadline' => $request->tanggal_deadline,
                     'status' => 'draft',
@@ -83,7 +83,7 @@ class StockOpnameController extends Controller
                 ]);
 
                 // 2. Ambil semua aset yang cocok
-                $assetsToOpname = Asset::where('departement_id', $request->departement_id)
+                $assetsToOpname = Asset::where('department_id', $request->department_id)
                     ->where('jenis_aset', $request->jenis_aset)
                     ->get();
 

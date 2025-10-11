@@ -23,7 +23,7 @@ class AssetSeeder extends Seeder
             'nilai_pembelian'  => 15000000,
             'lokasi_terakhir'  => 'Ruang IT',
             'status'           => 'tersedia',
-            'departement_id'   => 1,
+            'department_id'   => 1,
         ]);
 
         AsetBergerak::create([
@@ -46,7 +46,7 @@ class AssetSeeder extends Seeder
             'nilai_pembelian'  => 3000000,
             'lokasi_terakhir'  => 'Ruang Administrasi',
             'status'           => 'tersedia',
-            'departement_id'   => 1,
+            'department_id'   => 1,
         ]);
 
         AsetTidakBergerak::create([
@@ -67,7 +67,7 @@ class AssetSeeder extends Seeder
             'nilai_pembelian'  => 50000,
             'lokasi_terakhir'  => 'Gudang ATK',
             'status'           => 'tersedia',
-            'departement_id'   => 2,
+            'department_id'   => 2,
         ]);
 
         AsetHabisPakai::create([

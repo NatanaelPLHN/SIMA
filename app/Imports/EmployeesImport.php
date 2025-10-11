@@ -17,7 +17,7 @@ class EmployeesImport implements ToModel, WithHeadingRow
 
         return new Employee([
             'institution_id' => $institution ? $institution->id : null,
-            'departement_id' => $departement ? $departement->id : null,
+            'department_id' => $departement ? $departement->id : null,
             'nip'            => $row['nip'],
             'nama'           => $row['nama'],
             'alamat'         => $row['alamat'],

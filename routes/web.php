@@ -53,6 +53,11 @@ Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployee
 //import
 Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
 
+// untuk menyimpan progress opname bidang
+// Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
+
+
+
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
@@ -82,8 +87,13 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
 
-    Route::post('/opname/detail/{detail}/update-item', [App\Http\Controllers\StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
-});
+
+      // Autosave per-detail (AJAX partial update) — best practice: PATCH
+      Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
+      ->name('opname.details.update');
+    // Route::post('opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
+    // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
+    });
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
