@@ -71,7 +71,7 @@
                 </a>
             </div> --}}
                 <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
-                    <form action="{{ routeForRole('employees', 'import') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ routeForRole('employee', 'import') }}" method="POST" enctype="multipart/form-data"
                         class="inline-flex items-center justify-center w-1/2 sm:w-auto">
                         @csrf
                         <label
@@ -88,16 +88,21 @@
                         </label>
                     </form>
 
-                    <a href="{{ routeForRole('employees', 'export') }}"
-                        class="inline-flex items-center justify-center w-1/2 sm:w-auto px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
-                        <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M3 3a2 2 0 012-2h10a2 2 0 012 2v7a1 1 0 11-2 0V3H5v14h5a1 1 0 110 2H5a2 2 0 01-2-2V3zm9 10a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L12 16.586V13z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        Export
-                    </a>
+                    <form action="{{ routeForRole('employee', 'export') }}" method="post"
+                        class="inline-flex items-center justify-center w-1/2 sm:w-auto">
+                        @csrf
+                        <button type="submit"
+                            class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                            <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M3 3a2 2 0 012-2h10a2 2 0 012 2v7a1 1 0 11-2 0V3H5v14h5a1 1 0 110 2H5a2 2 0 01-2-2V3zm9 10a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L12 16.586V13z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Export
+                        </button>
+                    </form>
+
 
                     <a href="{{ routeForRole('employee', 'create') }}"
                         class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">

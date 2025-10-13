@@ -2,42 +2,38 @@
 
 namespace App\Exports;
 
-use App\Models\Employee;
+use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class EmployeesExport implements FromCollection, WithHeadings, WithMapping, WithStyles
+class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyles
 {
-    protected $employees;
+    protected $users;
 
-    public function __construct($employees)
+    public function __construct($users)
     {
-        $this->employees = $employees;
+        $this->users = $users;
     }
 
     public function collection()
     {
-        return $this->employees;
+        return $this->users;
     }
 
-    // Map each employee to desired columns
-    public function map($employee): array
+    public function map($user): array
     {
         static $rowNumber = 0;
         $rowNumber++;
 
         return [
             $rowNumber,
-            $employee->nip,
-            $employee->nama,
-            optional($employee->institution)->nama ?? '-',
-            optional($employee->department)->nama ?? '-',
-            $employee->alamat ?? '-',
-            $employee->telepon ?? '-',
-            $employee->created_at ? $employee->created_at->format('d-m-Y') : '-',
+            $user->email,
+            $user->role,
+            optional($user->employee)->nama ?? '-',
+            $user->created_at ? $user->created_at->format('d-m-Y') : '-',
         ];
     }
 
@@ -46,13 +42,9 @@ class EmployeesExport implements FromCollection, WithHeadings, WithMapping, With
     {
         return [
             'No',
-            'NIP',
-            'Name',
-            'Institusi',
-            'Bidang',
-            'Alamat',
-            'No Telepon',
-            'Created At',
+            'Email',
+            'Role',
+            'Nama Pegawai',
         ];
     }
 
