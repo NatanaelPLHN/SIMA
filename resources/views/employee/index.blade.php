@@ -72,7 +72,7 @@
                 </a>
             </div> --}}
                 <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
-                    <form action="{{ routeForRole('employees', 'import') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ routeForRole('employee', 'import') }}" method="POST" enctype="multipart/form-data"
                         class="inline-flex items-center justify-center w-1/2 sm:w-auto">
                         @csrf
                         <label
@@ -89,7 +89,7 @@
                         </label>
                     </form>
 
-                    <form action="{{ routeForRole('employees', 'export') }}" method="post"
+                    <form action="{{ routeForRole('employee', 'export') }}" method="post"
                         class="inline-flex items-center justify-center w-1/2 sm:w-auto">
                         @csrf
                         <button type="submit"

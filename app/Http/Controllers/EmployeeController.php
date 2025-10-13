@@ -270,7 +270,7 @@ class EmployeeController extends Controller
         }
 
         // Export the filtered employees
-        return Excel::download(new EmployeesExport($employees), 'employees.xlsx');
+        return Excel::download(new EmployeesExport($employees), 'pegawai.xlsx');
     }
 
 }
