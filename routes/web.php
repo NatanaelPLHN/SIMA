@@ -50,8 +50,9 @@ Route::post('verify-password', [StockOpnameDepartmentController::class, 'verifyP
 Route::get('/api/departements/{institutionId}', [UserController::class, 'getDepartements'])->name('api.departements');
 Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployees'])->name('api.employees');
 
-//import
-Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+//import & export
+// Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+// Route::get('employees/export/', [EmployeeController::class, 'export'])->name('employees.export');;
 
 // untuk menyimpan progress opname bidang
 // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
@@ -127,6 +128,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('user', controller: UserController::class);
     Route::resource('employee', controller: EmployeeController::class);
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+    Route::get('employees/export/', [EmployeeController::class, 'export'])->name('employees.export');;
     Route::resource('profile', controller: ProfileController::class);
 
     // routes category-groups (grup kategori)
