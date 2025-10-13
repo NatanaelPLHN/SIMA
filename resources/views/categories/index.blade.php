@@ -59,7 +59,7 @@
                     </form>
                 </div>
 
-                <button id="createCategoryGroupButton"
+                <button id="createCategoryButton"
                     class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800"
                     type="button" data-drawer-target="drawer-create-grup-category" data-drawer-show="drawer-create-grup-category"
                     aria-controls="drawer-create-grup-category" data-drawer-placement="right">
@@ -181,7 +181,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data Grup Kategori.
+                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data Kategori.
                             </td>
                         </tr>
                     @endforelse
@@ -210,7 +210,7 @@
         tabindex="-1" aria-labelledby="drawer-label">
         <h5 id="drawer-label"
             class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 dark:text-gray-400">
-            Tambah Grup Kategori Baru
+            Tambah Kategori Baru
         </h5>
         <button type="button" data-drawer-hide="drawer-create-grup-category" aria-controls="drawer-create-grup-category"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -332,7 +332,7 @@
             }
 
             // CREATE - open drawer and reset
-            document.getElementById('createCategoryGroupButton').addEventListener('click', function () {
+            document.getElementById('createCategoryButton').addEventListener('click', function () {
                 createForm.reset();
                 openDrawer(createDrawer);
             });
