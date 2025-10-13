@@ -13,9 +13,42 @@ class CategoryGroupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categoryGroups = CategoryGroup::withCount('categories')->latest()->paginate(10);
+        // Ambil parameter dari request
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        $direction = $request->get('direction', 'asc');
+
+        // Validasi kolom sorting yang diizinkan
+        $allowedSorts = ['nama', 'created_at'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        // Mulai query dengan relasi (jika diperlukan, misalnya untuk menghitung kategori)
+        $query = CategoryGroup::withCount('categories');
+
+        // === Pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where('nama', 'like', "%{$search}%")
+            ->orWhere('deskripsi', 'like', "%{$search}%")
+            ->orWhere('alias', 'like', "%{$search}%");
+        });
+
+        // === Sorting ===
+        $query->orderBy($sort, $direction);
+
+        // Pagination dengan append query string agar tetap ada di halaman berikutnya
+        $categoryGroups = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+
         return view('category_groups.category_groups', compact('categoryGroups'));
     }
 

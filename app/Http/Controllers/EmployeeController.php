@@ -7,8 +7,11 @@ use App\Models\Departement;
 use Illuminate\Http\Request;
 
 use App\Models\Institution;
+use App\Imports\EmployeesImport;
+use App\Exports\EmployeesExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
 {
@@ -234,4 +237,40 @@ class EmployeeController extends Controller
                 ->with('error', 'Gagal menghapus karyawan. ' . $e->getMessage());
         }
     }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        // Excel::import(new UsersImport, 'users.xlsx');
+        Excel::import(new EmployeesImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Employees imported successfully!');
+    }
+
+    public function export()
+    {
+        // authorize policy
+        $this->authorize('viewAny', Employee::class);
+
+        $user = auth()->user();
+
+        if ($user->role === 'superadmin') {
+            $employees = Employee::all();
+        } elseif ($user->role === 'admin') {
+            $employees = Employee::whereHas('department.institution', function ($query) use ($user) {
+                $query->where('id', $user->employee->institution_id);
+            })->get();
+        } elseif ($user->role === 'subadmin') {
+            $employees = Employee::where('department_id', $user->employee->department_id)->get();
+        } else {
+            $employees = Employee::where('id', $user->employee_id)->get();
+        }
+
+        // Export the filtered employees
+        return Excel::download(new EmployeesExport($employees), 'pegawai.xlsx');
+    }
+
 }

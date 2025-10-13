@@ -6,12 +6,14 @@ use App\Models\User;
 use App\Models\Employee;
 use App\Models\Departement;
 use App\Models\Institution;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -144,28 +146,102 @@ public function store(Request $request)
         return view('user.show', compact('user'));
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
+    // ORIGINAL------------------------------
+
+    // public function edit(User $user)
+    // {
+    //     $login = Auth::user();
+    //     $user->load('employee');
+    //     $employees = Employee::all(); // Tambahkan ini
+    //     // $employees = Employee::with(['department', 'institution', 'user']);
+
+    //     return view('user.edit_user', compact('user', 'employees', 'login'));
+    // }
     public function edit(User $user)
     {
         $login = Auth::user();
         $user->load('employee');
-        $employees = Employee::all();
+
+        $query = Employee::query();
+
+        // Query HANYA mengambil karyawan yang BELUM punya akun,
+        // ATAU karyawan yang saat ini terhubung dengan akun INI.
+        $query->where(function ($q) use ($user) {
+             $q->whereDoesntHave('user')
+               ->orWhere('id', $user->karyawan_id);
+         });
+
+        // Terapkan filter role (ini harus ditambahkan setelah filter user_id)
+        if ($login->role === 'superadmin') {
+            $query->where('institution_id', $user->employee->institution_id);
+        } elseif ($login->role === 'admin') {
+            $query->where('institution_id', $login->employee->institution_id)
+                ->where('id', '!=', $login->employee->id);
+        } elseif ($login->role === 'subadmin') {
+            $query->where('department_id', $login->employee->department_id)
+                ->where('id', '!=', $login->employee->id);
+        }
+
+        $employees = $query->orderBy('nama')->get();
+
         return view('user.edit_user', compact('user', 'employees', 'login'));
     }
+    /**
+     * Update the specified resource in storage.
+     */
+    // public function update(Request $request, User $user)
+    // {
+    //     $validated = $request->validate([
+    //         'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+    //         'password'    => 'nullable|min:6|confirmed',
+    //         'role'        => ['required', Rule::in(['superadmin', 'admin', 'subadmin', 'user'])],
+    //         'karyawan_id' => 'nullable|exists:employees,id',
+    //     ], [
+    //         'email.unique'       => 'Email sudah digunakan.',
+    //         'email.required'     => 'Email wajib diisi.',
+    //         'role.required'      => 'Role wajib diisi.',
+    //         'role.in'            => 'Role tidak valid.',
+    //         'password.min'       => 'Password minimal 6 karakter.',
+    //         'password.confirmed' => 'Konfirmasi password tidak cocok.',
+    //         'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
+    //     ]);
 
-public function update(Request $request, User $user)
-{
-    $validated = $request->validate([
-        'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-        'password'    => 'nullable|min:6|confirmed',
-        'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
-    ], [
-        'email.unique'       => 'Email sudah digunakan.',
-        'email.required'     => 'Email wajib diisi.',
-        'password.min'       => 'Password minimal 6 karakter.',
-        'password.confirmed' => 'Konfirmasi password tidak cocok.',
-        'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
-        'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
-    ]);
+    //     $original = $user->replicate();
+
+    //     // Handle password: only hash if it's provided
+    //     if (!empty($validated['password'])) {
+    //         $validated['password'] = Hash::make($validated['password']);
+    //     } else {
+    //         unset($validated['password']);
+    //     }
+
+    //     $user->fill($validated);
+
+    //     if (!$user->isDirty()) {
+    //         return back()->with('info', 'Tidak ada perubahan pada data user.');
+    //     }
+
+    //     $user->update($validated);
+
+    //     return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
+    // }
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'password'    => 'nullable|min:6|confirmed',
+            'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+        ], [
+            'email.unique'       => 'Email sudah digunakan.',
+            'email.required'     => 'Email wajib diisi.',
+            'password.min'       => 'Password minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
+            'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+        ]);
 
     $original = $user->replicate();
 
@@ -251,5 +327,30 @@ public function update(Request $request, User $user)
             return response()->json(['status' => 'info', 'message' => $message]);
         }
         return back()->with('info', $message);
+    }
+
+    public function export()
+    {
+        $this->authorize('viewAny', User::class);
+
+        $authUser = auth()->user();
+
+        if ($authUser->role === 'superadmin') {
+            // Superadmin can export only admin users
+            $users = User::where('role', 'admin')->get();
+
+        } elseif ($authUser->role === 'admin') {
+            // Admin can export only subadmin users
+            $users = User::where('role', 'subadmin')->get();
+
+        } elseif ($authUser->role === 'subadmin') {
+            // Subadmin can export only normal users
+            $users = User::where('role', 'user')->get();
+
+        } else {
+            abort(403, 'You are not authorized to export user data.');
+        }
+
+        return Excel::download(new UsersExport($users), 'akun pegawai.xlsx');
     }
 }

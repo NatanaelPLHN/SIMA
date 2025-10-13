@@ -14,16 +14,21 @@
 
                     <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 w-full">
                         <div class="w-full md:w-1/4">
-                            <label for="tanggal_dijadwalkan"
-                                class="text-sm font-medium text-gray-700">Tanggal Dijadwalkan</label>
+                            <label for="tanggal_dijadwalkan" class="text-sm font-medium text-gray-700">Tanggal
+                                Dijadwalkan</label>
                             <input type="date" id="tanggal_dijadwalkan" name="tanggal_dijadwalkan"
-                            min="{{ date('Y-m-d') }}"
-                            class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                min="{{ date('Y-m-d') }}"
+                                class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="w-full md:w-1/4">
+                            <label for="tanggal_deadline" class="text-sm font-medium text-gray-700">Tanggal Deadline</label>
+                            <input type="date" id="tanggal_deadline" name="tanggal_deadline" min="{{ date('Y-m-d') }}"
+                                class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
 
                         <div class="w-full md:w-2/5">
-                            <label for="departement_id" class="text-sm font-medium text-gray-700">Bidang</label>
-                            <select id="departement_id" name="departement_id"
+                            <label for="department_id" class="text-sm font-medium text-gray-700">Bidang</label>
+                            <select id="department_id" name="department_id"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Pilih Bidang</option>
                                 @foreach ($departements as $bidang)
@@ -37,10 +42,10 @@
                             <select id="jenis_aset" name="jenis_aset"
                                 class="w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Pilih Jenis Aset</option>
-                                    <option value="bergerak">Bergerak</option>
-                                    <option value="tidak_bergerak">Tidak Bergerak</option>
-                                    <option value="habis_pakai">Habis Pakai</option>
-                             </select>
+                                <option value="bergerak">Bergerak</option>
+                                <option value="tidak_bergerak">Tidak Bergerak</option>
+                                <option value="habis_pakai">Habis Pakai</option>
+                            </select>
                         </div>
                         {{-- <div class="w-full md:w-1/5">
                             <label for="category_group_id" class="text-sm font-medium text-gray-700">Kategori</label>
@@ -86,31 +91,45 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @foreach ($sessions as $index => $session)
-                <tr>
-                    {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session }}</td> --}}
-                    <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->departement->nama }}</td>
-                    @if ( $session->details->first()?->asset->jenis_aset  =='bergerak')
-                    <td class="px-4 py-3 text-sm text-gray-900">Bergerak</td>
-                    @elseif ( $session->details->first()?->asset->jenis_aset  =='tidak_bergerak')
-                    <td class="px-4 py-3 text-sm text-gray-900">Tidak Bergerak</td>
-                    @elseif ( $session->details->first()?->asset->jenis_aset =='habis_pakai'  )
-                    <td class="px-4 py-3 text-sm text-gray-900">Habis Pakai</td>
-                    @endif
-                    <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td>
+                    <tr>
+                        {{-- <td class="px-4 py-3 text-sm text-gray-900">{{ $session }}</td> --}}
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900"> {{ $session->departement->nama }}</td>
+                        @if ($session->details->first()?->asset->jenis_aset == 'bergerak')
+                            <td class="px-4 py-3 text-sm text-gray-900">Bergerak</td>
+                        @elseif ($session->details->first()?->asset->jenis_aset == 'tidak_bergerak')
+                            <td class="px-4 py-3 text-sm text-gray-900">Tidak Bergerak</td>
+                        @elseif ($session->details->first()?->asset->jenis_aset == 'habis_pakai')
+                            <td class="px-4 py-3 text-sm text-gray-900">Habis Pakai</td>
+                        @endif
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $session->status }}</td>
 
-                    <td class="px-4 py-3 text-sm">
-                        <div class="flex space-x-2">
-                            <a class="fas fa-eye text-blue-600 hover:text-blue-800" href="{{ routeForRole('opname', 'show', $session->id) }}"></a>
-                        </div>
-                    </td>
-                </tr>
-
+                        <td class="px-4 py-3 text-sm">
+                            <div class="flex space-x-2">
+                                <a class="fas fa-eye text-blue-600 hover:text-blue-800"
+                                    href="{{ routeForRole('opname', 'show', $session->id) }}"></a>
+                            </div>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.getElementById('tanggal_deadline').addEventListener('change', function() {
+            const tglJadwal = document.getElementById('tanggal_dijadwalkan').value;
+            const tglDeadline = this.value;
+
+            if (tglJadwal && tglDeadline && tglDeadline < tglJadwal) {
+                alert('Tanggal deadline tidak boleh sebelum tanggal dijadwalkan.');
+                this.value = ''; // reset nilai
+            }
+        });
+    </script>
+@endpush

@@ -13,7 +13,7 @@ if (!function_exists('isAsetLocked')) {
      */
     function isAsetLocked($department_id, $jenis_aset)
     {
-        return StockOpnameSession::where('departement_id', $department_id)
+        return StockOpnameSession::where('department_id', $department_id)
             ->whereHas('details.asset', function ($query) use ($jenis_aset) {
                 $query->where('jenis_aset', $jenis_aset);
             })

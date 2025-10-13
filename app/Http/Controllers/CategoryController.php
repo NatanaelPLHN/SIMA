@@ -14,10 +14,53 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::with('categoryGroup')->latest()->paginate(15);
+        // Ambil parameter query
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        $direction = $request->get('direction', 'asc');
+
+        // Validasi kolom sorting yang diizinkan
+        $allowedSorts = ['nama', 'category_group_id'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        // Mulai query dengan relasi
+        $query = Category::with('categoryGroup');
+
+        // === Pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhereHas('categoryGroup', fn($cg) => $cg->where('nama', 'like', "%{$search}%"));
+            });
+        });
+
+        // === Sorting ===
+        if ($sort === 'category_group_id') {
+            $query->join('category_groups', 'categories.category_group_id', '=', 'category_groups.id')
+                  ->orderBy('category_groups.nama', $direction)
+                  ->select('categories.*')
+                  ->distinct();
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        // Pagination dengan append query string
+        $categories = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
+
+        // Ambil semua grup kategori untuk dropdown/filter (jika diperlukan di view)
         $groupCategories = CategoryGroup::all();
+
         return view('categories.index', compact('categories', 'groupCategories'));
     }
 
@@ -41,6 +84,12 @@ class CategoryController extends Controller
             'deskripsi' => 'nullable|string',
             'category_group_id' => 'required|exists:category_groups,id',
             'alias' => 'required|string|max:255|unique:categories,alias',
+        ], [
+            'nama.required' => 'Nama kategori wajib diisi.',
+            'nama.unique' => 'Nama kategori sudah digunakan.',
+            'category_group_id.required' => 'Group kategori wajib dipilih.',
+            'alias.required' => 'Alias wajib diisi.',
+            'alias.unique' => 'Alias sudah digunakan.',
         ]);
 
         DB::beginTransaction();

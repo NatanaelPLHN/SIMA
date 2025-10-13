@@ -24,7 +24,7 @@ class Asset extends Model
         'nilai_pembelian',
         'lokasi_terakhir',
         'status',
-        'departement_id',
+        'department_id',
 
     ];
 
@@ -60,7 +60,7 @@ class Asset extends Model
     }
     public function departement()
     {
-        return $this->belongsTo(Departement::class, 'departement_id');
+        return $this->belongsTo(Departement::class, 'department_id');
     }
     public function peminjaman()
     {
