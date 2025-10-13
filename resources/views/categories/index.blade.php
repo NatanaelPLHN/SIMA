@@ -37,7 +37,7 @@
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Daftar Kategori</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Daftar Kategori </h1>
             </div>
 
             <!-- Controls: Search, Add Button -->
@@ -46,7 +46,7 @@
                     <form method="GET" action="{{ route('superadmin.categories.index') }}"
                         class="flex items-center space-x-2 sm:pl-4 mt-2 sm:mt-0">
                         <div class="relative w-48 sm:w-64">
-                            <input type="text" name="search" id="Kategori-search" value="{{ request('search') }}"
+                            <input type="text" name="search" id="Grup-kategori-search" value="{{ request('search') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, Deskripsi, dll...">
                         </div>
@@ -58,11 +58,11 @@
                         @endif
                     </form>
                 </div>
-               
-                <button id="createCategoryButton"
+
+                <button id="createCategoryGroupButton"
                     class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800"
-                    type="button" data-drawer-target="drawer-create-category" data-drawer-show="drawer-create-category"
-                    aria-controls="drawer-create-category" data-drawer-placement="right">
+                    type="button" data-drawer-target="drawer-create-grup-category" data-drawer-show="drawer-create-grup-category"
+                    aria-controls="drawer-create-grup-category" data-drawer-placement="right">
                     Tambah Kategori
                 </button>
             </div>
@@ -120,7 +120,8 @@
                         </th>
                         <th
                             class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                            Aksi</th>
+                            Aksi
+                        </th>
 
                     </tr>
                 </thead>
@@ -144,12 +145,13 @@
                             </td>
                             <td class="p-4 whitespace-nowrap text-center">
                                 <div class="flex items-center justify-center gap-x-3">
-                                    <button type="button" data-drawer-target="drawer-update-category" data-drawer-show="drawer-update-category"
-                                        aria-controls="drawer-update-category" data-drawer-placement="right"
-                                        class="updateCategoryButton inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-800"
+                                    <button type="button" data-drawer-target="drawer-update-group-category" data-drawer-show="drawer-update-group-category"
+                                        aria-controls="drawer-update-group-category" data-drawer-placement="right"
+                                        class="updateCategoryGroupButton inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 dark:bg-yellow-500 dark:hover:bg-yellow-600 dark:focus:ring-yellow-800"
                                         data-id="{{ $category->id }}" data-nama="{{ $category->nama }}"
                                         data-alias="{{ $category->alias }}" data-deskripsi="{{ $category->deskripsi }}"
                                         data-category-group-id="{{ $category->category_group_id }}">
+
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -179,7 +181,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data Kategori.
+                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data Grup Kategori.
                             </td>
                         </tr>
                     @endforelse
@@ -203,15 +205,14 @@
     </div>
 
     <!-- Drawer Create -->
-
-    <div id="drawer-create-category"
+    <div id="drawer-create-grup-category"
         class="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-96 dark:bg-gray-800"
         tabindex="-1" aria-labelledby="drawer-label">
         <h5 id="drawer-label"
             class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 dark:text-gray-400">
-            Tambah Kategori Baru
+            Tambah Grup Kategori Baru
         </h5>
-        <button type="button" data-drawer-hide="drawer-create-category" aria-controls="drawer-create-category"
+        <button type="button" data-drawer-hide="drawer-create-grup-category" aria-controls="drawer-create-grup-category"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
             <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
@@ -221,7 +222,11 @@
             </svg>
             <span class="sr-only">Close menu</span>
         </button>
-        <form id="createForm">
+
+        <!-- NOTE: keep form id createForm WITHOUT action attribute so IS handled by AJAX.
+             If you want a non-AJAX fallback, you could add action/method attributes, but
+             ensure JS prevents default submit when AJAX available. -->
+        <form id="createForm" enctype="multipart/form-data" novalidate>
             @csrf
             <div class="mb-4">
                 <label for="create-alias" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alias<span class="text-red-500">*</span></label>
@@ -230,8 +235,7 @@
                     required>
             </div>
             <div class="mb-4">
-                <label for="create-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
-                    Kategori<span class="text-red-500">*</span></label>
+                <label for="create-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Kategori<span class="text-red-500">*</span></label>
                 <input type="text" name="nama" id="create-nama"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
@@ -252,7 +256,7 @@
                 <textarea name="deskripsi" id="create-deskripsi" rows="3"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
             </div>
-            <button type="submit"
+            <button type="submit" id="createSubmitBtn"
                 class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 w-full dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
                 Simpan
             </button>
@@ -260,14 +264,14 @@
     </div>
 
     <!-- Drawer Update -->
-    <div id="drawer-update-category"
+    <div id="drawer-update-group-category"
         class="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-96 dark:bg-gray-800"
         tabindex="-1" aria-labelledby="drawer-label">
         <h5 id="drawer-label"
             class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 dark:text-gray-400">
             Edit Kategori
         </h5>
-        <button type="button" data-drawer-hide="drawer-update-category" aria-controls="drawer-update-category"
+        <button type="button" data-drawer-hide="drawer-update-group-category" aria-controls="drawer-update-group-category"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
             <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
@@ -277,7 +281,8 @@
             </svg>
             <span class="sr-only">Close menu</span>
         </button>
-        <form id="updateForm">
+
+        <form id="updateForm" novalidate>
             @csrf
             @method('PUT')
             <input type="hidden" id="update-id" name="id">
@@ -288,22 +293,10 @@
                     readonly>
             </div>
             <div class="mb-4">
-                <label for="update-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
-                    Kategori<span class="text-red-500">*</span></label>
+                <label for="update-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Kategori<span class="text-red-500">*</span></label>
                 <input type="text" name="nama" id="update-nama"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
-            </div>
-            <div class="mb-4">
-                <label for="update-group" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Group<span class="text-red-500">*</span></label>
-                <select name="category_group_id" id="update-group"
-                    class="js-select2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    required>
-                    <option value="">Pilih Group</option>
-                    @foreach($groupCategories as $group)
-                        <option value="{{ $group->id }}">{{ $group->nama }}</option>
-                    @endforeach
-                </select>
             </div>
             <div class="mb-6">
                 <label for="update-deskripsi"
@@ -311,27 +304,48 @@
                 <textarea name="deskripsi" id="update-deskripsi" rows="3"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
             </div>
-            <button type="submit"
+            <button type="submit" id="updateSubmitBtn"
                 class="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 w-full dark:bg-yellow-500 dark:hover:bg-yellow-600 focus:outline-none dark:focus:ring-yellow-800">
                 Perbarui
             </button>
         </form>
     </div>
 @endsection
-<!-- Drawer Create -->
+
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const createDrawer = document.getElementById('drawer-create-category');
-            const updateDrawer = document.getElementById('drawer-update-category');
-            
-            // CREATE
-            document.getElementById('createCategoryButton').addEventListener('click', function () {
-                document.getElementById('createForm').reset();
+            const createDrawer = document.getElementById('drawer-create-grup-category');
+            const updateDrawer = document.getElementById('drawer-update-group-category');
+
+            const createForm = document.getElementById('createForm');
+            const updateForm = document.getElementById('updateForm');
+
+            const createSubmitBtn = document.getElementById('createSubmitBtn');
+            const updateSubmitBtn = document.getElementById('updateSubmitBtn');
+
+            // Helper to open/close drawers
+            function openDrawer(drawer) {
+                if (createDrawer) createDrawer.classList.add('translate-x-full');
+                if (updateDrawer) updateDrawer.classList.add('translate-x-full');
+                if (drawer) drawer.classList.remove('translate-x-full');
+            }
+
+            // CREATE - open drawer and reset
+            document.getElementById('createCategoryGroupButton').addEventListener('click', function () {
+                createForm.reset();
+                openDrawer(createDrawer);
             });
 
-            document.getElementById('createForm').addEventListener('submit', function (e) {
+            // CREATE submit (AJAX)
+            createForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                if (createSubmitBtn.disabled) return;
+
+                const originalBtnText = createSubmitBtn.innerHTML;
+                createSubmitBtn.disabled = true;
+                createSubmitBtn.innerHTML = 'Menyimpan...';
+
                 const formData = new FormData(this);
 
                 fetch("{{ route('superadmin.categories.store') }}", {
@@ -339,58 +353,64 @@
                     body: formData,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                            ;
-                        } else {
-                            let errorMessage = data.message || 'Terjadi kesalahan.';
-                            if (data.errors) {
-                                const errorList = Object.values(data.errors).flat().join('<br>');
-                                errorMessage += '<br><br>' + errorList;
-                            }
-                            // 🔴 INI YANG KAMU LEWATKAN!
-                            Swal.fire({
-                                title: 'Gagal!',
-                                html: errorMessage,
-                                icon: 'error'
-                            });
+                .then(response => response.json().then(data => ({ ok: response.ok, data })))
+                .then(({ ok, data }) => {
+                    if (!ok) {
+                        let errorMessage = data.message || 'Terjadi kesalahan.';
+                        if (data.errors) {
+                            errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
                         }
-                    })
-                    .catch(() => {
-                        Swal.fire('Error!', 'Gagal menyimpan data. Cek koneksi atau coba lagi.', 'error');
-                    });
-            });
+                        Swal.fire({ title: 'Gagal!', html: errorMessage, icon: 'error' });
+                        return;
+                    }
 
-            // UPDATE
-            document.querySelectorAll('.updateCategoryButton').forEach(button => {
-                button.addEventListener('click', function () {
-                    const id = this.getAttribute('data-id');
-                    const nama = this.getAttribute('data-nama');
-                    const alias = this.getAttribute('data-alias');
-                    const deskripsi = this.getAttribute('data-deskripsi');
-                    const group = this.getAttribute('data-category-group-id');
-
-                    document.getElementById('update-id').value = id;
-                    document.getElementById('update-nama').value = nama;
-                    document.getElementById('update-alias').value = alias;
-                    document.getElementById('update-deskripsi').value = deskripsi;
-                    document.getElementById('update-group').value = group;
-                    $('#update-group').trigger('change'); 
-                    // Buka drawer
-                    updateDrawer.classList.remove('translate-x-full');
-                    updateDrawer.classList.add('translate-x-0');
+                    Swal.fire('Berhasil!', 'Data kategori berhasil ditambahkan!', 'success').then(() => location.reload());
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error!', 'Gagal menyimpan data. Cek koneksi atau coba lagi.', 'error');
+                })
+                .finally(() => {
+                    createSubmitBtn.disabled = false;
+                    createSubmitBtn.innerHTML = originalBtnText;
                 });
             });
 
-            document.getElementById('updateForm').addEventListener('submit', function (e) {
+            // UPDATE - open drawer and fill form
+            document.querySelectorAll('.updateCategoryGroupButton').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.dataset.id;
+                    const nama = this.dataset.nama;
+                    const alias = this.dataset.alias;
+                    const deskripsi = this.dataset.deskripsi;
+                    const groupId = this.dataset.categoryGroupId;
+
+                    updateForm.querySelector('#update-id').value = id;
+                    updateForm.querySelector('#update-nama').value = nama;
+                    updateForm.querySelector('#update-alias').value = alias;
+                    updateForm.querySelector('#update-deskripsi').value = deskripsi;
+                    updateForm.querySelector('#update-group').value = groupId;
+
+                    openDrawer(updateDrawer);
+                });
+            });
+
+            // UPDATE submit (AJAX)
+            updateForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                if (updateSubmitBtn.disabled) return;
+
+                const originalBtnText = updateSubmitBtn.innerHTML;
+                updateSubmitBtn.disabled = true;
+                updateSubmitBtn.innerHTML = 'Memperbarui...';
+
                 const id = document.getElementById('update-id').value;
                 const formData = new FormData(this);
+                formData.append('_method', 'PUT');
 
                 fetch("{{ url('superadmin/categories') }}/" + id, {
                     method: 'POST',
@@ -398,33 +418,39 @@
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-HTTP-Method-Override': 'PUT'
+                        'Accept': 'application/json'
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Berhasil!', data.message, 'success').then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire('Gagal!', data.message || 'Terjadi kesalahan.', 'error');
+                .then(response => response.json().then(data => ({ ok: response.ok, data })))
+                .then(({ ok, data }) => {
+                    if (!ok) {
+                        let errorMessage = data.message || 'Terjadi kesalahan.';
+                        if (data.errors) {
+                            errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
                         }
-                    })
-                    .catch(() => {
-                        Swal.fire('Error!', 'Gagal memperbarui data.', 'error');
-                    });
+                        Swal.fire({ title: 'Gagal!', html: errorMessage, icon: 'error' });
+                        return;
+                    }
+
+                    Swal.fire('Berhasil!', data.message || 'Data berhasil diperbarui.', 'success').then(() => location.reload());
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error!', 'Gagal memperbarui data.', 'error');
+                })
+                .finally(() => {
+                    updateSubmitBtn.disabled = false;
+                    updateSubmitBtn.innerHTML = originalBtnText;
+                });
             });
 
-            // DELETE
-
-
-            // Close drawers on close button
+            // Close drawers on button click
             document.querySelectorAll('[data-drawer-hide]').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    const target = this.getAttribute('data-drawer-hide');
-                    document.getElementById(target).classList.add('translate-x-full');
-                    document.getElementById(target).classList.remove('translate-x-0');
+                    const target = document.getElementById(this.getAttribute('data-drawer-hide'));
+                    if (target) {
+                        target.classList.add('translate-x-full');
+                    }
                 });
             });
         });
