@@ -67,7 +67,7 @@ class AssetSeeder extends Seeder
             'nilai_pembelian'  => 50000,
             'lokasi_terakhir'  => 'Gudang ATK',
             'status'           => 'tersedia',
-            'department_id'   => 2,
+            'department_id'   => 1,
         ]);
 
         AsetHabisPakai::create([

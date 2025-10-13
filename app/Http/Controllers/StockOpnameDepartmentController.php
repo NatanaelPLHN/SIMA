@@ -20,6 +20,19 @@ class StockOpnameDepartmentController extends Controller
 {
     public function index()
     {
+        $today = Carbon::today();
+        $overdueSessions = StockOpnameSession::where('department_id', auth()->user()->employee?->department_id)
+            ->whereIn('status', ['dijadwalkan', 'proses'])
+            ->where('tanggal_deadline', '<', $today)
+            ->get();
+
+        foreach ($overdueSessions as $session) {
+            $session->status = 'selesai';
+            $session->tanggal_selesai = now();
+            $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
+            $session->save();
+        }
+
         $user = auth()->user();
         $sessions = StockOpnameSession::with(['scheduler', 'details'])
             ->latest()
@@ -218,13 +231,13 @@ public function updateItem(Request $request, StockOpnameDetail $detail)
 
     $user = auth()->user();
     if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
-        // return response()->json(['message' => 'Unauthorized'], 403);
-        return response()->json([
-            'message' => 'Unauthorized',
-            'user_id' => $user->id,
-            'user_dept' => $user->employee?->department_id,
-            'detail_session_dept' => $detail->stockOpname->department_id,
-        ], 403);
+        return response()->json(['message' => 'Unauthorized'], 403);
+        // return response()->json([
+        //     'message' => 'Unauthorized',
+        //     'user_id' => $user->id,
+        //     'user_dept' => $user->employee?->department_id,
+        //     'detail_session_dept' => $detail->stockOpname->department_id,
+        // ], 403);
 
     }
 
