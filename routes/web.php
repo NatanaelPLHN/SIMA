@@ -72,6 +72,8 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::get('dashboard', [SubAdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::resource('employee', controller: EmployeeController::class);
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+    Route::get('employees/export/', [EmployeeController::class, 'export'])->name('employees.export');;
+
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
@@ -89,12 +91,12 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
 
 
-      // Autosave per-detail (AJAX partial update) — best practice: PATCH
-      Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
-      ->name('opname.details.update');
+    // Autosave per-detail (AJAX partial update) — best practice: PATCH
+    Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
+        ->name('opname.details.update');
     // Route::post('opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
     // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
-    });
+});
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -104,6 +106,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('departement', controller: DepartementController::class);
     Route::resource('employee', controller: EmployeeController::class);
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employees.import');
+    Route::get('employees/export/', [EmployeeController::class, 'export'])->name('employees.export');;
+
+
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 

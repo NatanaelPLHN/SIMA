@@ -50,7 +50,6 @@
                             <input type="text" name="search" id="Pegawai-search" value="{{ request('search') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, NIP, dll...">
-                            placeholder="Cari nama, NIP, dll...">
                         </div>
                         @if (request('search'))
                             <a href="{{ routeForRole('employee', 'index') }}"
@@ -88,7 +87,7 @@
                                 onchange="this.form.submit()">
                         </label>
                     </form>
-                    
+
                     <a href="{{ routeForRole('employees', 'export') }}"
                         class="inline-flex items-center justify-center w-1/2 sm:w-auto px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
                         <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20"
