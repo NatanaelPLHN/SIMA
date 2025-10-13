@@ -59,27 +59,27 @@ class UpdateStockOpnameStatusCommand extends Command
                     // --------------------------------
                     // PERLU DIPERHATIKAN YG BAWAH INI , KARENA BISA JADI SEMUA SUDAH SESUAI KARENA STATUS LAMA DAN FISIK SUDAH SESUAI
                     // -------------------------------
-                    $unprocessedDetails = $session->details()->whereColumn('status_lama', 'status_fisik')->get();
+                    // $unprocessedDetails = $session->details()->whereColumn('status_lama', 'status_fisik')->get();
 
-                    foreach ($unprocessedDetails as $detail) {
-                        $asset = $detail->asset;
-                        if (!$asset) continue;
+                    // foreach ($unprocessedDetails as $detail) {
+                    //     $asset = $detail->asset;
+                    //     if (!$asset) continue;
 
-                        // Logika default saat deadline terlewat
-                        if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
-                            // Jika status masih 'tersedia', anggap 'hilang'
-                            if ($detail->status_fisik === 'tersedia') {
-                                $detail->status_fisik = 'hilang';
-                                $detail->jumlah_fisik = 0;
-                            }
-                        } elseif ($asset->jenis_aset === 'habis_pakai') {
-                            // Jika habis pakai, anggap jumlahnya 0 dan statusnya 'habis'
-                            $detail->jumlah_fisik = 0;
-                            $detail->status_fisik = 'habis';
-                        }
+                    //     // Logika default saat deadline terlewat
+                    //     if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
+                    //         // Jika status masih 'tersedia', anggap 'hilang'
+                    //         if ($detail->status_fisik === 'tersedia') {
+                    //             $detail->status_fisik = 'hilang';
+                    //             $detail->jumlah_fisik = 0;
+                    //         }
+                    //     } elseif ($asset->jenis_aset === 'habis_pakai') {
+                    //         // Jika habis pakai, anggap jumlahnya 0 dan statusnya 'habis'
+                    //         $detail->jumlah_fisik = 0;
+                    //         $detail->status_fisik = 'habis';
+                    //     }
 
-                        $detail->save();
-                    }
+                    //     $detail->save();
+                    // }
                 });
                 $this->info("Session #{$session->id} ('{$session->nama}') has been marked as 'selesai'.");
             } catch (\Exception $e) {

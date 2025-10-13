@@ -35,7 +35,8 @@
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal Opname</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tanggal Deadline</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kategori
                         </th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Keterangan
@@ -53,6 +54,7 @@
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_dijadwalkan }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">{{ $session->tanggal_deadline }}</td>
                                 @if ($session->details->first()?->asset->jenis_aset == 'bergerak')
                                     <td class="px-4 py-3 text-sm text-gray-900">Bergerak</td>
                                 @elseif ($session->details->first()?->asset->jenis_aset == 'tidak_bergerak')
