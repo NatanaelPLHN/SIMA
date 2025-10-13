@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Institution;
 use App\Imports\EmployeesImport;
+use App\Exports\EmployeesExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -248,4 +249,10 @@ class EmployeeController extends Controller
 
         return redirect()->back()->with('success', 'Employees imported successfully!');
     }
+
+    public function export()
+    {
+        return Excel::download(new EmployeesExport, 'pegawai.xlsx');
+    }
+
 }
