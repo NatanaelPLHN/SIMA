@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -69,5 +70,15 @@ class Asset extends Model
     {
         return $this->hasMany(StockOpnameDetail::class, 'aset_id');
     }
+    public function usage()
+    {
+        return $this->hasMany(AssetUsage::class, 'asset_id');
+    }
 
+    public function currentUsage()
+    {
+        return $this->hasOne(AssetUsage::class, 'asset_id')
+            ->where('status', 'dipakai')
+            ->latest();
+    }
 }

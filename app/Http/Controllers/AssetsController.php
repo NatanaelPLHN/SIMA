@@ -38,7 +38,8 @@ class AssetsController extends Controller
         if (isAsetLocked($department_id, 'bergerak')) {
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
-        $groupCategories = CategoryGroup::with('categories')->get();
+        // $groupCategories = CategoryGroup::with('categories')->get();
+        $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
         return view('aset.forms.create_gerak', compact('groupCategories'));
     }
     public function create_tidak()
@@ -49,7 +50,8 @@ class AssetsController extends Controller
         if (isAsetLocked($department_id, 'tidak_bergerak')) {
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
-        $groupCategories = CategoryGroup::with('categories')->get();
+        // $groupCategories = CategoryGroup::with('categories')->get();
+        $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
         return view('aset.forms.create_tidak_bergerak', compact('groupCategories'));
     }
     public function create_habis()
@@ -59,7 +61,8 @@ class AssetsController extends Controller
         if (isAsetLocked($department_id, 'habis_pakai')) {
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
-        $groupCategories = CategoryGroup::with('categories')->get();
+        // $groupCategories = CategoryGroup::with('categories')->get();
+        $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
         return view('aset.forms.create_habis', compact('groupCategories'));
     }
 

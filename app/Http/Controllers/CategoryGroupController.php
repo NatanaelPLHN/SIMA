@@ -65,7 +65,7 @@ class CategoryGroupController extends Controller
      */
     public function store(Request $request)
     {
-        try {
+        // try {
             // Validasi untuk semua jenis request
             $validated = $request->validate([
                 'nama' => 'required|string|max:255|unique:category_groups,nama',
@@ -77,23 +77,23 @@ class CategoryGroupController extends Controller
                 'alias.required' => 'Alias wajib diisi.',
                 'alias.unique' => 'Alias sudah digunakan.',
             ]);
-        } catch (ValidationException $e) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validasi gagal.',
-                    'errors' => $e->errors()
-                ], 422);
-            }
-            throw $e;
-        }
+        // } catch (ValidationException $e) {
+        //     if ($request->ajax()) {
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Validasi gagal.',
+        //             'errors' => $e->errors()
+        //         ], 422);
+        //     }
+        //     throw $e;
+        // }
 
         DB::beginTransaction();
         try {
             $categoryGroup = CategoryGroup::create($validated);
             DB::commit();
 
-            session()->flash('success', 'Grup Kategori berhasil ditambahkan!');
+            // session()->flash('success', 'Grup Kategori berhasil ditambahkan!');
 
             if ($request->ajax()) {
                 return response()->json(['success' => true, 'category_group' => $categoryGroup], 201);
@@ -173,7 +173,7 @@ class CategoryGroupController extends Controller
             $categoryGroup->save();
             DB::commit();
 
-            session()->flash('success', 'Grup Kategori berhasil di ubah');
+            // session()->flash('success', 'Grup Kategori berhasil di ubah');
 
             if ($request->ajax()) {
                 return response()->json(['success' => true, 'category_group' => $categoryGroup]);

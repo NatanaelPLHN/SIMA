@@ -1,0 +1,309 @@
+<?php
+
+namespace App\Http\Controllers;
+
+
+use Illuminate\Support\Facades\Auth;
+use App\Models\AssetUsage;
+use App\Models\Asset;
+use App\Models\Employee;
+use App\Models\Departement;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+
+class AssetUsageController extends Controller
+{
+    public function __construct()
+    {
+        // Menerapkan policy ke semua method resource controller secara otomatis
+        $this->authorizeResource(AssetUsage::class, 'asset_usage');
+    }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $user = auth()->user();
+        $departmentId = $user->employee?->department_id;
+        // 2. Persiapan Query: Siapkan query dasar
+        $baseQuery = AssetUsage::with(['asset', 'user', 'department']);
+
+        // 3. Scoping Query: Filter data berdasarkan peran pengguna
+        if ($user->role === 'subadmin') {
+            // Subadmin melihat semua usage di departemennya
+            $baseQuery->whereHas('asset', function ($query) use ($departmentId) {
+                $query->where('department_id', $departmentId);
+            });
+        } elseif ($user->role === 'user') {
+            // User hanya melihat usage miliknya sendiri
+            $employeeId = $user->employee?->id;
+            $baseQuery->where('used_by', $employeeId);
+        }
+
+        // 4. Eksekusi Query: Clone dan paginate untuk setiap jenis aset
+        $usagesBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
+            $query->where('jenis_aset', 'bergerak');
+        })->latest()->paginate(10, ['*'], 'bergerak_page');
+
+        $usagesTidakBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
+            $query->where('jenis_aset', 'tidak_bergerak');
+        })->latest()->paginate(10, ['*'], 'tidak_bergerak_page');
+
+        $usagesHabisPakai = (clone $baseQuery)->whereHas('asset', function ($query) {
+            $query->where('jenis_aset', 'habis_pakai');
+        })->latest()->paginate(10, ['*'], 'habis_pakai_page');
+
+        if ($user->role === 'subadmin') {
+            return view('usage.bidang.index', compact(
+                'usagesBergerak',
+                'usagesTidakBergerak',
+                'usagesHabisPakai'
+            ));
+        } elseif ($user->role === 'user') {
+            return view('usage.user.index', compact(
+                'usagesBergerak',
+                'usagesTidakBergerak',
+                'usagesHabisPakai'
+            ));
+        }
+
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    // public function create()
+    // {
+    //     // atur agar hanya asset di departemen itu
+    //     $assets = Asset::where('status', 'tersedia')->get();
+    //     $employees = Employee::all();
+    //     $departements = Departement::all();
+
+    //     return view('usage.bidang.create', compact('assets', 'employees', 'departements'));
+    // }
+    public function create($jenisAset)
+    {
+        $user = Auth::user();
+        $departmentId = $user->employee?->department_id;
+
+        // $validJenisAset = ['bergerak', 'tidak_bergerak', 'habis_pakai'];
+
+        $assetsQuery = Asset::where('status', 'tersedia')
+            ->where('department_id', $departmentId);
+
+        // if ($jenisAset && in_array($jenisAset, $validJenisAset)) {
+        $assetsQuery->where('jenis_aset', $jenisAset);
+        // }
+        $assets = $assetsQuery->get();
+        $employees = Employee::where('department_id', $departmentId)->get();
+        $departements = Departement::where('id', $departmentId)->get();
+
+        return view('usage.bidang.create', compact(
+            'assets',
+            'employees',
+            'departements',
+            'jenisAset'
+        ));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'asset_id' => 'required|exists:aset,id',
+            'used_by' => 'required|exists:employees,id',
+            // 'department_id' => 'required|exists:departements,id',
+            'start_date' => 'required|date|before_or_equal:today',
+            'tujuan_penggunaan' => 'nullable|string|max:255',
+            'keterangan' => 'nullable|string',
+        ], [
+            'asset_id.exists' => 'Asset tidak ditemukan.',
+            'used_by.exists' => 'Karyawan tidak ditemukan.',
+            // 'department_id.exists' => 'Departement tidak ditemukan.',
+            'start_date.before_or_equal' => 'Tanggal mulai tidak boleh melebihi hari ini.',
+            // 'tujuan_penggunaan.required' => 'Tujuan penggunaan wajib diisi.',
+        ]);
+
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        $validated['department_id'] = $department_id;
+
+
+        // Validasi: cek apakah asset sedang digunakan
+        $existingUsage = AssetUsage::where('asset_id', $request->asset_id)
+            ->where('status', 'dipakai')
+            ->first();
+
+        if ($existingUsage) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['asset_id' => 'Asset sedang digunakan oleh employee lain.']);
+        }
+
+        // Validasi: cek status asset
+        $asset = Asset::find($request->asset_id);
+        if ($asset->status !== 'tersedia') {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['asset_id' => 'Asset tidak tersedia untuk digunakan. Status saat ini: ' . $asset->status]);
+        }
+
+        $usage = AssetUsage::create($validated);
+
+        // Update status asset menjadi 'dipakai'
+        $asset->update(['status' => 'dipakai']);
+
+        // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+
+        return redirect(routeForRole('asset-usage', 'index'))
+            ->with('success', 'Penggunaan asset berhasil ditambahkan.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(AssetUsage $assetUsage)
+    {
+        $assetUsage->load(['asset', 'user', 'department']);
+        return view('asset-usage.show', compact('assetUsage'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(AssetUsage $assetUsage)
+    {
+        $assetUsage->load(['asset', 'user', 'department']);
+        $assets = Asset::all();
+        $employees = Employee::all();
+        $departements = Departement::all();
+
+        return view('asset-usage.edit', compact('assetUsage', 'assets', 'employees', 'departements'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, AssetUsage $assetUsage)
+    {
+        $validated = $request->validate([
+            'asset_id' => 'required|exists:aset,id',
+            'used_by' => 'required|exists:employees,id',
+            'department_id' => 'required|exists:departements,id',
+            'start_date' => 'required|date',
+            'tujuan_penggunaan' => 'required|string|max:255',
+            'keterangan' => 'nullable|string',
+        ], [
+            'asset_id.exists' => 'Asset tidak ditemukan.',
+            'used_by.exists' => 'Employee tidak ditemukan.',
+            'department_id.exists' => 'Departement tidak ditemukan.',
+            'tujuan_penggunaan.required' => 'Tujuan penggunaan wajib diisi.',
+        ]);
+
+        // Validasi jika status masih dipakai dan asset_id berubah
+        if ($assetUsage->status === 'dipakai' && $assetUsage->asset_id != $request->asset_id) {
+            $newAsset = Asset::find($request->asset_id);
+            if ($newAsset->status !== 'tersedia') {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['asset_id' => 'Asset baru tidak tersedia untuk digunakan.']);
+            }
+
+            // Update status asset lama ke tersedia
+            $oldAsset = Asset::find($assetUsage->asset_id);
+            if ($oldAsset) {
+                $oldAsset->update(['status' => 'tersedia']);
+            }
+
+            // Update status asset baru ke dipakai
+            $newAsset->update(['status' => 'dipakai']);
+        }
+
+        $assetUsage->update($validated);
+
+        return redirect(routeForRole('asset-usage', 'index'))
+            ->with('success', 'Penggunaan asset berhasil diperbarui.');
+
+        // return redirect()->route('superadmin.asset-usage.index')
+        //     ->with('success', 'Penggunaan asset berhasil diperbarui.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(AssetUsage $assetUsage)
+    {
+        try {
+            $oldAssetId = $assetUsage->asset_id;
+            $oldStatus = $assetUsage->status;
+
+            $assetUsage->delete();
+
+            // Update status asset jika diperlukan
+            if ($oldStatus === 'dipakai') {
+                $asset = Asset::find($oldAssetId);
+                if ($asset) {
+                    $asset->update(['status' => 'tersedia']);
+                }
+            }
+            return redirect(routeForRole('asset-usage', 'index'))
+                ->with('success', 'Penggunaan asset berhasil dihapus.');
+
+            // return redirect()->route('superadmin.asset-usage.index')
+            //     ->with('success', 'Penggunaan asset berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect(routeForRole('asset-usage', 'index'))
+                ->with('error', 'Gagal menghapus penggunaan asset.');
+
+            // return redirect()->route('superadmin.asset-usage.index')
+            //     ->with('error', 'Gagal menghapus penggunaan asset.');
+        }
+    }
+
+    /**
+     * Return asset
+     */
+    public function returnAsset(AssetUsage $assetUsage)
+    {
+        $this->authorize('return', $assetUsage);
+        if ($assetUsage->status !== 'dipakai') {
+            return redirect()->back()
+                ->with('error', 'Asset tidak sedang digunakan.');
+        }
+
+        $assetUsage->update([
+            'status' => 'dikembalikan',
+            'end_date' => now(),
+        ]);
+
+        // Update status asset menjadi 'tersedia'
+        $asset = Asset::find($assetUsage->asset_id);
+        if ($asset) {
+            $asset->update(['status' => 'tersedia']);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Asset berhasil dikembalikan.');
+    }
+
+    /**
+     * Show active usages
+     */
+    public function active()
+    {
+        $usages = AssetUsage::with(['asset', 'user', 'department'])
+            ->where('status', 'dipakai')
+            ->latest()
+            ->paginate(10);
+
+        return view('asset-usage.active', compact('usages'));
+    }
+}

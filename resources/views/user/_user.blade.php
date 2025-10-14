@@ -57,13 +57,13 @@
     <label for="karyawan_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         Karyawan
     </label>
-    <select 
-        name="karyawan_id" 
+    <select
+        name="karyawan_id"
         id="karyawan_id"
-        class="js-select2 mt-1 block w-full border border-gray-300 dark:border-gray-600 
+        class="js-select2 mt-1 block w-full border border-gray-300 dark:border-gray-600
                bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-               rounded-md shadow-sm py-2 px-3 
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
+               rounded-md shadow-sm py-2 px-3
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
                dark:focus:ring-indigo-600 dark:focus:border-indigo-500
                @error('karyawan_id') border-red-500 dark:border-red-500 @enderror"
     >
@@ -73,8 +73,9 @@
             @if ($login->role == 'superadmin')
             {{ $employee->nama }} ( {{ $employee->institution->nama ?? $user->employee->institution->nama }} )
             @elseif ($login->role == 'admin')
-            {{-- {{ $employee->nama }} --}}
             {{ $employee->nama }} ( {{ $employee->department->nama ?? $user->employee->department->nama ?? ''}})
+            @elseif ($login->role == 'subadmin')
+            {{ $employee->nama }}
             @endif
         </option>
         @endforeach
