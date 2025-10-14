@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Asset extends Model
 {
     use HasFactory;
@@ -56,5 +57,15 @@ class Asset extends Model
     {
         return $this->hasMany(StockOpnameDetail::class, 'aset_id');
     }
+    public function usage()
+    {
+        return $this->hasMany(AssetUsage::class, 'asset_id');
+    }
 
+    public function currentUsage()
+    {
+        return $this->hasOne(AssetUsage::class, 'asset_id')
+            ->where('status', 'dipakai')
+            ->latest();
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,5 +34,14 @@ class Employee extends Model
     {
         return $this->hasOne(User::class, 'karyawan_id');
     }
-}
+    public function assetUsage()
+    {
+        return $this->hasMany(AssetUsage::class, 'used_by');
+    }
 
+    public function currentAssetUsage()
+    {
+        return $this->hasMany(AssetUsage::class, 'used_by')
+            ->where('status', 'dipakai');
+    }
+}

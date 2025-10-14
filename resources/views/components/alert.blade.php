@@ -67,8 +67,34 @@
     });
 </script>
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteForms = document.querySelectorAll('.return-form');
+
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // hentikan submit default
+
+                Swal.fire({
+                    title: 'Konfirmasi Pengembalian',
+                    text: 'Apakah Anda yakin ingin menandai aset ini sebagai telah dikembalikan?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, kembalikan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // kalau user klik hapus, baru submit form
+                    }
+                });
+            });
+        });
+    });
+</script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('form'); 
+    const form = document.querySelector('form');
     if (!form) return;
 
     // simpan nilai awal

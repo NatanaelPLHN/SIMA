@@ -17,7 +17,7 @@ use App\Http\Controllers\SubAdminDashboardController;
 use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\StockOpnameDepartmentController;
 use App\Http\Controllers\ProfileController;
-// use App\Http\Controllers\StockOpname;
+use App\Http\Controllers\AssetUsageController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -91,12 +91,26 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
 
 
-      // Autosave per-detail (AJAX partial update) — best practice: PATCH
-      Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
-      ->name('opname.details.update');
-    // Route::post('opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
-    // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
-    });
+    // Autosave per-detail (AJAX partial update) — best practice: PATCH
+    Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
+        ->name('opname.details.update');
+
+    // Definisikan route 'create' secara manual untuk menerima parameter opsional
+    Route::get('asset-usage/create/{jenisAset?}', [AssetUsageController::class, 'create'])->name(
+        'asset-usage.create'
+    );
+
+    // Daftarkan sisa resource route, kecuali 'create' yang sudah kita definisikan di atas
+    Route::resource('asset-usage', AssetUsageController::class)->except(['create']);
+    // Route::resource('asset-usage', AssetUsageController::class);
+
+    // Route tambahan
+    Route::put('asset-usage/{assetUsage}/return', [AssetUsageController::class, 'returnAsset'])
+        ->name('asset-usage.return');
+
+    Route::get('asset-usage/active', [AssetUsageController::class, 'active'])
+        ->name('asset-usage.active');
+});
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

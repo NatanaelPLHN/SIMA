@@ -1,0 +1,79 @@
+@csrf
+<div>
+    <label for="nama" class="block text-sm font-medium text-gray-700 mb-1">Nama<span class="text-red-500">*</span></label>
+    <input type="text" id="nama" name="nama" value="{{ old('nama', $departement->nama ?? '') }}"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+</div>
+
+<div>
+    <label for="lokasi" class="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+    <input type="text" id="lokasi" name="lokasi" value="{{ old('lokasi', $departement->lokasi ?? '') }}"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+</div>
+<div>
+    <label for="alias" class="block text-sm font-medium text-gray-700 mb-1">Alias</label>
+    <input type="text" id="alias" name="alias" value="{{ old('alias', $departement->alias ?? '') }}"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ isset($departement) && $departement->exists ? 'bg-gray-100' : '' }}"
+        {{ isset($departement) && $departement->exists ? 'disabled' : '' }} required>
+</div>
+
+{{-- buat drop down berdasarkan data instansi --}}
+{{-- <div>
+    <label for="instansi_id" class="block text-sm font-medium text-gray-700">Instansi <span class="text-red-500">*</span></label>
+    <select name="instansi_id" id="instansi_id"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('instansi_id') ? 'border-red-500' : '' }}">
+        <option value="">Pilih Instansi</option>
+        @foreach ($institutions as $instansi)
+            <option value="{{ $instansi->id }}" {{ old('instansi_id', $departement->instansi_id ?? '') == $instansi->id ? 'selected' : '' }}>
+                {{ $instansi->nama }}
+            </option>
+        @endforeach
+    </select>
+    @error('instansi_id')
+        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+    @enderror
+</div> --}}
+@if (isset($departement) && $departement->exists)
+      {{-- Tampilan untuk form EDIT --}}
+      <div>
+          <label for="instansi_id" class="block text-sm font-medium text-gray-700">Instansi</label>
+          <input type="text" id="instansi_nama" name="instansi_nama"
+                 value="{{ $departement->institution->nama ?? 'Tidak Ditemukan' }}"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" disabled>
+          <input type="hidden" name="instansi_id" value="{{ $departement->institution->id ?? '' }}">
+          <p class="mt-1 text-sm text-gray-500">Instansi tidak dapat diubah.</p>
+      </div>
+  @else
+      {{-- Tampilan untuk form CREATE --}}
+      <div>
+          <label class="block text-sm font-medium text-gray-700">Instansi</label>
+          <div class="mt-1 p-3 bg-indigo-100 border border-indigo-200 rounded-md">
+              <p class="font-semibold text-indigo-800">{{ Auth::user()->employee?->institution?->nama }}</p>
+              <p class="text-sm text-indigo-600">Departemen baru akan otomatis terdaftar di bawah instansi ini.</p>
+          </div>
+      </div>
+  @endif
+<div>
+    <label for="kepala_bidang_id" class="block text-sm font-medium text-gray-700">Kepala Bidang</label>
+    <select name="kepala_bidang_id" id="kepala_bidang_id"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 {{ $errors->has('kepala_bidang_id') ? 'border-red-500' : '' }}">
+        <option value="">Pilih Kepala Bidang</option>
+        @forelse ($employees as $employee)
+            <option value="{{ $employee->id }}" {{ old('kepala_bidang_id', $departement->kepala_bidang_id ?? '') == $employee->id ? 'selected' : '' }}>
+                {{ $employee->nama }} ({{ $employee->nip }})
+            </option>
+        @empty
+            <option value="">Tidak ada pegawai di bidang ini</option>
+        @endforelse
+    </select>
+
+    @if(isset($departement) && $departement->exists)
+        <p class="mt-1 text-sm text-gray-500">Hanya menampilkan pegawai yang ada di bidang ini.</p>
+    @else
+        <p class="mt-1 text-sm text-gray-500">Kepala bidang dapat dipilih setelah bidang dibuat dan pegawai ditambahkan.</p>
+    @endif
+
+    @error('kepala_bidang')
+        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+    @enderror
+</div>
