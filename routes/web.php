@@ -65,8 +65,10 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::get('dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::resource('profile', controller: ProfileController::class);
     // Route::get('asset-usage', AssetUsageController::class);
-    Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
-    Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
+    // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
+    // Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
+    Route::resource('asset-usage', AssetUsageController::class)->except(['create','edit','delete','update']);
+
 });
 
 // SubAdmin routes

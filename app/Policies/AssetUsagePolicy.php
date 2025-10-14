@@ -45,9 +45,21 @@ class AssetUsagePolicy
      */
     public function view(User $user, AssetUsage $assetUsage)
     {
+        // dd(
+        //     'Role Pengguna:',
+        //     $user->role,
+        //     'Departemen ID Pengguna:',
+        //     $user->employee?->department_id,
+        //     'Departemen ID Asset Usage:',
+        //     $assetUsage->department_id,
+        //     'Employee ID Pengguna:',
+        //     $user->employee?->id,
+        //     'Asset Usage Digunakan Oleh (used_by):',
+        //     $assetUsage->used_by
+        // );
         if ($user->role === 'subadmin') {
             // Subadmin hanya bisa melihat usage di departemennya
-            return $user->employee?->departement_id === $assetUsage->department_id;
+            return $user->employee?->department_id === $assetUsage->department_id;
         }
 
         if ($user->role === 'user') {
@@ -80,7 +92,7 @@ class AssetUsagePolicy
     public function update(User $user, AssetUsage $assetUsage)
     {
         // Hanya subadmin yang bisa mengupdate usage di departemennya
-        return $user->role === 'subadmin' && $user->employee?->departement_id === $assetUsage->department_id;
+        return $user->role === 'subadmin' && $user->employee?->department_id === $assetUsage->department_id;
     }
 
     /**
@@ -93,7 +105,7 @@ class AssetUsagePolicy
     public function delete(User $user, AssetUsage $assetUsage)
     {
         // Hanya subadmin yang bisa menghapus usage di departemennya
-        return $user->role === 'subadmin' && $user->employee?->departement_id === $assetUsage->department_id;
+        return $user->role === 'subadmin' && $user->employee?->department_id === $assetUsage->department_id;
     }
     /**
      * Determine whether the user can return the asset.
@@ -105,6 +117,6 @@ class AssetUsagePolicy
     public function return(User $user, AssetUsage $assetUsage)
     {
         // Hanya subadmin yang bisa mengembalikan aset di departemennya
-        return $user->role === 'subadmin' && $user->employee?->departement_id === $assetUsage->department_id;
+        return $user->role === 'subadmin' && $user->employee?->department_id === $assetUsage->department_id;
     }
 }

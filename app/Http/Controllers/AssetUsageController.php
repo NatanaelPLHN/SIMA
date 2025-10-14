@@ -71,8 +71,6 @@ class AssetUsageController extends Controller
                 'usagesHabisPakai'
             ));
         }
-
-
     }
 
     /**
@@ -170,11 +168,61 @@ class AssetUsageController extends Controller
     /**
      * Display the specified resource.
      */
+    // public function show(AssetUsage $assetUsage)
+    // {
+    //     $assetUsage->load(['asset', 'user', 'department']);
+    //     return view('asset-usage.show', compact('assetUsage'));
+    // }
+    // public function show(AssetUsage $assetUsage)
+    // {
+    //     // 1. Otorisasi: Pastikan user boleh melihat data ini.
+    //     // Ini sudah ditangani oleh authorizeResource di __construct.
+    //     // $this->authorize('view', $assetUsage);
+
+    //     // 2. Eager Load: Muat relasi yang dibutuhkan.
+    //     // Kita muat relasi dasar dan juga relasi spesifik jenis aset.
+    //     $assetUsage->load([
+    //         'asset.bergerak',
+    //         'asset.tidakBergerak',
+    //         'asset.habisPakai',
+    //         'user',
+    //         'department'
+    //     ]);
+    //     // 3. Kirim data ke view.
+    //     return view('usage.show', compact('assetUsage'));
+    //     // return view('usage.bidang.show', compact('assetUsage'));
+    // }
     public function show(AssetUsage $assetUsage)
-    {
-        $assetUsage->load(['asset', 'user', 'department']);
-        return view('asset-usage.show', compact('assetUsage'));
-    }
+{
+// Otorisasi untuk memastikan pengguna boleh melihat data ini
+$this->authorize('view', $assetUsage);
+$user = auth()->user();
+         // Eager load semua relasi yang mungkin dibutuhkan
+         $assetUsage->load([
+             'asset.bergerak',
+             'asset.tidakBergerak',
+             'asset.habisPakai',
+             'user',
+             'department'
+         ]);
+
+         $jenisAset = $assetUsage->asset->jenis_aset;
+         $viewName = '';
+
+         // Tentukan nama view yang akan digunakan berdasarkan jenis aset
+         if ($jenisAset === 'bergerak') {
+             $viewName = 'usage.show.show_bergerak';
+         } elseif ($jenisAset === 'tidak_bergerak') {
+             $viewName = 'usage.show.show_tidak_bergerak';
+         } elseif ($jenisAset === 'habis_pakai') {
+             $viewName = 'usage.show.show_habis_pakai';
+         } else {
+             // Fallback jika jenis aset tidak dikenali
+             abort(404, 'Jenis aset tidak valid.');
+         }
+
+         return view($viewName, compact('assetUsage','user'));
+     }
 
     /**
      * Show the form for editing the specified resource.
