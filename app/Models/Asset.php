@@ -28,7 +28,6 @@ class Asset extends Model
 
     ];
 
-    //log changes
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -53,7 +52,6 @@ class Asset extends Model
     {
         return $this->hasOne(AsetHabisPakai::class, 'aset_id');
     }
-    // Relasi dengan category
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');

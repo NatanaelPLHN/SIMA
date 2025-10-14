@@ -6,6 +6,7 @@ use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\CategoryGroupController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,6 @@ use App\Http\Controllers\SubAdminDashboardController;
 use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\StockOpnameDepartmentController;
 use App\Http\Controllers\ProfileController;
-// use App\Http\Controllers\StockOpname;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -74,6 +74,7 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employee.import');
     Route::post('employees/export', [EmployeeController::class, 'export'])->name('employee.export');
     Route::post('users/export/', [UserController::class, 'export'])->name('user.export');;
+    Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
@@ -107,7 +108,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('employee', controller: EmployeeController::class);
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employee.import');
     Route::post('employees/export', [EmployeeController::class, 'export'])->name('employee.export');
-    Route::post('users/export/', [UserController::class, 'export'])->name('user.export');;
+    Route::post('users/export/', [UserController::class, 'export'])->name('user.export');
+    Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
+
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 

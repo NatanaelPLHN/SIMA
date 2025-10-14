@@ -18,8 +18,7 @@ class SuperadminDashboardController extends Controller
         $admins = User::where('role', 'admin')->count();
         $pegawai = User::where('role', 'pegawai')->count();
 
-        $activities = Activity::latest()->get(); // recent 20 logs
-
+        $activities = Activity::latest()->paginate(10);
         return view('superadmin.dashboard', compact('totalAssets', 'rusak', 'hilang', 'totalUsers', 'admins', 'pegawai', 'activities',));
     }
 
