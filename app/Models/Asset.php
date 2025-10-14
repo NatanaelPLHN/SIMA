@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 class Asset extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $table = 'aset';
 
@@ -25,6 +29,16 @@ class Asset extends Model
 
     ];
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('aset')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) =>
+                "Aset {$this->nama_aset} dengan kode {$this->kode} telah {$eventName}");
+    }
+
     public function bergerak()
     {
         return $this->hasOne(AsetBergerak::class, 'aset_id');
@@ -39,7 +53,6 @@ class Asset extends Model
     {
         return $this->hasOne(AsetHabisPakai::class, 'aset_id');
     }
-    // Relasi dengan category
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
