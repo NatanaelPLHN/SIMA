@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\DB;
 
 class AssetUsageController extends Controller
 {
+    public function __construct()
+    {
+        // Menerapkan policy ke semua method resource controller secara otomatis
+        $this->authorizeResource(AssetUsage::class, 'asset_usage');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -25,14 +30,22 @@ class AssetUsageController extends Controller
     {
         $user = auth()->user();
         $departmentId = $user->employee?->department_id;
+        // 2. Persiapan Query: Siapkan query dasar
+        $baseQuery = AssetUsage::with(['asset', 'user', 'department']);
 
-        // Query dasar untuk AssetUsage yang berelasi dengan Asset dari departemen pengguna
-        $baseQuery = AssetUsage::with(['asset', 'user', 'department'])
-            ->whereHas('asset', function ($query) use ($departmentId) {
+        // 3. Scoping Query: Filter data berdasarkan peran pengguna
+        if ($user->role === 'subadmin') {
+            // Subadmin melihat semua usage di departemennya
+            $baseQuery->whereHas('asset', function ($query) use ($departmentId) {
                 $query->where('department_id', $departmentId);
             });
+        } elseif ($user->role === 'user') {
+            // User hanya melihat usage miliknya sendiri
+            $employeeId = $user->employee?->id;
+            $baseQuery->where('used_by', $employeeId);
+        }
 
-        // Clone query dasar dan filter berdasarkan jenis aset untuk masing-masing kategori
+        // 4. Eksekusi Query: Clone dan paginate untuk setiap jenis aset
         $usagesBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
             $query->where('jenis_aset', 'bergerak');
         })->latest()->paginate(10, ['*'], 'bergerak_page');
@@ -45,11 +58,21 @@ class AssetUsageController extends Controller
             $query->where('jenis_aset', 'habis_pakai');
         })->latest()->paginate(10, ['*'], 'habis_pakai_page');
 
-        return view('usage.bidang.index', compact(
-            'usagesBergerak',
-            'usagesTidakBergerak',
-            'usagesHabisPakai'
-        ));
+        if ($user->role === 'subadmin') {
+            return view('usage.bidang.index', compact(
+                'usagesBergerak',
+                'usagesTidakBergerak',
+                'usagesHabisPakai'
+            ));
+        } elseif ($user->role === 'user') {
+            return view('usage.user.index', compact(
+                'usagesBergerak',
+                'usagesTidakBergerak',
+                'usagesHabisPakai'
+            ));
+        }
+
+
     }
 
     /**
@@ -75,7 +98,7 @@ class AssetUsageController extends Controller
             ->where('department_id', $departmentId);
 
         // if ($jenisAset && in_array($jenisAset, $validJenisAset)) {
-            $assetsQuery->where('jenis_aset', $jenisAset);
+        $assetsQuery->where('jenis_aset', $jenisAset);
         // }
         $assets = $assetsQuery->get();
         $employees = Employee::where('department_id', $departmentId)->get();
@@ -250,6 +273,7 @@ class AssetUsageController extends Controller
      */
     public function returnAsset(AssetUsage $assetUsage)
     {
+        $this->authorize('return', $assetUsage);
         if ($assetUsage->status !== 'dipakai') {
             return redirect()->back()
                 ->with('error', 'Asset tidak sedang digunakan.');
