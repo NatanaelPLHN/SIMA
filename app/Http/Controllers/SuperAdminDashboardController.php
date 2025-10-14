@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Asset;
 use App\Models\User;
+use Spatie\Activitylog\Models\Activity;
 
 class SuperadminDashboardController extends Controller
 {
@@ -17,14 +18,8 @@ class SuperadminDashboardController extends Controller
         $admins = User::where('role', 'admin')->count();
         $pegawai = User::where('role', 'pegawai')->count();
 
-        return view('superadmin.dashboard', compact(
-            'totalAssets',
-            'rusak',
-            'hilang',
-            'totalUsers',
-            'admins',
-            'pegawai'
-        ));
+        $activities = Activity::latest()->paginate(10);
+        return view('superadmin.dashboard', compact('totalAssets', 'rusak', 'hilang', 'totalUsers', 'admins', 'pegawai', 'activities',));
     }
 
     // public function instansi()

@@ -228,17 +228,10 @@ public function updateItem(Request $request, StockOpnameDetail $detail)
 {
     // Optional: policy/authorize
     // $this->authorize('update', $detail);
-
+    activity()->disableLogging();
     $user = auth()->user();
     if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
         return response()->json(['message' => 'Unauthorized'], 403);
-        // return response()->json([
-        //     'message' => 'Unauthorized',
-        //     'user_id' => $user->id,
-        //     'user_dept' => $user->employee?->department_id,
-        //     'detail_session_dept' => $detail->stockOpname->department_id,
-        // ], 403);
-
     }
 
     if ($detail->stockOpname->status !== 'proses') {
@@ -263,6 +256,7 @@ public function updateItem(Request $request, StockOpnameDetail $detail)
             }
             $detail->save();
         });
+        activity()->enableLogging();
 
         return response()->json(['message' => 'Data berhasil disimpan.', 'timestamp' => now()->toTimeString()]);
     } catch (\Exception $e) {
