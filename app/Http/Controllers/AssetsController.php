@@ -29,7 +29,15 @@ class AssetsController extends Controller
         $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
         $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
 
-        return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
+        $jumlahAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->count();
+        $jumlahAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->count();
+        $jumlahAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->count();
+
+        $totalNilaiAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
+        $totalNilaiAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
+        $totalNilaiAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
+
+        return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai', 'jumlahAsetBergerak', 'jumlahAsetTidakBergerak', 'jumlahAsetHabisPakai', 'totalNilaiAsetBergerak', 'totalNilaiAsetTidakBergerak', 'totalNilaiAsetHabisPakai'));
     }
     public function create_gerak()
     {
