@@ -273,7 +273,7 @@ class DepartementController extends Controller
             return redirect(routeForRole('departement', 'index'))->with('success', 'Bidang berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to update departement: ' . $e->getMessage(), ['exception' => $e, 'departement_id' => $departement->id, 'payload' => $validated]);
+            Log::error('Failed to update departement: ' . $e->getMessage(), ['exception' => $e, 'department_id' => $departement->id, 'payload' => $validated]);
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json(['success' => false, 'message' => 'Gagal memperbarui bidang.'], 500);
@@ -308,7 +308,7 @@ class DepartementController extends Controller
                 throw $e;
             }
         } catch (\Exception $e) {
-            Log::error('Failed to delete departement: ' . $e->getMessage(), ['exception' => $e, 'departement_id' => $departement->id]);
+            Log::error('Failed to delete departement: ' . $e->getMessage(), ['exception' => $e, 'department_id' => $departement->id]);
             return redirect(routeForRole('departement', 'index'))->with('error', 'Gagal menghapus departement. Departement masih digunakan dalam data lain.');
         }
     }

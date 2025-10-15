@@ -22,7 +22,7 @@
             $table->decimal('nilai_pembelian', 15, 2)->nullable();
             $table->string('lokasi_terakhir')->nullable();
             $table->enum('status', ['tersedia','dipakai','rusak','hilang','habis'])->default('tersedia');
-            $table->foreignId('departement_id')->constrained('departements')->cascadeOnDelete();
+            $table->foreignId('department_id')->constrained('departements')->cascadeOnDelete();
             $table->timestamps();
         });
     }

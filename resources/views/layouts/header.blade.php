@@ -236,7 +236,11 @@
 
                         <ul class="py-1" role="none">
                             <li>
-                                @if (auth()->user()->role === 'admin')
+
+                                <a href="{{ routeForRole('profile', 'index') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    role="menuitem">Profile ku</a>
+                                {{-- @if (auth()->user()->role === 'admin')
                                     <a href="{{ route('admin.profil') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                         role="menuitem">Profile</a>
@@ -252,7 +256,7 @@
                                     <a href="{{ route('subadmin.profil') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                         role="menuitem">Profile</a>
-                                @endif
+                                @endif --}}
                             </li>
                             <!-- Di dalam dropdown menu -->
                             <li>

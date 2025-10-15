@@ -58,7 +58,7 @@
                         @endif
                     </form>
                 </div>
-               
+
                 <button id="createCategoryGroupButton"
                     class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800"
                     type="button" data-drawer-target="drawer-create-grup-category" data-drawer-show="drawer-create-grup-category"
@@ -191,7 +191,6 @@
     </div>
 
     <!-- Drawer Create -->
-
     <div id="drawer-create-grup-category"
         class="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-96 dark:bg-gray-800"
         tabindex="-1" aria-labelledby="drawer-label">
@@ -209,7 +208,11 @@
             </svg>
             <span class="sr-only">Close menu</span>
         </button>
-        <form id="createForm">
+
+        <!-- NOTE: keep form id createForm WITHOUT action attribute so IS handled by AJAX.
+             If you want a non-AJAX fallback, you could add action/method attributes, but
+             ensure JS prevents default submit when AJAX available. -->
+        <form id="createForm" enctype="multipart/form-data" novalidate>
             @csrf
             <div class="mb-4">
                 <label for="create-alias" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alias<span class="text-red-500">*</span></label>
@@ -229,7 +232,7 @@
                 <textarea name="deskripsi" id="create-deskripsi" rows="3"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
             </div>
-            <button type="submit"
+            <button type="submit" id="createSubmitBtn"
                 class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 w-full dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
                 Simpan
             </button>
@@ -254,7 +257,8 @@
             </svg>
             <span class="sr-only">Close menu</span>
         </button>
-        <form id="updateForm">
+
+        <form id="updateForm" enctype="multipart/form-data" novalidate>
             @csrf
             @method('PUT')
             <input type="hidden" id="update-id" name="id">
@@ -276,27 +280,61 @@
                 <textarea name="deskripsi" id="update-deskripsi" rows="3"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
             </div>
-            <button type="submit"
+            <button type="submit" id="updateSubmitBtn"
                 class="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 w-full dark:bg-yellow-500 dark:hover:bg-yellow-600 focus:outline-none dark:focus:ring-yellow-800">
                 Perbarui
             </button>
         </form>
     </div>
 @endsection
-<!-- Drawer Create -->
+
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const createDrawer = document.getElementById('drawer-create-grup-category');
             const updateDrawer = document.getElementById('drawer-update-group-category');
-            
-            // CREATE
+
+            const createForm = document.getElementById('createForm');
+            const updateForm = document.getElementById('updateForm');
+
+            const createSubmitBtn = document.getElementById('createSubmitBtn');
+            const updateSubmitBtn = document.getElementById('updateSubmitBtn');
+
+            // helper: open/close drawers safely (avoid both open)
+            function openDrawer(drawer) {
+                // close both then open requested
+                if (createDrawer) {
+                    createDrawer.classList.add('translate-x-full');
+                    createDrawer.classList.remove('translate-x-0');
+                }
+                if (updateDrawer) {
+                    updateDrawer.classList.add('translate-x-full');
+                    updateDrawer.classList.remove('translate-x-0');
+                }
+                if (drawer) {
+                    drawer.classList.remove('translate-x-full');
+                    drawer.classList.add('translate-x-0');
+                }
+            }
+
+            // CREATE - open drawer and reset
             document.getElementById('createCategoryGroupButton').addEventListener('click', function () {
-                document.getElementById('createForm').reset();
+                createForm.reset();
+                // clear potential previous validation display (if any)
+                openDrawer(createDrawer);
             });
 
-            document.getElementById('createForm').addEventListener('submit', function (e) {
+            // CREATE submit (AJAX)
+            createForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                e.stopPropagation();
+
+                // prevent double submit
+                if (createSubmitBtn.disabled) return;
+                createSubmitBtn.disabled = true;
+                const originalCreateText = createSubmitBtn.innerHTML;
+                createSubmitBtn.textContent = 'Menyimpan...';
+
                 const formData = new FormData(this);
 
                 fetch("{{ route('superadmin.category-groups.store') }}", {
@@ -304,56 +342,85 @@
                     body: formData,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                            ;
-                        } else {
-                            let errorMessage = data.message || 'Terjadi kesalahan.';
-                            if (data.errors) {
-                                const errorList = Object.values(data.errors).flat().join('<br>');
-                                errorMessage += '<br><br>' + errorList;
-                            }
-                            // 🔴 INI YANG KAMU LEWATKAN!
-                            Swal.fire({
-                                title: 'Gagal!',
-                                html: errorMessage,
-                                icon: 'error'
-                            });
+                .then(async response => {
+                    // parse json safely
+                    let data = {};
+                    try {
+                        data = await response.json();
+                    } catch (err) {
+                        data = {};
+                    }
+
+                    if (!response.ok) {
+                        // show validation / error message from server
+                        let errorMessage = data.message || 'Terjadi kesalahan.';
+                        if (data.errors) {
+                            const errorList = Object.values(data.errors).flat().join('<br>');
+                            errorMessage += '<br><br>' + errorList;
                         }
-                    })
-                    .catch(() => {
-                        Swal.fire('Error!', 'Gagal menyimpan data. Cek koneksi atau coba lagi.', 'error');
-                    });
+                        Swal.fire({
+                            title: 'Gagal!',
+                            html: errorMessage,
+                            icon: 'error'
+                        });
+                        return;
+                    }
+
+                    // success
+                    if (data.success) {
+                        Swal.fire('Berhasil!', 'Grup Kategori berhasil ditambahkan!', 'success')
+                            .then(() => location.reload());
+                    } else {
+                        // fallback message
+                        Swal.fire('Info', data.message || 'Operasi selesai.', 'info')
+                            .then(() => location.reload());
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error!', 'Gagal menyimpan data. Cek koneksi atau coba lagi.', 'error');
+                })
+                .finally(() => {
+                    createSubmitBtn.disabled = false;
+                    createSubmitBtn.innerHTML = originalCreateText;
+                });
             });
 
-            // UPDATE
+            // UPDATE drawer opening (fill form)
             document.querySelectorAll('.updateCategoryGroupButton').forEach(button => {
                 button.addEventListener('click', function () {
                     const id = this.getAttribute('data-id');
                     const nama = this.getAttribute('data-nama');
                     const alias = this.getAttribute('data-alias');
                     const deskripsi = this.getAttribute('data-deskripsi');
-                    
-                    document.getElementById('update-id').value = id;
-                    document.getElementById('update-nama').value = nama;
-                    document.getElementById('update-alias').value = alias;
-                    document.getElementById('update-deskripsi').value = deskripsi;
-                    
-                   
-                    updateDrawer.classList.remove('translate-x-full');
-                    updateDrawer.classList.add('translate-x-0');
+
+                    document.getElementById('update-id').value = id || '';
+                    document.getElementById('update-nama').value = nama || '';
+                    document.getElementById('update-alias').value = alias || '';
+                    document.getElementById('update-deskripsi').value = deskripsi || '';
+
+                    openDrawer(updateDrawer);
                 });
             });
 
-            document.getElementById('updateForm').addEventListener('submit', function (e) {
+            // UPDATE submit (AJAX with method override)
+            updateForm.addEventListener('submit', function (e) {
                 e.preventDefault();
+                e.stopPropagation();
+
+                // prevent double submit
+                if (updateSubmitBtn.disabled) return;
+                updateSubmitBtn.disabled = true;
+                const originalUpdateText = updateSubmitBtn.innerHTML;
+                updateSubmitBtn.textContent = 'Memperbarui...';
+
                 const id = document.getElementById('update-id').value;
                 const formData = new FormData(this);
+                // include method override in body as well (some setups expect it)
+                formData.set('_method', 'PUT');
 
                 fetch("{{ url('superadmin/category-groups') }}/" + id, {
                     method: 'POST',
@@ -361,33 +428,58 @@
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-HTTP-Method-Override': 'PUT'
+                        'X-HTTP-Method-Override': 'PUT',
+                        'Accept': 'application/json'
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Berhasil!', data.message, 'success').then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire('Gagal!', data.message || 'Terjadi kesalahan.', 'error');
+                .then(async response => {
+                    let data = {};
+                    try {
+                        data = await response.json();
+                    } catch (err) {
+                        data = {};
+                    }
+
+                    if (!response.ok) {
+                        let errorMessage = data.message || 'Terjadi kesalahan.';
+                        if (data.errors) {
+                            const errorList = Object.values(data.errors).flat().join('<br>');
+                            errorMessage += '<br><br>' + errorList;
                         }
-                    })
-                    .catch(() => {
-                        Swal.fire('Error!', 'Gagal memperbarui data.', 'error');
-                    });
+                        Swal.fire({
+                            title: 'Gagal!',
+                            html: errorMessage,
+                            icon: 'error'
+                        });
+                        return;
+                    }
+
+                    if (data.success) {
+                        Swal.fire('Berhasil!', data.message || 'Data berhasil diperbarui.', 'success').then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Gagal!', data.message || 'Terjadi kesalahan.', 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error!', 'Gagal memperbarui data.', 'error');
+                })
+                .finally(() => {
+                    updateSubmitBtn.disabled = false;
+                    updateSubmitBtn.innerHTML = originalUpdateText;
+                });
             });
-
-            // DELETE
-
 
             // Close drawers on close button
             document.querySelectorAll('[data-drawer-hide]').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const target = this.getAttribute('data-drawer-hide');
-                    document.getElementById(target).classList.add('translate-x-full');
-                    document.getElementById(target).classList.remove('translate-x-0');
+                    const el = document.getElementById(target);
+                    if (el) {
+                        el.classList.add('translate-x-full');
+                        el.classList.remove('translate-x-0');
+                    }
                 });
             });
         });

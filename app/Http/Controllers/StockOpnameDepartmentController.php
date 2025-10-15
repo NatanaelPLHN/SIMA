@@ -20,6 +20,19 @@ class StockOpnameDepartmentController extends Controller
 {
     public function index()
     {
+        $today = Carbon::today();
+        $overdueSessions = StockOpnameSession::where('department_id', auth()->user()->employee?->department_id)
+            ->whereIn('status', ['dijadwalkan', 'proses'])
+            ->where('tanggal_deadline', '<', $today)
+            ->get();
+
+        foreach ($overdueSessions as $session) {
+            $session->status = 'selesai';
+            $session->tanggal_selesai = now();
+            $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
+            $session->save();
+        }
+
         $user = auth()->user();
         $sessions = StockOpnameSession::with(['scheduler', 'details'])
             ->latest()
@@ -170,4 +183,86 @@ class StockOpnameDepartmentController extends Controller
 
         return response()->json(['message' => 'Password yang Anda masukkan salah.'], 422);
     }
+
+    // public function updateItem(Request $request, StockOpnameDetail $detail)
+    // {
+    //     // Pastikan user yang login berhak mengubah detail ini (misal, kepala departemen yang sesuai)
+    //     $user = auth()->user();
+    //     if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
+    //         return response()->json(['message' => 'Unauthorized'], 403);
+    //     }
+
+    //     // Pastikan sesi opname sedang berjalan
+    //     if ($detail->stockOpname->status !== 'proses') {
+    //         return response()->json(['message' => 'Sesi opname tidak aktif'], 400);
+    //     }
+
+    //     $asset = $detail->asset;
+    //     if (!$asset) {
+    //         return response()->json(['message' => 'Aset tidak ditemukan'], 404);
+    //     }
+
+    //     try {
+    //         DB::transaction(function () use ($request, $detail, $asset) {
+    //             if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
+    //                 $validated = $request->validate(['status_fisik' => 'required|string']);
+    //                 $detail->status_fisik = $validated['status_fisik'];
+    //                 $detail->jumlah_fisik = ($validated['status_fisik'] === 'hilang') ? 0 : 1;
+    //             } elseif ($asset->jenis_aset === 'habis_pakai') {
+    //                 $validated = $request->validate(['jumlah_fisik' => 'required|integer|min:0']);
+    //                 $detail->jumlah_fisik = $validated['jumlah_fisik'];
+    //                 $detail->status_fisik = ($validated['jumlah_fisik'] == 0) ? 'habis' : 'tersedia';
+    //             }
+    //             $detail->save();
+    //         });
+
+    //         return response()->json(['message' => 'Data berhasil disimpan.', 'timestamp' => now()->toTimeString()]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['message' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
+    //     }
+    // }
+
+// App\Http\Controllers\StockOpnameDepartmentController.php
+
+public function updateItem(Request $request, StockOpnameDetail $detail)
+{
+    // Optional: policy/authorize
+    // $this->authorize('update', $detail);
+    activity()->disableLogging();
+    $user = auth()->user();
+    if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    if ($detail->stockOpname->status !== 'proses') {
+        return response()->json(['message' => 'Sesi opname tidak aktif'], 400);
+    }
+
+    $asset = $detail->asset;
+    if (!$asset) {
+        return response()->json(['message' => 'Aset tidak ditemukan'], 404);
+    }
+
+    try {
+        DB::transaction(function () use ($request, $detail, $asset) {
+            if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
+                $validated = $request->validate(['status_fisik' => 'required|string']);
+                $detail->status_fisik = $validated['status_fisik'];
+                $detail->jumlah_fisik = ($validated['status_fisik'] === 'hilang') ? 0 : 1;
+            } elseif ($asset->jenis_aset === 'habis_pakai') {
+                $validated = $request->validate(['jumlah_fisik' => 'required|integer|min:0']);
+                $detail->jumlah_fisik = $validated['jumlah_fisik'];
+                $detail->status_fisik = ($validated['jumlah_fisik'] == 0) ? 'habis' : 'tersedia';
+            }
+            $detail->save();
+        });
+        activity()->enableLogging();
+
+        return response()->json(['message' => 'Data berhasil disimpan.', 'timestamp' => now()->toTimeString()]);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
+    }
+}
+
+
 }

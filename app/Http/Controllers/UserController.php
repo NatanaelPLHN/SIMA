@@ -6,12 +6,14 @@ use App\Models\User;
 use App\Models\Employee;
 use App\Models\Departement;
 use App\Models\Institution;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -174,7 +176,7 @@ public function store(Request $request)
 
         // Terapkan filter role (ini harus ditambahkan setelah filter user_id)
         if ($login->role === 'superadmin') {
-            $query->where('institution_id', $login->employee->institution_id);
+            $query->where('institution_id', $user->employee->institution_id);
         } elseif ($login->role === 'admin') {
             $query->where('institution_id', $login->employee->institution_id)
                 ->where('id', '!=', $login->employee->id);
@@ -325,5 +327,30 @@ public function store(Request $request)
             return response()->json(['status' => 'info', 'message' => $message]);
         }
         return back()->with('info', $message);
+    }
+
+    public function export()
+    {
+        $this->authorize('viewAny', User::class);
+
+        $authUser = auth()->user();
+
+        if ($authUser->role === 'superadmin') {
+            // Superadmin can export only admin users
+            $users = User::where('role', 'admin')->get();
+
+        } elseif ($authUser->role === 'admin') {
+            // Admin can export only subadmin users
+            $users = User::where('role', 'subadmin')->get();
+
+        } elseif ($authUser->role === 'subadmin') {
+            // Subadmin can export only normal users
+            $users = User::where('role', 'user')->get();
+
+        } else {
+            abort(403, 'You are not authorized to export user data.');
+        }
+
+        return Excel::download(new UsersExport($users), 'akun pegawai.xlsx');
     }
 }

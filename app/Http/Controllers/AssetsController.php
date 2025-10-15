@@ -25,9 +25,9 @@ class AssetsController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->where('departement_id', $user->employee?->department_id)->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
-        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('departement_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
-        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('departement_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
+        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
+        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
+        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
 
         return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai'));
     }
@@ -38,7 +38,8 @@ class AssetsController extends Controller
         if (isAsetLocked($department_id, 'bergerak')) {
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
-        $groupCategories = CategoryGroup::with('categories')->get();
+        // $groupCategories = CategoryGroup::with('categories')->get();
+        $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
         return view('aset.forms.create_gerak', compact('groupCategories'));
     }
     public function create_tidak()
@@ -49,7 +50,8 @@ class AssetsController extends Controller
         if (isAsetLocked($department_id, 'tidak_bergerak')) {
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
-        $groupCategories = CategoryGroup::with('categories')->get();
+        // $groupCategories = CategoryGroup::with('categories')->get();
+        $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
         return view('aset.forms.create_tidak_bergerak', compact('groupCategories'));
     }
     public function create_habis()
@@ -59,7 +61,8 @@ class AssetsController extends Controller
         if (isAsetLocked($department_id, 'habis_pakai')) {
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menambah aset baru. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
-        $groupCategories = CategoryGroup::with('categories')->get();
+        // $groupCategories = CategoryGroup::with('categories')->get();
+        $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
         return view('aset.forms.create_habis', compact('groupCategories'));
     }
 
@@ -107,7 +110,7 @@ class AssetsController extends Controller
         $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
         $categoryAlias       = $category->id; // category alias = ID
 
-        $lastAsset = Asset::where('departement_id', $user->employee?->department?->id)
+        $lastAsset = Asset::where('department_id', $user->employee?->department?->id)
             ->where('category_id', $validated['category_id'])
             ->latest('id')
             ->first();
@@ -127,8 +130,8 @@ class AssetsController extends Controller
             $nextNumber,
         ]);
 
-        $departement_id = $user->employee?->department?->id;
-        $validated['departement_id'] = $departement_id;
+        $department_id = $user->employee?->department?->id;
+        $validated['department_id'] = $department_id;
         $validated['kode'] = $kode;
 
         // Use DB transaction. Generate QR only AFTER successful commit to avoid orphan files.
@@ -209,7 +212,7 @@ class AssetsController extends Controller
 
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
 
-        if ($asset->departement_id != $user->employee->department_id) {
+        if ($asset->department_id != $user->employee->department_id) {
             abort(404);
             // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
@@ -239,7 +242,7 @@ class AssetsController extends Controller
 
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
 
-        if ($asset->departement_id != $user->employee->department_id) {
+        if ($asset->department_id != $user->employee->department_id) {
             abort(404);
             // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
         }

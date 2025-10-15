@@ -97,7 +97,7 @@ class CategoryController extends Controller
             $category = Category::create($validated);
             DB::commit();
 
-            session()->flash('success', 'Kategori berhasil ditambahkan!');
+            // session()->flash('success', 'Kategori berhasil ditambahkan!');
 
             if ($request->expectsJson()) {
                 return response()->json(['success' => true, 'category' => $category], 201);
@@ -145,12 +145,12 @@ class CategoryController extends Controller
             $validated = $request->validate([
                 'nama' => 'required|string|max:255|unique:categories,nama,' . $category->id,
                 'deskripsi' => 'nullable|string',
-                'category_group_id' => 'required|exists:category_groups,id',
+                // 'category_group_id' => 'required|exists:category_groups,id',
                 'alias' => 'required|string|max:255|unique:categories,alias,' . $category->id,
             ], [
                 'nama.required' => 'Nama kategori wajib diisi.',
                 'nama.unique' => 'Nama kategori sudah digunakan.',
-                'category_group_id.required' => 'Group kategori wajib dipilih.',
+                // 'category_group_id.required' => 'Group kategori wajib dipilih.',
                 'alias.required' => 'Alias wajib diisi.',
                 'alias.unique' => 'Alias sudah digunakan.',
             ]);
@@ -180,7 +180,7 @@ class CategoryController extends Controller
             $category->save();
             DB::commit();
 
-            session()->flash('success', 'Kategori berhasil di ubah');
+            // session()->flash('success', 'Kategori berhasil di ubah');
 
             if ($request->expectsJson()) {
                 return response()->json(['success' => true, 'category' => $category]);

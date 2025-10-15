@@ -49,7 +49,7 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, email, dll...">
                         </div>
-                        @if(request('search'))
+                        @if (request('search'))
                             <a href="{{ routeForRole('user', 'index') }}"
                                 class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">
                                 Clear
@@ -57,10 +57,27 @@
                         @endif
                     </form>
                 </div>
-                <a href="{{ routeForRole('user', 'create') }}"
-                    class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
-                    Tambah Akun
-                </a>
+                <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
+                    <form action="{{ routeForRole('user', 'export') }}" method="post"
+                        class="inline-flex items-center justify-center w-1/2 sm:w-auto">
+                        @csrf
+                        <button type="submit"
+                            class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                            <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M3 3a2 2 0 012-2h10a2 2 0 012 2v7a1 1 0 11-2 0V3H5v14h5a1 1 0 110 2H5a2 2 0 01-2-2V3zm9 10a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L12 16.586V13z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Export
+                        </button>
+                    </form>
+                    <a href="{{ routeForRole('user', 'create') }}"
+                        class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
+                        Tambah Akun
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
@@ -79,7 +96,7 @@
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'direction' => request('sort') === 'nama' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Email
-                                @if(request('sort') === 'nama')
+                                @if (request('sort') === 'nama')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
                             </a>
@@ -89,7 +106,7 @@
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'pemerintah', 'direction' => request('sort') === 'pemerintah' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Role
-                                @if(request('sort') === 'pemerintah')
+                                @if (request('sort') === 'pemerintah')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
                             </a>
@@ -99,7 +116,7 @@
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'telepon', 'direction' => request('sort') === 'telepon' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Karyawan
-                                @if(request('sort') === 'telepon')
+                                @if (request('sort') === 'telepon')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
                             </a>
@@ -170,7 +187,8 @@
                                 </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data instansi.
+                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data
+                                instansi.
                             </td>
                         </tr>
                     @endforelse

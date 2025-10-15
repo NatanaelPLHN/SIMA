@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 class Asset extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $table = 'aset';
 
@@ -20,9 +25,19 @@ class Asset extends Model
         'nilai_pembelian',
         'lokasi_terakhir',
         'status',
-        'departement_id',
+        'department_id',
 
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('aset')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->setDescriptionForEvent(fn(string $eventName) =>
+                "Aset {$this->nama_aset} dengan kode {$this->kode} telah {$eventName}");
+    }
 
     public function bergerak()
     {
@@ -38,14 +53,13 @@ class Asset extends Model
     {
         return $this->hasOne(AsetHabisPakai::class, 'aset_id');
     }
-    // Relasi dengan category
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
     public function departement()
     {
-        return $this->belongsTo(Departement::class, 'departement_id');
+        return $this->belongsTo(Departement::class, 'department_id');
     }
     public function peminjaman()
     {
@@ -56,5 +70,15 @@ class Asset extends Model
     {
         return $this->hasMany(StockOpnameDetail::class, 'aset_id');
     }
+    public function usage()
+    {
+        return $this->hasMany(AssetUsage::class, 'asset_id');
+    }
 
+    public function currentUsage()
+    {
+        return $this->hasOne(AssetUsage::class, 'asset_id')
+            ->where('status', 'dipakai')
+            ->latest();
+    }
 }

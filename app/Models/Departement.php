@@ -34,5 +34,8 @@ class Departement extends Model
     {
         return $this->hasMany(Employee::class, 'department_id');
     }
+    public function assetUsage()
+    {
+        return $this->hasMany(AssetUsage::class, 'department_id');
+    }
 }
-
