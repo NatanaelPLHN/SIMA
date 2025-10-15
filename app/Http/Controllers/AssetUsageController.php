@@ -102,6 +102,10 @@ class AssetUsageController extends Controller
         $employees = Employee::where('department_id', $departmentId)->get();
         $departements = Departement::where('id', $departmentId)->get();
 
+        if (isAsetLocked($departmentId, $jenisAset)) {
+            return redirect(routeForRole('asset-usage', 'index'))->with('error', 'Tidak dapat meminjam aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
+
         return view('usage.bidang.create', compact(
             'assets',
             'employees',
@@ -141,6 +145,11 @@ class AssetUsageController extends Controller
             'jumlah_digunakan.required' => 'Jumlah penggunaan wajib diisi untuk aset habis pakai.',
             'jumlah_digunakan.min' => 'Jumlah penggunaan minimal adalah 1.',
         ]);
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $asset->jenis_aset)) {
+            return redirect(routeForRole('asset-usage', 'index'))->with('error', 'Tidak dapat meminjam aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
 
         $jumlahDiminta = $validated['jumlah_digunakan'];
 
@@ -391,6 +400,11 @@ class AssetUsageController extends Controller
      */
     public function returnAsset(AssetUsage $assetUsage)
     {
+        $user = auth()->user();
+        $department_id = $user->employee?->department?->id;
+        if (isAsetLocked($department_id, $assetUsage->asset->jenis_aset)) {
+            return redirect(routeForRole('asset-usage', 'index'))->with('error', 'Tidak dapat mengembalikan aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+        }
         // Pastikan aset yang akan dikembalikan bukan jenis habis pakai.
         if ($assetUsage->asset->jenis_aset === 'habis_pakai') {
             return redirect()->back()
