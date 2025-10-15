@@ -68,12 +68,12 @@ class AssetUsage extends Model
     // Scope untuk penggunaan aktif
     public function scopeActive($query)
     {
-        return $query->where('status', 'in_use');
+        return $query->where('status', 'dipakai');
     }
 
     // Scope untuk penggunaan yang sudah dikembalikan
     public function scopeReturned($query)
     {
-        return $query->where('status', 'returned');
+        return $query->where('status', 'dikembalikan');
     }
 }

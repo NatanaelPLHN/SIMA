@@ -113,10 +113,7 @@
                                             <!-- Show -->
                                             <a class="fas fa-eye text-blue-600 hover:text-blue-800"
                                                 href="{{ routeForRole('asset-usage', 'show', $usage->id) }}"></a>
-                                            <!-- Edit -->
-                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ routeForRole('asset-usage', 'edit', $usage->id) }}"></a>
-                                            <!-- Delete -->
+                                             <!-- Delete -->
                                             @if ($usage->status == 'dipakai')
                                                 <form method="POST"
                                                     action="{{ routeForRole('asset-usage', 'return', $usage) }}"
@@ -230,10 +227,7 @@
                                             <!-- Show -->
                                             <a class="fas fa-eye text-blue-600 hover:text-blue-800"
                                                 href="{{ routeForRole('asset-usage', 'show', $usage->id) }}"></a>
-                                            <!-- Edit -->
-                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ routeForRole('asset-usage', 'edit', $usage->id) }}"></a>
-                                            <!-- Delete -->
+                                             <!-- Delete -->
 
                                             @if ($usage->status == 'dipakai')
                                                 <form method="POST"
@@ -341,10 +335,7 @@
                                             <!-- Show -->
                                             <a class="fas fa-eye text-blue-600 hover:text-blue-800"
                                                 href="{{ routeForRole('asset-usage', 'show', $usage->id) }}"></a>
-                                            <!-- Edit -->
-                                            <a class="fas fa-edit text-yellow-600 hover:text-yellow-800"
-                                                href="{{ routeForRole('asset-usage', 'edit', $usage->id) }}"></a>
-                                            <!-- Delete -->
+                                             <!-- Delete -->
 
                                             @if ($usage->status == 'dipakai')
                                                 <form method="POST"

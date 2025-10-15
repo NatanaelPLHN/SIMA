@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\Departement;
-use Illuminate\Http\Request;
-
 use App\Models\Institution;
+use App\Models\AssetUsage;
 use App\Imports\EmployeesImport;
 use App\Exports\EmployeesExport;
 use Illuminate\Support\Facades\Auth;
@@ -21,25 +21,25 @@ class EmployeeController extends Controller
     }
 
     public function index(Request $request)
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
 
-    // Ambil parameter query
-    $search = $request->get('search');
-    $sort = $request->get('sort', 'nama');
-    $direction = $request->get('direction', 'asc');
+        // Ambil parameter query
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        $direction = $request->get('direction', 'asc');
 
-    // Validasi kolom sorting yang diizinkan
-    $allowedSorts = ['nip', 'nama', 'alamat', 'telepon', 'email', 'bidang'];
-    if (!in_array($sort, $allowedSorts)) {
-        $sort = 'nama';
-    }
-    if (!in_array(strtolower($direction), ['asc', 'desc'])) {
-        $direction = 'asc';
-    }
+        // Validasi kolom sorting yang diizinkan
+        $allowedSorts = ['nip', 'nama', 'alamat', 'telepon', 'email', 'bidang'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
 
-    // Mulai query dengan relasi
-    $query = Employee::with(['department', 'institution', 'user']);
+        // Mulai query dengan relasi
+        $query = Employee::with(['department', 'institution', 'user']);
 
         if ($user->role == 'superadmin') {
             $query->whereNull('department_id');
@@ -53,43 +53,43 @@ class EmployeeController extends Controller
             $query->where('id', '!=', $user->employee?->id);
         }
 
-    // === Pencarian ===
-    $query->when($search, function ($q) use ($search) {
-        $q->where(function ($sub) use ($search) {
-            $sub->where('nama', 'like', "%{$search}%")
-                ->orWhere('nip', 'like', "%{$search}%")
-                ->orWhere('alamat', 'like', "%{$search}%")
-                ->orWhere('telepon', 'like', "%{$search}%")
-                ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"))
-                ->orWhereHas('department', fn($d) => $d->where('nama', 'like', "%{$search}%"))
-                ->orWhereHas('institution', fn($i) => $i->where('nama', 'like', "%{$search}%"));
+        // === Pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('telepon', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$search}%"))
+                    ->orWhereHas('department', fn($d) => $d->where('nama', 'like', "%{$search}%"))
+                    ->orWhereHas('institution', fn($i) => $i->where('nama', 'like', "%{$search}%"));
+            });
         });
-    });
 
-    // === Sorting ===
-    if ($sort === 'email') {
-        $query->join('users', 'employees.id', '=', 'users.karyawan_id')
-              ->orderBy('users.email', $direction)
-              ->select('employees.*')
-              ->distinct();
-    } elseif ($sort === 'bidang') {
-        // ✅ Perbaikan: gunakan 'departments' (bukan 'departements')
-        $query->join('departments', 'employees.department_id', '=', 'departments.id')
-              ->orderBy('departments.nama', $direction)
-              ->select('employees.*')
-              ->distinct();
-    } else {
-        $query->orderBy($sort, $direction);
-    }
+        // === Sorting ===
+        if ($sort === 'email') {
+            $query->join('users', 'employees.id', '=', 'users.karyawan_id')
+                ->orderBy('users.email', $direction)
+                ->select('employees.*')
+                ->distinct();
+        } elseif ($sort === 'bidang') {
+            // ✅ Perbaikan: gunakan 'departments' (bukan 'departements')
+            $query->join('departments', 'employees.department_id', '=', 'departments.id')
+                ->orderBy('departments.nama', $direction)
+                ->select('employees.*')
+                ->distinct();
+        } else {
+            $query->orderBy($sort, $direction);
+        }
 
-    // Pagination dengan append query string
-    $employees = $query->paginate(10)->appends([
-        'search' => $search,
-        'sort' => $sort,
-        'direction' => $direction,
-    ]);
+        // Pagination dengan append query string
+        $employees = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
 
-        return view('employee.index', compact('employees' ,'user'));
+        return view('employee.index', compact('employees', 'user'));
     }
 
     public function create()
@@ -198,6 +198,16 @@ class EmployeeController extends Controller
             'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
         ]);
+        // Cek apakah departemen diubah dan apakah ada aset yang masih digunakan
+        if ($request->department_id != $oldDepartmentId) {
+            $activeUsage = AssetUsage::where('used_by', $employee->id)
+                ->where('status', 'dipakai')
+                ->exists();
+
+            if ($activeUsage) {
+                return back()->with('error', 'Tidak dapat memindahkan karyawan. Pastikan semua aset yang digunakan telah dikembalikan.')->withInput();
+            }
+        }
 
         try {
             DB::transaction(function () use ($employee, $validated, $oldDepartmentId, $request) {
@@ -224,6 +234,15 @@ class EmployeeController extends Controller
 
     public function destroy(Employee $employee)
     {
+        // Cek apakah ada aset yang masih digunakan oleh karyawan ini
+        $activeUsage = AssetUsage::where('used_by', $employee->id)
+            ->where('status', 'dipakai')
+            ->exists();
+
+        if ($activeUsage) {
+            return redirect(routeForRole('employee', 'index'))
+                ->with('error', 'Tidak dapat menghapus karyawan. Pastikan semua aset yang digunakan telah dikembalikan.');
+        }
         try {
             DB::transaction(function () use ($employee) {
                 // Future-proof: if we need to unlink or cascade other data later
@@ -272,5 +291,4 @@ class EmployeeController extends Controller
         // Export the filtered employees
         return Excel::download(new EmployeesExport($employees), 'pegawai.xlsx');
     }
-
 }
