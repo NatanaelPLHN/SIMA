@@ -69,6 +69,7 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
     // Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
     Route::resource('asset-usage', AssetUsageController::class)->except(['create','edit','delete','update']);
+    Route::resource('assets', controller: AssetsController::class)->except(['create','edit','destroy','update']);;
 
 });
 
