@@ -113,57 +113,121 @@ class AssetUsageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
+        $asset = Asset::find($request->asset_id);
+        if (!$asset) {
+            return back()->withInput()->withErrors(['asset_id' => 'Asset tidak ditemukan.']);
+        }
+
+        // Jika aset bukan habis pakai, kita set jumlahnya menjadi 1 secara otomatis
+        // dan tidak mewajibkan input dari user.
+        if ($asset->jenis_aset !== 'habis_pakai') {
+            $request->merge(['jumlah_digunakan' => 1]);
+        }
+
         $validated = $request->validate([
             'asset_id' => 'required|exists:aset,id',
             'used_by' => 'required|exists:employees,id',
-            // 'department_id' => 'required|exists:departements,id',
             'start_date' => 'required|date|before_or_equal:today',
             'tujuan_penggunaan' => 'nullable|string|max:255',
+            'jumlah_digunakan' => 'required|integer|min:1',
             'keterangan' => 'nullable|string',
         ], [
             'asset_id.exists' => 'Asset tidak ditemukan.',
             'used_by.exists' => 'Karyawan tidak ditemukan.',
-            // 'department_id.exists' => 'Departement tidak ditemukan.',
             'start_date.before_or_equal' => 'Tanggal mulai tidak boleh melebihi hari ini.',
-            // 'tujuan_penggunaan.required' => 'Tujuan penggunaan wajib diisi.',
+            'jumlah_digunakan.required' => 'Jumlah penggunaan wajib diisi untuk aset habis pakai.',
+            'jumlah_digunakan.min' => 'Jumlah penggunaan minimal adalah 1.',
         ]);
 
-        $user = auth()->user();
-        $department_id = $user->employee?->department?->id;
-        $validated['department_id'] = $department_id;
+        $jumlahDiminta = $validated['jumlah_digunakan'];
 
+        DB::beginTransaction();
+        try {
+            if ($asset->jenis_aset === 'habis_pakai') {
+                if ($asset->jumlah < $jumlahDiminta) {
+                    throw new \Exception('Stok aset tidak mencukupi. Stok tersedia: ' . $asset->jumlah);
+                }
+                $asset->decrement('jumlah', $jumlahDiminta);
+                if ($asset->fresh()->jumlah <= 0) {
+                    $asset->update(['status' => 'habis']);
+                }
+            } else { // Untuk aset bergerak & tidak bergerak
+                if ($asset->jumlah < $jumlahDiminta) { // Seharusnya jumlahnya 1
+                    throw new \Exception('Jumlah aset tidak mencukupi (Stok: ' . $asset->jumlah . ').');
+                }
+                if ($asset->status !== 'tersedia') {
+                    throw new \Exception('Asset tidak tersedia untuk digunakan. Status saat ini: ' . $asset->status);
+                }
+                $asset->update(['status' => 'dipakai']);
+            }
 
-        // Validasi: cek apakah asset sedang digunakan
-        $existingUsage = AssetUsage::where('asset_id', $request->asset_id)
-            ->where('status', 'dipakai')
-            ->first();
+            $validated['department_id'] = auth()->user()->employee?->department?->id;
+            AssetUsage::create($validated);
 
-        if ($existingUsage) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['asset_id' => 'Asset sedang digunakan oleh employee lain.']);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Gunakan error yang lebih umum jika bukan karena validasi
+            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        // Validasi: cek status asset
-        $asset = Asset::find($request->asset_id);
-        if ($asset->status !== 'tersedia') {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['asset_id' => 'Asset tidak tersedia untuk digunakan. Status saat ini: ' . $asset->status]);
-        }
-
-        $usage = AssetUsage::create($validated);
-
-        // Update status asset menjadi 'dipakai'
-        $asset->update(['status' => 'dipakai']);
-
-        // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
 
         return redirect(routeForRole('asset-usage', 'index'))
-            ->with('success', 'Penggunaan asset berhasil ditambahkan.');
+            ->with('success', 'Penggunaan asset berhasil dicatat.');
     }
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'asset_id' => 'required|exists:aset,id',
+    //         'used_by' => 'required|exists:employees,id',
+    //         // 'department_id' => 'required|exists:departements,id',
+    //         'start_date' => 'required|date|before_or_equal:today',
+    //         'tujuan_penggunaan' => 'nullable|string|max:255',
+    //         'keterangan' => 'nullable|string',
+    //     ], [
+    //         'asset_id.exists' => 'Asset tidak ditemukan.',
+    //         'used_by.exists' => 'Karyawan tidak ditemukan.',
+    //         // 'department_id.exists' => 'Departement tidak ditemukan.',
+    //         'start_date.before_or_equal' => 'Tanggal mulai tidak boleh melebihi hari ini.',
+    //         // 'tujuan_penggunaan.required' => 'Tujuan penggunaan wajib diisi.',
+    //     ]);
+
+    //     $user = auth()->user();
+    //     $department_id = $user->employee?->department?->id;
+    //     $validated['department_id'] = $department_id;
+
+
+    //     // Validasi: cek apakah asset sedang digunakan
+    //     $existingUsage = AssetUsage::where('asset_id', $request->asset_id)
+    //         ->where('status', 'dipakai')
+    //         ->first();
+
+    //     if ($existingUsage) {
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['asset_id' => 'Asset sedang digunakan oleh employee lain.']);
+    //     }
+
+    //     // Validasi: cek status asset
+    //     $asset = Asset::find($request->asset_id);
+    //     if ($asset->status !== 'tersedia') {
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['asset_id' => 'Asset tidak tersedia untuk digunakan. Status saat ini: ' . $asset->status]);
+    //     }
+
+    //     $usage = AssetUsage::create($validated);
+
+    //     // Update status asset menjadi 'dipakai'
+    //     $asset->update(['status' => 'dipakai']);
+
+    //     // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
+
+    //     return redirect(routeForRole('asset-usage', 'index'))
+    //         ->with('success', 'Penggunaan asset berhasil ditambahkan.');
+    // }
 
     /**
      * Display the specified resource.
@@ -193,36 +257,36 @@ class AssetUsageController extends Controller
     //     // return view('usage.bidang.show', compact('assetUsage'));
     // }
     public function show(AssetUsage $assetUsage)
-{
-// Otorisasi untuk memastikan pengguna boleh melihat data ini
-$this->authorize('view', $assetUsage);
-$user = auth()->user();
-         // Eager load semua relasi yang mungkin dibutuhkan
-         $assetUsage->load([
-             'asset.bergerak',
-             'asset.tidakBergerak',
-             'asset.habisPakai',
-             'user',
-             'department'
-         ]);
+    {
+        // Otorisasi untuk memastikan pengguna boleh melihat data ini
+        $this->authorize('view', $assetUsage);
+        $user = auth()->user();
+        // Eager load semua relasi yang mungkin dibutuhkan
+        $assetUsage->load([
+            'asset.bergerak',
+            'asset.tidakBergerak',
+            'asset.habisPakai',
+            'user',
+            'department'
+        ]);
 
-         $jenisAset = $assetUsage->asset->jenis_aset;
-         $viewName = '';
+        $jenisAset = $assetUsage->asset->jenis_aset;
+        $viewName = '';
 
-         // Tentukan nama view yang akan digunakan berdasarkan jenis aset
-         if ($jenisAset === 'bergerak') {
-             $viewName = 'usage.show.show_bergerak';
-         } elseif ($jenisAset === 'tidak_bergerak') {
-             $viewName = 'usage.show.show_tidak_bergerak';
-         } elseif ($jenisAset === 'habis_pakai') {
-             $viewName = 'usage.show.show_habis_pakai';
-         } else {
-             // Fallback jika jenis aset tidak dikenali
-             abort(404, 'Jenis aset tidak valid.');
-         }
+        // Tentukan nama view yang akan digunakan berdasarkan jenis aset
+        if ($jenisAset === 'bergerak') {
+            $viewName = 'usage.show.show_bergerak';
+        } elseif ($jenisAset === 'tidak_bergerak') {
+            $viewName = 'usage.show.show_tidak_bergerak';
+        } elseif ($jenisAset === 'habis_pakai') {
+            $viewName = 'usage.show.show_habis_pakai';
+        } else {
+            // Fallback jika jenis aset tidak dikenali
+            abort(404, 'Jenis aset tidak valid.');
+        }
 
-         return view($viewName, compact('assetUsage','user'));
-     }
+        return view($viewName, compact('assetUsage', 'user'));
+    }
 
     /**
      * Show the form for editing the specified resource.

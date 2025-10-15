@@ -17,6 +17,7 @@ class AssetUsage extends Model
         'department_id',
         'start_date',
         'tujuan_penggunaan',
+        'jumlah_digunakan',
         'status',
         'keterangan',
         'end_date',
