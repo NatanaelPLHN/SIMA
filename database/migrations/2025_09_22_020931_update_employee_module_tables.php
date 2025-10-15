@@ -28,7 +28,7 @@ return new class extends Migration
 
             // Recreate with foreignId
             $table->foreignId('instansi_id')
-                  ->constrained('Institutions')
+                  ->constrained('institutions')
                   ->cascadeOnDelete();
 
             // Replace kepala_bidang with a foreignId to karyawan
@@ -65,7 +65,7 @@ return new class extends Migration
 
             $table->foreign('instansi_id')
                   ->references('id')
-                  ->on('Institution')
+                  ->on('institutions')
                   ->onDelete('cascade');
 
             Schema::rename('karyawan', 'employees');
