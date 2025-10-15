@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Asset;
+use App\Exports\AssetActivityExport;
+use App\Exports\SpecificActivityLogExport;
 use App\Models\AsetBergerak;
-use App\Models\AsetTidakBergerak;
 use App\Models\AsetHabisPakai;
+use App\Models\AsetTidakBergerak;
+use App\Models\Asset;
 use App\Models\Category;
 use App\Models\CategoryGroup;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Builder;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Spatie\Activitylog\Models\Activity;
 
 class AssetsController extends Controller
 {
@@ -22,6 +24,7 @@ class AssetsController extends Controller
     {
         // $this->authorizeResource(Asset::class, 'asset');
     }
+
     public function index()
     {
         $user = auth()->user();
@@ -39,6 +42,7 @@ class AssetsController extends Controller
 
         return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai', 'jumlahAsetBergerak', 'jumlahAsetTidakBergerak', 'jumlahAsetHabisPakai', 'totalNilaiAsetBergerak', 'totalNilaiAsetTidakBergerak', 'totalNilaiAsetHabisPakai'));
     }
+
     public function create_gerak()
     {
         $user = auth()->user();
@@ -48,8 +52,10 @@ class AssetsController extends Controller
         }
         // $groupCategories = CategoryGroup::with('categories')->get();
         $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
+
         return view('aset.forms.create_gerak', compact('groupCategories'));
     }
+
     public function create_tidak()
     {
 
@@ -60,8 +66,10 @@ class AssetsController extends Controller
         }
         // $groupCategories = CategoryGroup::with('categories')->get();
         $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
+
         return view('aset.forms.create_tidak_bergerak', compact('groupCategories'));
     }
+
     public function create_habis()
     {
         $user = auth()->user();
@@ -71,6 +79,7 @@ class AssetsController extends Controller
         }
         // $groupCategories = CategoryGroup::with('categories')->get();
         $groupCategories = CategoryGroup::whereHas('categories')->with('categories')->get();
+
         return view('aset.forms.create_habis', compact('groupCategories'));
     }
 
@@ -110,13 +119,12 @@ class AssetsController extends Controller
             $validated['jumlah'] = ($request->status === 'hilang') ? 0 : 1;
         }
 
-
         $institutionAlias = $user->employee?->department?->institution?->alias;
         $departmentAlias = $user->employee?->department?->alias;
 
         $category = Category::find($request->category_id);
-        $categoryGroupAlias  = $category->categoryGroup?->id; // category group alias = ID
-        $categoryAlias       = $category->id; // category alias = ID
+        $categoryGroupAlias = $category->categoryGroup?->id; // category group alias = ID
+        $categoryAlias = $category->id; // category alias = ID
 
         $lastAsset = Asset::where('department_id', $user->employee?->department?->id)
             ->where('category_id', $validated['category_id'])
@@ -180,10 +188,10 @@ class AssetsController extends Controller
 
             // After commit -> generate QR and update the bergerak/tidak_bergerak record with path
             if ($validated['jenis_aset'] === 'bergerak') {
-                $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
-                $fullPath = storage_path("app/public/" . $qrCodePath);
+                $qrCodePath = 'qrcodes/'.$asset->kode.'.svg';
+                $fullPath = storage_path('app/public/'.$qrCodePath);
 
-                if (!file_exists(dirname($fullPath))) {
+                if (! file_exists(dirname($fullPath))) {
                     mkdir(dirname($fullPath), 0755, true);
                 }
                 QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
@@ -193,10 +201,10 @@ class AssetsController extends Controller
             }
 
             if ($validated['jenis_aset'] === 'tidak_bergerak') {
-                $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
-                $fullPath = storage_path("app/public/" . $qrCodePath);
+                $qrCodePath = 'qrcodes/'.$asset->kode.'.svg';
+                $fullPath = storage_path('app/public/'.$qrCodePath);
 
-                if (!file_exists(dirname($fullPath))) {
+                if (! file_exists(dirname($fullPath))) {
                     mkdir(dirname($fullPath), 0755, true);
                 }
                 QrCode::format('svg')->size(200)->generate(route('asset.public.verify', $asset->kode), $fullPath);
@@ -207,38 +215,39 @@ class AssetsController extends Controller
             return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to store asset: ' . $e->getMessage(), ['exception' => $e]);
+            Log::error('Failed to store asset: '.$e->getMessage(), ['exception' => $e]);
+
             return back()->withInput()->with('error', 'Gagal menambahkan aset. Silakan coba lagi.');
         }
     }
 
-
     public function show(Asset $asset)
     {
-
         $user = auth()->user();
 
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai', 'category.categoryGroup']);
 
         if ($asset->department_id != $user->employee->department_id) {
             abort(404);
-            // return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat mengedit data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
 
-        if ($asset->jenis_aset === 'bergerak') {
-            return view('aset.details.bergerak', compact('asset'));
-        }
+        $logs = Activity::where('subject_type', Asset::class)
+            ->where('subject_id', $asset->id)
+            ->latest()
+            ->paginate(10);
 
-        if ($asset->jenis_aset === 'tidak_bergerak') {
-            return view('aset.details.tidak_bergerak', compact('asset'));
+        switch ($asset->jenis_aset) {
+            case 'bergerak':
+                return view('aset.details.bergerak', compact('asset', 'logs'));
+            case 'tidak_bergerak':
+                return view('aset.details.tidak_bergerak', compact('asset', 'logs'));
+            case 'habis_pakai':
+                return view('aset.details.habis', compact('asset', 'logs'));
+            default:
+                abort(404);
         }
-
-        if ($asset->jenis_aset === 'habis_pakai') {
-            return view('aset.details.habis', compact('asset'));
-        }
-
-        abort(404);
     }
+
     public function edit(Asset $asset)
     {
 
@@ -298,7 +307,7 @@ class AssetsController extends Controller
                     'merk',
                     'tipe',
                     'nomor_serial',
-                    'tahun_produksi'
+                    'tahun_produksi',
                 ]));
                 $detailModel = $asset->bergerak;
             } elseif ($asset->jenis_aset === 'tidak_bergerak') {
@@ -313,8 +322,9 @@ class AssetsController extends Controller
             $isAssetDirty = $asset->isDirty();
             $isDetailDirty = $detailModel ? $detailModel->isDirty() : false;
 
-            if (!$isAssetDirty && !$isDetailDirty) {
+            if (! $isAssetDirty && ! $isDetailDirty) {
                 DB::rollBack();
+
                 return back()->with('info', 'Tidak ada perubahan pada data aset.');
             }
 
@@ -327,10 +337,12 @@ class AssetsController extends Controller
             }
 
             DB::commit();
+
             return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to update asset: ' . $e->getMessage(), ['exception' => $e, 'asset_id' => $asset->id]);
+            Log::error('Failed to update asset: '.$e->getMessage(), ['exception' => $e, 'asset_id' => $asset->id]);
+
             return back()->withInput()->with('error', 'Gagal memperbarui aset. Silakan coba lagi.');
         }
     }
@@ -343,7 +355,7 @@ class AssetsController extends Controller
             return redirect(routeForRole('assets', 'index'))->with('error', 'Tidak dapat menghapus data aset. Stock opname untuk jenis aset ini sedang berlangsung.');
         }
         // determine QR code path
-        $qrCodePath = 'qrcodes/' . $asset->kode . '.svg';
+        $qrCodePath = 'qrcodes/'.$asset->kode.'.svg';
 
         DB::beginTransaction();
         try {
@@ -358,20 +370,23 @@ class AssetsController extends Controller
             return redirect(routeForRole('assets', 'index'))->with('success', 'Aset berhasil dihapus.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to delete asset: ' . $e->getMessage(), ['exception' => $e, 'asset_id' => $asset->id]);
+            Log::error('Failed to delete asset: '.$e->getMessage(), ['exception' => $e, 'asset_id' => $asset->id]);
+
             return redirect(routeForRole('assets', 'index'))->with('error', 'Gagal menghapus Aset. Aset masih memiliki data peminjaman atau terjadi kesalahan.');
         }
     }
 
-    /**
-     * Display a public verification page for the asset.
-     *
-     * @param  \App\Models\Asset  $asset
-     * @return \Illuminate\View\View
-     */
     public function verifyAsset(Asset $asset)
     {
         $asset->load(['bergerak', 'tidakBergerak', 'habisPakai']);
+
         return view('aset.public_verify', compact('asset'));
+    }
+
+    public function exportAssetLog(Asset $asset)
+    {
+        $fileName = 'Log_Aset_'.str_replace(' ', '_', $asset->nama_aset).'_'.now()->format('Ymd_His').'.xlsx';
+
+        return Excel::download(new SpecificActivityLogExport($asset->id), $fileName);
     }
 }
