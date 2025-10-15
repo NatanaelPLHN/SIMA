@@ -266,7 +266,7 @@ class EmployeeController extends Controller
         // Excel::import(new UsersImport, 'users.xlsx');
         Excel::import(new EmployeesImport, $request->file('file'));
 
-        return redirect()->back()->with('success', 'Employees imported successfully!');
+        return redirect()->back()->with('success', 'Data pegawai berhasil di import!');
     }
 
     public function export()
@@ -288,7 +288,6 @@ class EmployeeController extends Controller
             $employees = Employee::where('id', $user->employee_id)->get();
         }
 
-        // Export the filtered employees
         return Excel::download(new EmployeesExport($employees), 'pegawai.xlsx');
     }
 }
