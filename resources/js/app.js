@@ -2,6 +2,18 @@
 import '../css/app.css';
 import 'select2/dist/css/select2.min.css';
 import 'flowbite';
+// import 'flowbite-datepicker';
+// import "@fortawesome/fontawesome-free/css/all.min.css"; 
+// import "flowbite/src/themes/default";
+// import "flowbite/dist/flowbite.min.css";
+// import "flowbite-datepicker/dist/css/flowbite-datepicker.min.css"
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
+
+// import 'flowbite';
+// import 'flowbite-datepicker';    
+
 
 // Bootstrap & custom JS
 import './bootstrap';
@@ -16,6 +28,7 @@ window.$ = window.jQuery = jquery;
 // Select2: attach ke jQuery global
 import select2 from 'select2/dist/js/select2.full.js';
 select2(window.jQuery);
+
 
 // AlpineJS
 import Alpine from 'alpinejs';
@@ -33,7 +46,17 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 // Flowbite components
 import { Tooltip } from 'flowbite';
-
+document.addEventListener('DOMContentLoaded', () => {
+    const dateInputs = document.querySelectorAll('input[data-datepicker]');
+    dateInputs.forEach(input => {
+        flatpickr(input, {
+            dateFormat: "Y-m-d",
+            maxDate: input.dataset.maxDate || "today",
+            allowInput: true,
+            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        });
+    });
+});
 // Inisialisasi Select2 saat DOM siap
 // $(document).ready(function () {
 //     console.log("✅ jQuery version:", $.fn.jquery);
@@ -68,4 +91,20 @@ $(document).ready(function() {
         allowClear: true
     });
 });
+
+$(document).ready(function() {
+    $('.js-select2').select2({
+        placeholder: "-- Kosongkan  --", // wajib
+        allowClear: true, // wajib agar tombol hapus muncul
+        width: '100%'
+    });
+});
+$('#modalEdit').on('shown.bs.modal', function () {
+    $('.js-select2').select2({
+        placeholder: "-- Kosongkan  --",
+        allowClear: true,
+        width: '100%'
+    });
+});
+
 

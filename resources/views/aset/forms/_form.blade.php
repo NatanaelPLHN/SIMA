@@ -7,23 +7,38 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {{-- Nama Aset --}}
     <div>
-        <label for="nama_aset" class="block text-sm font-medium text-gray-700 mb-1">
+        <label for="nama_aset" class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
             Nama Aset <span class="text-red-500">*</span>
         </label>
         <input type="text" id="nama_aset" name="nama_aset" value="{{ old('nama_aset', $asset->nama_aset ?? '') }}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md
-            focus:outline-none focus:ring-2 focus:ring-indigo-500
-            {{ $errors->has('nama_aset') ? 'border-red-500' : '' }}">
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
         @error('nama_aset')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
     </div>
     <div>
-        <label for="nilai_pembelian" class="block text-sm font-medium text-gray-700 mb-1">Nilai Pembelian<span
-                class="text-red-500">*</span></label>
-        <input type="number" id="nilai_pembelian" name="nilai_pembelian" min="0" step="0.01"
-            value="{{ old('nilai_pembelian', $asset->nilai_pembelian ?? '') }}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('nilai_pembelian') ? 'border-red-500' : '' }}">
+    <label class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
+        Nilai Pembelian <span class="text-red-500">*</span>
+    </label>
+
+    @if (Route::is('subadmin.assets.edit'))
+        {{-- Mode Edit: Tampilkan sebagai teks + hidden input --}}
+        <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
+            {{ number_format($asset->nilai_pembelian ?? 0, 2, ',', '.') }}
+        </div>
+        <input type="hidden" name="nilai_pembelian" value="{{ $asset->nilai_pembelian }}">
+    @else
+        {{-- Mode Create: Input normal --}}
+        <input 
+            type="number" 
+            id="nilai_pembelian" 
+            name="nilai_pembelian" 
+            min="0" 
+            step="0.01"
+            value="{{ old('nilai_pembelian') }}"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('nilai_pembelian') ? 'border-red-500' : '' }}"
+            required
+        >
         @error('nilai_pembelian')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
         @enderror
