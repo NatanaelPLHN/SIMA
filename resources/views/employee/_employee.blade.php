@@ -52,9 +52,9 @@
         <div>
             <label for="institution_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Instansi</label>
             <select name="institution_id" id="institution_id" x-model="selectedInstitution" class="js-select2 mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3
-                        bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-                        focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
-                        focus:border-indigo-500 dark:focus:border-indigo-400">
+                                        bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                                        focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
+                                        focus:border-indigo-500 dark:focus:border-indigo-400">
                 <option value="">Pilih Instansi</option>
                 @foreach ($institutions as $institution)
                     <option value="{{ $institution->id }}" @selected(old('institution_id', $employee->institution_id ?? '') == $institution->id)>
@@ -69,10 +69,10 @@
             <select name="department_id" id="department_id" x-model="selectedDepartment"
                 :disabled="!selectedInstitution || {{ isset($isInstitutionHead) && $isInstitutionHead ? 'true' : 'false' }}"
                 class=" mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3
-                        bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-                        focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
-                        focus:border-indigo-500 dark:focus:border-indigo-400
-                        disabled:bg-gray-100 disabled:dark:bg-gray-700 disabled:opacity-100">
+                                        bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                                        focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
+                                        focus:border-indigo-500 dark:focus:border-indigo-400
+                                        disabled:bg-gray-100 disabled:dark:bg-gray-700 disabled:opacity-100">
                 <option value="">Pilih Bidang</option>
                 <template x-for="department in filteredDepartments" :key="department.id">
                     <option :value="department.id" x-text="department.nama" :selected="department.id == selectedDepartment">
@@ -100,17 +100,24 @@
             <label for="department_id"
                 class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Bidang</label>
             <select name="department_id" id="department_id" class="js-select2 mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3
-                        bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-                        focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
-                        focus:border-indigo-500 dark:focus:border-indigo-400">
-                <option value="">Pilih Bidang</option>
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
+                focus:border-indigo-500 dark:focus:border-indigo-400">
+
+                {{-- Opsi kosong selalu tersedia --}}
+                <option value="" {{ old('department_id', $employee->department_id ?? '') === '' ? 'selected' : '' }}>
+                    -- Pilih Bidang --
+                </option>
+
+                {{-- Loop bidang --}}
                 @foreach ($departements as $department)
-                    <option value="{{ $department->id }}" @selected(old('department_id', $employee->department_id ?? '') == $department->id)>
+                    <option value="{{ $department->id }}" {{ old('department_id', $employee->department_id ?? '') == $department->id ? 'selected' : '' }}>
                         {{ $department->nama }}
                     </option>
                 @endforeach
             </select>
         </div>
+
 
     @elseif ($isSubAdmin)
         <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-3 items-start sm:items-center">

@@ -195,6 +195,7 @@ class EmployeeController extends Controller
             'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
         ]);
+        $validated['department_id'] = $validated['department_id'] ?: null;
 
         try {
             DB::transaction(function () use ($employee, $validated, $oldDepartmentId, $request) {

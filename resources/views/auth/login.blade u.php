@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+@extends('components/alert')
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SIMA DISKOMINFO</title>
+    {{--
+    <script src="/js/darkmode.js"></script> --}}
+    <script>
+        if (
+            localStorage.getItem('color-theme') === 'dark' ||
+            (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    {{-- @include('components.theme-init') --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
