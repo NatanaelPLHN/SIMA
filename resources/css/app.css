@@ -56,11 +56,15 @@
 
 /* Arrow */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
+    display: none !important;
+}
+
+/* .select2-selection__clear {
     height: 2.5rem !important;
     top: 0 !important;
     right: 0.75rem !important;
     width: 2rem !important;
-}
+} */
 
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
     border-color: #9ca3af transparent transparent !important;
@@ -115,5 +119,126 @@
     @apply bg-gray-700 text-white border-gray-600;
 }
 
+/* resources/css/app.css */
 
+/* Dark mode untuk flatpickr */
+.dark .flatpickr-calendar {
+    background: #1f2937; /* bg-gray-800 */
+    color: #e5e7eb; /* text-gray-200 */
+    border-color: #374151; /* border-gray-700 */
+}
 
+.dark .flatpickr-day {
+    color: #e5e7eb;
+}
+
+.dark .flatpickr-day:hover {
+    background: #374151;
+    color: white;
+}
+
+.dark .flatpickr-day.selected {
+    background: #6366f1; /* bg-indigo-500 */
+    color: white;
+    border-color: #6366f1;
+}
+
+.dark .flatpickr-months .flatpickr-prev-month,
+.dark .flatpickr-months .flatpickr-next-month {
+    color: #d1d5db;
+}
+
+.dark .flatpickr-months .flatpickr-prev-month:hover,
+.dark .flatpickr-months .flatpickr-next-month:hover {
+    color: #c7d2fe;
+}
+
+/* Dark mode untuk header Flatpickr (bulan & tahun) */
+.dark .flatpickr-months .flatpickr-month {
+    color: #e5e7eb; /* text-gray-200 */
+    fill: #e5e7eb;
+}
+
+.dark .flatpickr-current-month .flatpickr-monthDropdown-months,
+.dark .flatpickr-current-month .numInput {
+    color: #e5e7eb;
+    background: transparent;
+    border-color: #374151;
+}
+
+/* Panah navigasi bulan */
+.dark .flatpickr-months .flatpickr-prev-month svg,
+.dark .flatpickr-months .flatpickr-next-month svg {
+    fill: #d1d5db; /* text-gray-300 */
+}
+
+.dark .flatpickr-months .flatpickr-prev-month:hover svg,
+.dark .flatpickr-months .flatpickr-next-month:hover svg {
+    fill: #c7d2fe; /* text-indigo-200 */
+}
+
+/* Dropdown bulan (jika muncul) */
+.dark .flatpickr-monthDropdown-month {
+    background-color: #1f2937;
+    color: #e5e7eb;
+}
+
+.dark .flatpickr-monthDropdown-month:hover {
+    background-color: #374151;
+}
+
+.flatpickr-day:not(.flatpickr-disabled):not(.selected):hover {
+    background: #eff6ff; /* bg-blue-50 */
+    color: #1e40af; /* text-blue-800 */
+    border-radius: 4px;
+}
+/* === DARK MODE UNTUK SEMUA ELEMEN FLATPICKR === */
+
+/* Latar belakang kalender */
+.dark .flatpickr-calendar {
+    background: #1f2937; /* bg-gray-800 */
+    border-color: #374151; /* border-gray-700 */
+}
+
+/* Hari biasa (angka tanggal) */
+.dark .flatpickr-day {
+    color: #e5e7eb; /* text-gray-200 */
+    background: transparent;
+}
+
+/* Hari yang bisa dipilih (bukan disabled) */
+.dark .flatpickr-day:not(.flatpickr-disabled):not(.selected):hover {
+    background: #374151; /* bg-gray-700 */
+    color: #f9fafb; /* text-gray-50 */
+}
+
+/* Hari yang dipilih */
+.dark .flatpickr-day.selected,
+.dark .flatpickr-day.selected:hover,
+.dark .flatpickr-day.selected:focus {
+    background: #6366f1; /* bg-indigo-500 */
+    color: #ffffff;
+    border-color: #6366f1;
+}
+
+/* Hari di luar bulan (misal: akhir/beginning yang abu-abu) */
+.dark .flatpickr-day.flatpickr-disabled,
+.dark .flatpickr-day.prevMonthDay,
+.dark .flatpickr-day.nextMonthDay {
+    color: #9ca3af; /* text-gray-400 */
+}
+
+/* Hari weekend (Sabtu/Minggu) — opsional */
+.dark .flatpickr-day.weekend {
+    color: #f87171; /* text-red-400 */
+}
+
+/* Header hari (Sen, Sel, Rab, dst) */
+.dark .flatpickr-weekdays {
+    background: #111827; /* bg-gray-900 */
+}
+
+.dark .flatpickr-weekday {
+    color: #9ca3af; /* text-gray-400 */
+    font-weight: 500;
+}

@@ -18,20 +18,68 @@ class DepartementController extends Controller
         $this->authorizeResource(Departement::class, 'departement');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $institutionId = $user->employee?->institution?->id;
 
         // Jika admin tidak terhubung ke institusi, jangan tampilkan apa-apa.
         if (!$institutionId) {
-            $departements = collect(); // Membuat koleksi kosong
-        } else {
-            // Ambil hanya departemen yang instansi_id-nya cocok.
-            $departements = Departement::where('instansi_id', $institutionId)
-                ->with(['institution', 'kepala'])
-                ->paginate(10);
+            $departements = collect(); // Koleksi kosong
+            return view('departement.index', compact('departements'));
         }
+
+        // Ambil parameter query
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'nama');
+        $direction = $request->get('direction', 'asc');
+
+        // Validasi kolom sorting yang diizinkan
+        $allowedSorts = ['nama', 'alias', 'created_at']; // Sesuaikan dengan kolom di tabel departements
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'nama';
+        }
+        if (!in_array(strtolower($direction), ['asc', 'desc'])) {
+            $direction = 'asc';
+        }
+
+        // Mulai query
+        $query = Departement::where('instansi_id', $institutionId)
+            ->with(['institution', 'kepala']);
+
+        // === Pencarian ===
+        $query->when($search, function ($q) use ($search) {
+            $q->where(function ($sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhere('alias', 'like', "%{$search}%")
+                    ->orWhere('lokasi', 'like', "%{$search}%")
+                    ->orWhereHas('kepala', fn($k) => $k->where('nama', 'like', "%{$search}%"));
+                    // ->orWhereHas('institution', fn($i) => $i->where('nama', 'like', "%{$search}%"));
+            });
+        });
+
+        // === Sorting ===
+        // Jika sort berdasarkan relasi, lakukan join
+        if ($sort === 'kepala') {
+            $query->join('employees', 'departements.kepala_id', '=', 'employees.id')
+                ->orderBy('employees.nama', $direction)
+                ->select('departements.*')
+                ->distinct();
+        } elseif ($sort === 'institution') {
+            $query->join('institutions', 'departements.instansi_id', '=', 'institutions.id')
+                ->orderBy('institutions.nama', $direction)
+                ->select('departements.*')
+                ->distinct();
+        } else {
+            $query->orderBy($sort, $direction);
+        }
+
+        // Pagination dengan append query string
+        $departements = $query->paginate(10)->appends([
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
 
         return view('departement.index', compact('departements'));
     }
