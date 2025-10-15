@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id')->nullable(); // Pastikan tipe data sama
             $table->date('start_date');
             $table->string('tujuan_penggunaan')->nullable();
-            $table->enum('status', ['dipakai', 'dikembalikan'])->default('dipakai');
+            $table->enum('status', ['dipakai', 'dikembalikan','selesai'])->default('dipakai');
             $table->text('keterangan')->nullable();
             $table->date('end_date')->nullable();
             $table->timestamps();
