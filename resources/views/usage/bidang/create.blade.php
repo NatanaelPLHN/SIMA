@@ -5,7 +5,7 @@
 @section('content')
     <h1 class="text-lg font-semibold text-indigo-800">Tambah Penggunaan Asset</h1>
     <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <form action="{{ routeForRole('asset-usage','store') }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ routeForRole('asset-usage', 'store') }}" method="POST" enctype="multipart/form-data"
             class="grid grid-cols-1 md:grid-cols gap-6">
             <!-- Form Groups -->
             @csrf
@@ -53,11 +53,20 @@
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
+        @if($jenisAset === 'habis_pakai')
+            <div>
+                <label for="jumlah_digunakan" class="block text-sm font-medium text-gray-700 mb-1">Jumlah Digunakan<span
+                        class="text-red-500">*</span></label>
+                <input type="number" id="jumlah_digunakan" name="jumlah_digunakan" min="1" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            @endif
 
             <div>
                 <label for="tujuan_penggunaan" class="block text-sm font-medium text-gray-700 mb-1">Tujuan Penggunaan
-                    </label>
-                <input type="text" id="tujuan_penggunaan" name="tujuan_penggunaan" value="{{ old('tujuan_penggunaan') }}"
+                </label>
+                <input type="text" id="tujuan_penggunaan" name="tujuan_penggunaan"
+                    value="{{ old('tujuan_penggunaan') }}"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('tujuan_penggunaan') ? 'border-red-500' : '' }}">
                 @error('tujuan_penggunaan')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -73,9 +82,10 @@
                 @enderror
             </div>
 
+
             <!-- Buttons -->
             <div class="mt-6 flex justify-end space-x-3">
-                <a href="{{ routeForRole('asset-usage','index') }}"
+                <a href="{{ routeForRole('asset-usage', 'index') }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
                     Batal
                 </a>

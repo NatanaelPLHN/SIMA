@@ -286,7 +286,7 @@
                         <thead class="bg-indigo-800">
                             <tr>
                                 <th
-                                    class="bg-indigo-800 px-4 py-3 text-center text-xs fongit-medium text-white uppercase tracking-wider">
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
                                     No</th>
                                 <th
                                     class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
@@ -297,17 +297,25 @@
                                     Aset</th>
                                 <th
                                     class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                    Register</th>
-                                <th
-                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                    Satuan
-                                    Produksi</th>
-                                <th
-                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                    Status
+                                    Pengguna
                                 </th>
                                 <th
                                     class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Tanggal Mulai</th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Tujuan
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
+                                    Keterangan
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-32">
+                                    Status
+                                </th>
+                                <th
+                                    class="bg-indigo-800 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider w-32">
                                     Aksi
                                 </th>
                             </tr>

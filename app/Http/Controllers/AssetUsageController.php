@@ -146,23 +146,29 @@ class AssetUsageController extends Controller
 
         DB::beginTransaction();
         try {
-            if ($asset->jenis_aset === 'habis_pakai') {
-                if ($asset->jumlah < $jumlahDiminta) {
-                    throw new \Exception('Stok aset tidak mencukupi. Stok tersedia: ' . $asset->jumlah);
-                }
-                $asset->decrement('jumlah', $jumlahDiminta);
-                if ($asset->fresh()->jumlah <= 0) {
-                    $asset->update(['status' => 'habis']);
-                }
-            } else { // Untuk aset bergerak & tidak bergerak
-                if ($asset->jumlah < $jumlahDiminta) { // Seharusnya jumlahnya 1
-                    throw new \Exception('Jumlah aset tidak mencukupi (Stok: ' . $asset->jumlah . ').');
-                }
-                if ($asset->status !== 'tersedia') {
-                    throw new \Exception('Asset tidak tersedia untuk digunakan. Status saat ini: ' . $asset->status);
-                }
-                $asset->update(['status' => 'dipakai']);
-            }
+            // Menentukan status untuk AssetUsage berdasarkan jenis aset
+         if ($asset->jenis_aset === 'habis_pakai') {
+          $validated['status'] = 'selesai'; // Status baru untuk habis pakai
+             $validated['end_date'] = now();   // Langsung ada tanggal selesai
+
+             if ($asset->jumlah < $jumlahDiminta) {
+                 throw new \Exception('Stok aset tidak mencukupi. Stok tersedia: ' . $asset->jumlah);
+             }
+             $asset->decrement('jumlah', $jumlahDiminta);
+             if ($asset->fresh()->jumlah <= 0) {
+                 $asset->update(['status' => 'habis']);
+             }
+         } else {
+             $validated['status'] = 'dipakai'; // Status untuk aset yang bisa dikembalikan
+
+             if ($asset->jumlah < $jumlahDiminta) {
+                  throw new \Exception('Jumlah aset tidak mencukupi (Stok: ' . $asset->jumlah . ').');
+             }
+             if ($asset->status !== 'tersedia') {
+                 throw new \Exception('Asset tidak tersedia untuk digunakan. Status saat ini: ' . $asset->status);
+             }
+             $asset->update(['status' => 'dipakai']);
+         }
 
             $validated['department_id'] = auth()->user()->employee?->department?->id;
             AssetUsage::create($validated);
@@ -385,6 +391,11 @@ class AssetUsageController extends Controller
      */
     public function returnAsset(AssetUsage $assetUsage)
     {
+        // Pastikan aset yang akan dikembalikan bukan jenis habis pakai.
+        if ($assetUsage->asset->jenis_aset === 'habis_pakai') {
+            return redirect()->back()
+                ->with('error', 'Aset habis pakai tidak dapat dikembalikan karena bersifat konsumsi.');
+        }
         $this->authorize('return', $assetUsage);
         if ($assetUsage->status !== 'dipakai') {
             return redirect()->back()
