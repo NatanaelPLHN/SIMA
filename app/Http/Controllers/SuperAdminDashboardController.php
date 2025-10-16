@@ -4,23 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\Asset;
 use App\Models\User;
+use App\Models\Institution;
+use App\Models\Employee;
 use Spatie\Activitylog\Models\Activity;
 
 class SuperadminDashboardController extends Controller
 {
     public function dashboard()
-    {
-        // Superadmin bisa lihat statistik semua
-        $totalAssets = Asset::count();
-        $rusak = Asset::where('status', 'rusak')->count();
-        $hilang = Asset::where('status', 'hilang')->count();
-        $totalUsers = User::count();
-        $admins = User::where('role', 'admin')->count();
-        $pegawai = User::where('role', 'pegawai')->count();
+{
+$institutionCount = Institution::count();
+$employeeCount = Employee::count();
+$activities = Activity::latest()->paginate(10);
 
-        $activities = Activity::latest()->paginate(10);
-        return view('superadmin.dashboard', compact('totalAssets', 'rusak', 'hilang', 'totalUsers', 'admins', 'pegawai', 'activities',));
-    }
+return view('superadmin.dashboard', compact('institutionCount', 'employeeCount', 'activities'));
+     }
+    // public function dashboard()
+    // {
+    //     // Superadmin bisa lihat statistik semua
+    //     $totalAssets = Asset::count();
+    //     $rusak = Asset::where('status', 'rusak')->count();
+    //     $hilang = Asset::where('status', 'hilang')->count();
+    //     $totalUsers = User::count();
+    //     $admins = User::where('role', 'admin')->count();
+    //     $pegawai = User::where('role', 'pegawai')->count();
+
+    //     $activities = Activity::latest()->paginate(10);
+    //     return view('superadmin.dashboard', compact('totalAssets', 'rusak', 'hilang', 'totalUsers', 'admins', 'pegawai', 'activities',));
+    // }
 
     // public function instansi()
     // {
