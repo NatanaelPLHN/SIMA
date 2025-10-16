@@ -230,10 +230,17 @@ class StockOpnameController extends Controller
                     $opname->delete();
                 } elseif ($opname->status === 'dijadwalkan') {
                     $opname->update(['status' => 'cancelled']);
-                }
+                    // return back()->with('success', 'Sesi stock opname berhasil dibatalkan.');
+                // routeForRole('opname', 'show', $session->id) }}
+                        return redirect(routeForRole('opname', 'show', $opname->id))
+                ->with('success', 'Sesi stock opname berhasil dibatalkan');
+   
+            }
             });
+                return redirect(routeForRole('opname', 'index'))
+                ->with('success', 'Sesi stock opname berhasil dibatalkan.');
+    
 
-            return back()->with('success', 'Sesi stock opname berhasil dibatalkan.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membatalkan sesi: ' . $e->getMessage());
         }

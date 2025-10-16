@@ -124,6 +124,17 @@ class EmployeeController extends Controller
             'telepon' => 'nullable|string|max:20',
             'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
+        ],[
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.unique' => 'NIP sudah terdaftar.',
+            'nama.required' => 'Nama wajib diisi.',
+            'nama.string' => 'Nama harus berupa teks.',
+            'nama.max' => 'Nama maksimal 255 karakter.',
+            'alamat.string' => 'Alamat harus berupa teks.',
+            'telepon.string' => 'Telepon harus berupa teks.',
+            'telepon.max' => 'Telepon maksimal 20 karakter.',
+            'institution_id.exists' => 'Institusi tidak valid.',
+            'department_id.exists' => 'Bidang tidak valid.',
         ]);
 
         // Business rules per role

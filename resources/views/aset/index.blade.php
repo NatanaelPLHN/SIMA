@@ -687,7 +687,7 @@
                     <div>{{ $assetsHabisPakai->links() }}</div>
                 </div>
             @endif
-        </div>
+        </div>;
     </div>
 
 </div>
