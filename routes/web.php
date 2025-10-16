@@ -42,6 +42,7 @@ Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->name('categories.by-group')->middleware('auth'); // optional: biar tetap butuh login
+Route::get('departments/{department}/employees', [UserController::class, 'getEmployeesByDepartment'])->name('departments.employees')->middleware('auth');
 
 // Route publik untuk verifikasi aset via QR Code
 Route::get('verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
@@ -58,8 +59,6 @@ Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployee
 // untuk menyimpan progress opname bidang
 // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
 
-
-
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
@@ -68,9 +67,9 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     // Route::get('asset-usage', AssetUsageController::class);
     // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
     // Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
-    Route::resource('asset-usage', AssetUsageController::class)->except(['create','edit','delete','update']);
-    Route::resource('assets', controller: AssetsController::class)->except(['create','edit','destroy','update']);;
-
+    Route::resource('asset-usage', AssetUsageController::class)->except(['create', 'edit', 'delete', 'update']);
+    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
+    Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
 });
 
 // SubAdmin routes
@@ -100,6 +99,9 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     // Autosave per-detail (AJAX partial update) — best practice: PATCH
     Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
         ->name('opname.details.update');
+    Route::post('opname/{opname}/validate-completion', [StockOpnameDepartmentController::class, 'validateCompletion'])->name(
+        'opname.validate'
+    );
 
     // Definisikan route 'create' secara manual untuk menerima parameter opsional
     Route::get('asset-usage/create/{jenisAset?}', [AssetUsageController::class, 'create'])->name(
@@ -129,7 +131,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('employees/export', [EmployeeController::class, 'export'])->name('employee.export');
     Route::post('users/export/', [UserController::class, 'export'])->name('user.export');
     Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
-
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
@@ -141,6 +142,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
     Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
+    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
+    Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
 });
 
 // Superadmin routes

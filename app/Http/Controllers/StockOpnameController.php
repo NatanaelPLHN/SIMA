@@ -14,20 +14,96 @@ use Illuminate\Support\Facades\DB;
 
 class StockOpnameController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $user = auth()->user();
+    //     $institutionId = $user->employee->institution_id;
+
+    //     $departements = Departement::where('instansi_id', $institutionId)->get();
+
+    //     $sessions = StockOpnameSession::with(['scheduler', 'details'])
+    //         ->latest()
+    //         ->paginate(10);
+
+    //     return view('opname.institution.index', compact('sessions', 'departements'));
+    // }
+
+    // public function index()
+    // {
+    //     $user = auth()->user();
+    //     $institutionId = $user->employee->institution_id;
+
+    //     // Query dasar untuk sesi di institusi pengguna
+    //     $sessionsQuery = StockOpnameSession::whereHas('departement', function ($query) use ($institutionId) {
+    //         $query->where('instansi_id', $institutionId);
+    //     });
+
+    //     // Menghitung statistik
+    //     $overview = [
+    //         'total' => $sessionsQuery->clone()->count(),
+    //         'dijadwalkan' => $sessionsQuery->clone()->where('status', 'dijadwalkan')->count(),
+    //         'proses' => $sessionsQuery->clone()->where('status', 'proses')->count(),
+    //         'selesai' => $sessionsQuery->clone()->where('status', 'selesai')->count(),
+    //     ];
+
+    //     $departements = Departement::where('instansi_id', $institutionId)->get();
+
+    //     // Mengambil data sesi untuk paginasi
+    //     $sessions = $sessionsQuery->clone()->with(['scheduler', 'details'])
+    //         ->latest()
+    //         ->paginate(10);
+
+    //     return view('opname.institution.index', compact('sessions', 'departements', 'overview'));
+    // }
+
+    public function index(Request $request)
     {
         $user = auth()->user();
         $institutionId = $user->employee->institution_id;
 
+        // Ambil nilai filter dari request
+        $filterJenisAset = $request->input('jenis_aset');
+        $filterStatus = $request->input('status');
+
+        // Query dasar untuk sesi di institusi pengguna
+        $sessionsQuery = StockOpnameSession::whereHas('departement', function ($query) use ($institutionId) {
+            $query->where('instansi_id', $institutionId);
+        });
+
+        // Terapkan filter Jenis Aset jika ada
+        if ($filterJenisAset) {
+            // Filter ini memeriksa apakah ADA detail dalam sesi yang cocok dengan jenis aset
+            $sessionsQuery->whereHas('details.asset', function ($query) use ($filterJenisAset) {
+                $query->where('jenis_aset', $filterJenisAset);
+            });
+        }
+
+        // Terapkan filter Status jika ada
+        if ($filterStatus) {
+            $sessionsQuery->where('status', $filterStatus);
+        }
+
+        // Menghitung statistik (overview tidak terpengaruh filter)
+        $overviewQuery = StockOpnameSession::whereHas('departement', function ($query) use ($institutionId) {
+            $query->where('instansi_id', $institutionId);
+        });
+        $overview = [
+            'total' => $overviewQuery->clone()->count(),
+            'dijadwalkan' => $overviewQuery->clone()->where('status', 'dijadwalkan')->count(),
+            'proses' => $overviewQuery->clone()->where('status', 'proses')->count(),
+            'selesai' => $overviewQuery->clone()->where('status', 'selesai')->count(),
+        ];
+
         $departements = Departement::where('instansi_id', $institutionId)->get();
 
-        $sessions = StockOpnameSession::with(['scheduler', 'details'])
+        // Mengambil data sesi untuk paginasi dengan filter yang sudah diterapkan
+        $sessions = $sessionsQuery->with(['scheduler', 'details'])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->query()); // <-- Penting untuk paginasi
 
-        return view('opname.institution.index', compact('sessions', 'departements'));
+        return view('opname.institution.index', compact('sessions', 'departements', 'overview'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -99,7 +175,7 @@ class StockOpnameController extends Controller
                         'stock_opname_id' => $session->id,
                         'aset_id' => $asset->id,
                         'jumlah_sistem' => $asset->jumlah,
-                        'jumlah_fisik' => 0,
+                        'jumlah_fisik' => null,
                         'status_lama' => $asset->status,
                         'status_fisik' => null,
                         // 'status_fisik' => $asset->status,
@@ -231,16 +307,13 @@ class StockOpnameController extends Controller
                 } elseif ($opname->status === 'dijadwalkan') {
                     $opname->update(['status' => 'cancelled']);
                     // return back()->with('success', 'Sesi stock opname berhasil dibatalkan.');
-                // routeForRole('opname', 'show', $session->id) }}
-                        return redirect(routeForRole('opname', 'show', $opname->id))
-                ->with('success', 'Sesi stock opname berhasil dibatalkan');
-   
-            }
+                    // routeForRole('opname', 'show', $session->id) }}
+                    return redirect(routeForRole('opname', 'show', $opname->id))
+                        ->with('success', 'Sesi stock opname berhasil dibatalkan');
+                }
             });
-                return redirect(routeForRole('opname', 'index'))
+            return redirect(routeForRole('opname', 'index'))
                 ->with('success', 'Sesi stock opname berhasil dibatalkan.');
-    
-
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membatalkan sesi: ' . $e->getMessage());
         }
