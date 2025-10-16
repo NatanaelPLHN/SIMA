@@ -59,8 +59,9 @@ class AdminDashboardController extends Controller
 
             'stockStatus' => [
                 'selesai' => $stockOpnameSessions->clone()->where('status', 'selesai')->count(),
-                'berlangsung' => $stockOpnameSessions->clone()->whereIn('status', ['proses', 'dijadwalkan'])->count(),
-                'belum' => $stockOpnameSessions->clone()->where('status', 'draft')->count(),
+                'berlangsung' => $stockOpnameSessions->clone()->where('status', 'proses')->count(),
+                'belum' => $stockOpnameSessions->clone()->whereIn('status', ['draft', 'dijadwalkan'])->count(),
+                // 'belum' => $stockOpnameSessions->clone()->where('status', 'draft')->count(),
                 'total' => $stockOpnameSessions->clone()->count(),
             ],
 
