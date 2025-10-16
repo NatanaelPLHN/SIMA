@@ -151,20 +151,6 @@ class UserController extends Controller
         return view('user.show', compact('user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // ORIGINAL------------------------------
-
-    // public function edit(User $user)
-    // {
-    //     $login = Auth::user();
-    //     $user->load('employee');
-    //     $employees = Employee::all(); // Tambahkan ini
-    //     // $employees = Employee::with(['department', 'institution', 'user']);
-
-    //     return view('user.edit_user', compact('user', 'employees', 'login'));
-    // }
     public function edit(User $user)
     {
         $login = Auth::user();
@@ -172,6 +158,9 @@ class UserController extends Controller
 
         $query = Employee::query();
 
+        $departments = Departement::whereDoesntHave('employees.user', function ($query) {
+            $query->where('role', 'admin');
+        })->get();
         // Query HANYA mengambil karyawan yang BELUM punya akun,
         // ATAU karyawan yang saat ini terhubung dengan akun INI.
         $query->where(function ($q) use ($user) {
@@ -192,47 +181,9 @@ class UserController extends Controller
 
         $employees = $query->orderBy('nama')->get();
 
-        return view('user.edit_user', compact('user', 'employees', 'login'));
+        return view('user.edit_user', compact('user', 'employees', 'login', 'departments'));
     }
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, User $user)
-    // {
-    //     $validated = $request->validate([
-    //         'email'       => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-    //         'password'    => 'nullable|min:6|confirmed',
-    //         'role'        => ['required', Rule::in(['superadmin', 'admin', 'subadmin', 'user'])],
-    //         'karyawan_id' => 'nullable|exists:employees,id',
-    //     ], [
-    //         'email.unique'       => 'Email sudah digunakan.',
-    //         'email.required'     => 'Email wajib diisi.',
-    //         'role.required'      => 'Role wajib diisi.',
-    //         'role.in'            => 'Role tidak valid.',
-    //         'password.min'       => 'Password minimal 6 karakter.',
-    //         'password.confirmed' => 'Konfirmasi password tidak cocok.',
-    //         'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
-    //     ]);
 
-    //     $original = $user->replicate();
-
-    //     // Handle password: only hash if it's provided
-    //     if (!empty($validated['password'])) {
-    //         $validated['password'] = Hash::make($validated['password']);
-    //     } else {
-    //         unset($validated['password']);
-    //     }
-
-    //     $user->fill($validated);
-
-    //     if (!$user->isDirty()) {
-    //         return back()->with('info', 'Tidak ada perubahan pada data user.');
-    //     }
-
-    //     $user->update($validated);
-
-    //     return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
-    // }
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
