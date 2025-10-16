@@ -42,6 +42,7 @@ Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('categories/by-group', [CategoryController::class, 'getByGroup'])->name('categories.by-group')->middleware('auth'); // optional: biar tetap butuh login
+Route::get('departments/{department}/employees', [UserController::class, 'getEmployeesByDepartment'])->name('departments.employees')->middleware('auth');
 
 // Route publik untuk verifikasi aset via QR Code
 Route::get('verify/asset/{asset:kode}', [AssetsController::class, 'verifyAsset'])->name('asset.public.verify');
@@ -57,8 +58,6 @@ Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployee
 
 // untuk menyimpan progress opname bidang
 // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
-
-
 
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
@@ -129,7 +128,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('employees/export', [EmployeeController::class, 'export'])->name('employee.export');
     Route::post('users/export/', [UserController::class, 'export'])->name('user.export');
     Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
-
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
