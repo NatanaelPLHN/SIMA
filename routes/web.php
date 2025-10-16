@@ -141,6 +141,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
     Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
+    Route::resource('assets', controller: AssetsController::class)->except(['create','edit','destroy','update']);;
+    Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
+
 });
 
 // Superadmin routes

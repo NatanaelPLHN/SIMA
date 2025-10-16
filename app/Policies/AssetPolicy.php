@@ -10,13 +10,13 @@ class AssetPolicy
     public function viewAny(User $user)
     {
         // smua role bisa lihat asset
-        return in_array($user->role, ['pegawai','admin','superadmin']);
+        return in_array($user->role, ['user','admin','superadmin']);
     }
 
     public function view(User $user, Asset $asset)
     {
         // semua role bisa lihat detail
-        return in_array($user->role, ['pegawai','admin','superadmin']);
+        return in_array($user->role, ['user','admin','superadmin']);
     }
 
     public function create(User $user)
