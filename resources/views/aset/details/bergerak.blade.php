@@ -199,119 +199,121 @@
 
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                {{-- 🔹 Asset Activity Log Section --}}
-                <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg mt-8 p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        Riwayat Aktivitas Aset Ini
-                    </h2>
-                    <div class="flex justify-end mt-4">
-                        <a href="{{ route('subadmin.asset.export', $asset->id) }}"
-                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg shadow">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                            </svg>
-                            Export Log Aset
-                        </a>
+    {{-- 🔹 Asset Activity Log Section --}}
+    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg mt-8 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Riwayat Aktivitas Aset Ini
+        </h2>
+        <div class="flex justify-end mt-4">
+            <a href="{{ route('subadmin.asset.export', $asset->id) }}"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg shadow">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Export Log Aset
+            </a>
+        </div>
+
+        @if ($logs->isEmpty())
+            <div class="text-gray-500 dark:text-gray-400 text-center py-6">
+                Belum ada aktivitas tercatat untuk aset ini.
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-100 dark:bg-gray-700">
+                        <tr>
+                            <th
+                                class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                                No</th>
+                            <th
+                                class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                                Tanggal</th>
+                            <th
+                                class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                                User</th>
+                            <th
+                                class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                                Event</th>
+                            <th
+                                class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                                Deskripsi</th>
+                            <th
+                                class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                                Perubahan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        @foreach ($logs as $index => $activity)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="p-4 text-sm text-center text-gray-900 dark:text-gray-300">
+                                    {{ $index + $logs->firstItem() }}
+                                </td>
+                                <td class="p-4 text-sm text-center text-gray-900 dark:text-gray-300">
+                                    {{ $activity->created_at->format('Y-m-d H:i:s') }}
+                                </td>
+                                <td class="p-4 text-sm text-center text-gray-900 dark:text-gray-300">
+                                    {{ $activity->causer?->email ?? 'System' }}
+                                </td>
+                                <td class="p-4 text-sm text-center">
+                                    @php
+                                        $colors = [
+                                            'created' =>
+                                                'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100',
+                                            'updated' =>
+                                                'bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100',
+                                            'deleted' => 'bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100',
+                                            'Status Changed' =>
+                                                'bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100',
+                                        ];
+                                    @endphp
+                                    <span
+                                        class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$activity->event] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
+                                        {{ ucfirst($activity->event ?? '-') }}
+                                    </span>
+                                </td>
+                                <td class="p-4 text-sm text-gray-900 dark:text-gray-300">
+                                    {{ $activity->description ?? '-' }}
+                                </td>
+                                <td class="p-4 text-sm text-gray-900 dark:text-gray-300">
+                                    @if ($activity->properties && isset($activity->properties['old'], $activity->properties['attributes']))
+                                        @foreach ($activity->properties['attributes'] as $field => $newValue)
+                                            @php
+                                                $oldValue = $activity->properties['old'][$field] ?? '—';
+                                            @endphp
+                                            <div>
+                                                <strong>{{ ucfirst($field) }}:</strong>
+                                                <span class="text-red-500">{{ $oldValue }}</span>
+                                                →
+                                                <span class="text-green-600">{{ $newValue }}</span>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <span>-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination --}}
+            @if ($logs->hasPages())
+                <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div class="text-sm text-gray-700 dark:text-gray-300 mb-2 sm:mb-0">
+                        Menampilkan <span class="font-medium">{{ $logs->firstItem() }}</span> sampai
+                        <span class="font-medium">{{ $logs->lastItem() }}</span> dari
+                        <span class="font-medium">{{ $logs->total() }}</span> hasil
                     </div>
-
-                    @if ($logs->isEmpty())
-                        <div class="text-gray-500 dark:text-gray-400 text-center py-6">
-                            Belum ada aktivitas tercatat untuk aset ini.
-                        </div>
-                    @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-100 dark:bg-gray-700">
-                                    <tr>
-                                        <th
-                                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                                            No</th>
-                                        <th
-                                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                                            Tanggal</th>
-                                        <th
-                                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                                            User</th>
-                                        <th
-                                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                                            Event</th>
-                                        <th
-                                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                                            Deskripsi</th>
-                                        <th
-                                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
-                                            Perubahan</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                    @foreach ($logs as $index => $activity)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            <td class="p-4 text-sm text-center text-gray-900 dark:text-gray-300">
-                                                {{ $index + $logs->firstItem() }}
-                                            </td>
-                                            <td class="p-4 text-sm text-center text-gray-900 dark:text-gray-300">
-                                                {{ $activity->created_at->format('Y-m-d H:i:s') }}
-                                            </td>
-                                            <td class="p-4 text-sm text-center text-gray-900 dark:text-gray-300">
-                                                {{ $activity->causer?->email ?? 'System' }}
-                                            </td>
-                                            <td class="p-4 text-sm text-center">
-                                                @php
-                                                    $colors = [
-                                                        'created' =>
-                                                            'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100',
-                                                        'updated' =>
-                                                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100',
-                                                        'deleted' =>
-                                                            'bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100',
-                                                        'Status Changed' =>
-                                                            'bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100',
-                                                    ];
-                                                @endphp
-                                                <span
-                                                    class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$activity->event] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' }}">
-                                                    {{ ucfirst($activity->event ?? '-') }}
-                                                </span>
-                                            </td>
-                                            <td class="p-4 text-sm text-gray-900 dark:text-gray-300">
-                                                {{ $activity->description ?? '-' }}
-                                            </td>
-                                            <td class="p-4 text-sm text-gray-900 dark:text-gray-300">
-                                                @if ($activity->properties && isset($activity->properties['old'], $activity->properties['attributes']))
-                                                    @foreach ($activity->properties['attributes'] as $field => $newValue)
-                                                        @php
-                                                            $oldValue = $activity->properties['old'][$field] ?? '—';
-                                                        @endphp
-                                                        <div>
-                                                            <strong>{{ ucfirst($field) }}:</strong>
-                                                            <span class="text-red-500">{{ $oldValue }}</span>
-                                                            →
-                                                            <span class="text-green-600">{{ $newValue }}</span>
-                                                        </div>
-                                                    @endforeach
-                                                @else
-                                                    <span>-</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {{-- Pagination --}}
-                        @if ($logs->hasPages())
-                            <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                <div class="text-sm text-gray-700 dark:text-gray-300 mb-2 sm:mb-0">
-                                    Menampilkan <span class="font-medium">{{ $logs->firstItem() }}</span> sampai
-                                    <span class="font-medium">{{ $logs->lastItem() }}</span> dari
-                                    <span class="font-medium">{{ $logs->total() }}</span> hasil
-                                </div>
-                                <div>{{ $logs->links() }}</div>
-                            </div>
-                        @endif
-                    @endif
+                    <div>{{ $logs->links() }}</div>
                 </div>
-            @endsection
+            @endif
+        @endif
+    </div>
+@endsection
