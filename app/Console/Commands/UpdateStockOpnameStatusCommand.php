@@ -53,6 +53,7 @@ class UpdateStockOpnameStatusCommand extends Command
                     $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
                     $session->save();
 
+                    $session->details()->whereNull('status_fisik')->update(['status_fisik' => 'hilang']);
                     // 2. Proses detail yang belum diverifikasi
                     // Asumsi 'belum diproses' adalah jika status fisik belum diubah dari status awal
 

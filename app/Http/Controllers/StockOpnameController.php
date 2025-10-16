@@ -99,7 +99,7 @@ class StockOpnameController extends Controller
                         'stock_opname_id' => $session->id,
                         'aset_id' => $asset->id,
                         'jumlah_sistem' => $asset->jumlah,
-                        'jumlah_fisik' => 0,
+                        'jumlah_fisik' => null,
                         'status_lama' => $asset->status,
                         'status_fisik' => null,
                         // 'status_fisik' => $asset->status,
@@ -234,12 +234,12 @@ class StockOpnameController extends Controller
                 // routeForRole('opname', 'show', $session->id) }}
                         return redirect(routeForRole('opname', 'show', $opname->id))
                 ->with('success', 'Sesi stock opname berhasil dibatalkan');
-   
+
             }
             });
                 return redirect(routeForRole('opname', 'index'))
                 ->with('success', 'Sesi stock opname berhasil dibatalkan.');
-    
+
 
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membatalkan sesi: ' . $e->getMessage());
