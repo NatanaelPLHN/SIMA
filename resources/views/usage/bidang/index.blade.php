@@ -39,9 +39,9 @@
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <label for="search-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
+                        {{-- <label for="search-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-bergerak"
-                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"> --}}
                         <a href="{{ routeForRole('asset-usage', 'create', 'bergerak') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
@@ -153,9 +153,9 @@
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
+                        {{-- <label for="search-tidak-bergerak" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-tidak-bergerak"
-                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"> --}}
                         <a href="{{ routeForRole('asset-usage', 'create', 'tidak_bergerak') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah
@@ -268,9 +268,9 @@
                     </div>
 
                     <div class="flex items-center space-x-2">
-                        <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
+                        {{-- <label for="search-habis-pakai" class="text-sm font-medium text-gray-700">Cari:</label>
                         <input type="text" id="search-habis-pakai"
-                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"> --}}
                         <a href="{{ routeForRole('asset-usage', 'create', 'habis_pakai') }}"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
                             Tambah

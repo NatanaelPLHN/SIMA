@@ -99,6 +99,9 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     // Autosave per-detail (AJAX partial update) — best practice: PATCH
     Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
         ->name('opname.details.update');
+    Route::post('opname/{opname}/validate-completion', [StockOpnameDepartmentController::class, 'validateCompletion'])->name(
+        'opname.validate'
+    );
 
     // Definisikan route 'create' secara manual untuk menerima parameter opsional
     Route::get('asset-usage/create/{jenisAset?}', [AssetUsageController::class, 'create'])->name(

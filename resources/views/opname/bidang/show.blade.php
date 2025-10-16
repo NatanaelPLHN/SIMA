@@ -70,14 +70,13 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($opname->details as $index => $detail)
                             {{-- PERUBAHAN 1: Menambahkan atribut data-asset-code pada <tr> dan data-update-url --}}
-                            <tr
-                                data-asset-code="{{ $detail->asset->kode ?? '' }}"
-                                data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}"
-                            >
+                            <tr data-asset-code="{{ $detail->asset->kode ?? '' }}"
+                                data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}">
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->kode ?? '-' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->nama_aset ?? '-' }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->category->nama ?? '-' }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->category->nama ?? '-' }}
+                                </td>
                                 @if ($detail->asset->jenis_aset == 'bergerak' || $detail->asset->jenis_aset == 'tidak_bergerak')
                                     <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->status_lama ?? '-' }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-900">
@@ -133,8 +132,7 @@ transition-colors">
     </div>
 
     {{-- PERUBAHAN 2: Menambahkan HTML untuk Modal Update Aset --}}
-    <div id="update-asset-modal"
-        class="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div id="update-asset-modal" class="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 id="modal-title" class="text-xl font-semibold text-gray-800 mb-2">Update Aset</h2>
             <p id="modal-asset-info" class="text-sm text-gray-600 mb-4"></p>
@@ -174,8 +172,8 @@ transition-colors">
 
     <script>
         // Bungkus seluruh logic agar tidak terjadi redeclare variabel global
-        (function () {
-            document.addEventListener('DOMContentLoaded', function () {
+        (function() {
+            document.addEventListener('DOMContentLoaded', function() {
                 // --- DEKLARASI ELEMEN UTAMA (hanya sekali) ---
                 const opnameForm = document.getElementById('opname-form');
                 const finishButton = document.getElementById('finish-opname-btn');
@@ -213,7 +211,9 @@ transition-colors">
                     }
                 }
 
-                async function sendPatch(url, payload, opts = { keepalive: false }) {
+                async function sendPatch(url, payload, opts = {
+                    keepalive: false
+                }) {
                     return await fetch(url, {
                         method: 'PATCH',
                         headers: {
@@ -229,9 +229,14 @@ transition-colors">
                 }
 
                 const localPrefix = 'opname_pending_';
+
                 function savePending(detailId, url, payload) {
                     try {
-                        localStorage.setItem(localPrefix + detailId, JSON.stringify({ url, payload, ts: Date.now() }));
+                        localStorage.setItem(localPrefix + detailId, JSON.stringify({
+                            url,
+                            payload,
+                            ts: Date.now()
+                        }));
                     } catch (e) {
                         console.warn('Gagal menyimpan ke localStorage', e);
                     }
@@ -245,9 +250,16 @@ transition-colors">
                     const raw = localStorage.getItem(localPrefix + detailId);
                     if (!raw) return false;
                     let parsed;
-                    try { parsed = JSON.parse(raw); } catch (e) { removePending(detailId); return false; }
                     try {
-                        const res = await sendPatch(parsed.url, parsed.payload, { keepalive: useKeepalive });
+                        parsed = JSON.parse(raw);
+                    } catch (e) {
+                        removePending(detailId);
+                        return false;
+                    }
+                    try {
+                        const res = await sendPatch(parsed.url, parsed.payload, {
+                            keepalive: useKeepalive
+                        });
                         if (res.ok) {
                             removePending(detailId);
                             return true;
@@ -299,7 +311,9 @@ transition-colors">
                         try {
                             const res = await sendPatch(url, payload);
                             if (!res.ok) {
-                                const body = await res.json().catch(() => ({ message: res.statusText }));
+                                const body = await res.json().catch(() => ({
+                                    message: res.statusText
+                                }));
                                 console.warn('Server error autosave:', body);
                                 savePending(detailId, url, payload);
                                 showAutoSave('Gagal tersimpan — disimpan sementara');
@@ -307,7 +321,9 @@ transition-colors">
                             }
                             const data = await res.json().catch(() => ({}));
                             removePending(detailId);
-                            showAutoSave(`Tersimpan (${data.timestamp || new Date().toLocaleTimeString()})`);
+                            showAutoSave(
+                                `Tersimpan (${data.timestamp || new Date().toLocaleTimeString()})`
+                                );
                         } catch (err) {
                             console.error('Autosave network error', err);
                             savePending(detailId, url, payload);
@@ -318,15 +334,16 @@ transition-colors">
 
                 // Attach listeners to inputs/selects
                 function attachAutoSaveListeners() {
-                    document.querySelectorAll('select[name^="statuses"], input[name^="jumlah_fisik"]').forEach(el => {
-                        // remove previous to avoid duplicate listeners
-                        el.removeEventListener('change', handleChangeEvent);
-                        el.addEventListener('change', handleChangeEvent);
-                        if (el.tagName.toLowerCase() === 'input') {
-                            el.removeEventListener('blur', handleChangeEvent);
-                            el.addEventListener('blur', handleChangeEvent);
-                        }
-                    });
+                    document.querySelectorAll('select[name^="statuses"], input[name^="jumlah_fisik"]').forEach(
+                        el => {
+                            // remove previous to avoid duplicate listeners
+                            el.removeEventListener('change', handleChangeEvent);
+                            el.addEventListener('change', handleChangeEvent);
+                            if (el.tagName.toLowerCase() === 'input') {
+                                el.removeEventListener('blur', handleChangeEvent);
+                                el.addEventListener('blur', handleChangeEvent);
+                            }
+                        });
                 }
 
                 // flush pending on online
@@ -346,28 +363,33 @@ transition-colors">
                 // attempt flush any pending on load
                 flushAllPending(false);
 
-                                // --- LOGIKA PEMINDAI QR (REVISI FINAL DENGAN PEMBERSIHAN PAKSA) ---
-                                function startScanning() {
-                                    qrScannerModal.classList.remove('hidden');
+                // --- LOGIKA PEMINDAI QR (REVISI FINAL DENGAN PEMBERSIHAN PAKSA) ---
+                function startScanning() {
+                    qrScannerModal.classList.remove('hidden');
 
-                                    // Selalu buat instance baru untuk memastikan state bersih, seperti di file referensi
-                                    html5QrCode = new Html5Qrcode("qr-reader");
+                    // Selalu buat instance baru untuk memastikan state bersih, seperti di file referensi
+                    html5QrCode = new Html5Qrcode("qr-reader");
 
-                                    const config = {
-                                        fps: 10,
-                                        qrbox: { width: 250, height: 250 }
-                                    };
+                    const config = {
+                        fps: 10,
+                        qrbox: {
+                            width: 250,
+                            height: 250
+                        }
+                    };
 
-                                    html5QrCode.start(
-                                        { facingMode: "environment" },
-                                        config,
-                                        qrCodeSuccessCallback
-                                    ).catch(err => {
-                                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
-                                        // Coba hentikan untuk membersihkan jika ada sisa elemen
-                                        stopScanning();
-                                    });
-                                }
+                    html5QrCode.start({
+                            facingMode: "environment"
+                        },
+                        config,
+                        qrCodeSuccessCallback
+                    ).catch(err => {
+                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
+                        // Coba hentikan untuk membersihkan jika ada sisa elemen
+                        stopScanning();
+                    });
+                }
+
                 function stopScanning() {
                     if (html5QrCode && html5QrCode.isScanning) {
                         // Biarkan library menangani penghentian dan pembersihan.
@@ -380,7 +402,8 @@ transition-colors">
                             .catch(err => {
                                 // Ini adalah tempat error 'removeChild' terjadi.
                                 // Kita bisa mengabaikannya dengan aman karena tujuannya (menghentikan scan) tercapai.
-                                console.warn("Scanner stop function failed, but this is often ignorable.", err);
+                                console.warn("Scanner stop function failed, but this is often ignorable.",
+                                    err);
                             })
                             .finally(() => {
                                 // Apapun yang terjadi (berhasil atau gagal), pastikan modal selalu tersembunyi.
@@ -412,16 +435,21 @@ transition-colors">
                 async function fetchAssetData(assetCode) {
                     const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
                     if (!targetRow) {
-                        console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
+                        console.error(
+                        `[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
                         alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
                         return;
                     }
 
                     try {
-                        const response = await fetch(`/api/asset/${assetCode}`, { credentials: 'same-origin' });
+                        const response = await fetch(`/api/asset/${assetCode}`, {
+                            credentials: 'same-origin'
+                        });
                         console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
                         if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                            const errorData = await response.json().catch(() => ({
+                                message: response.statusText
+                            }));
                             throw new Error(errorData.message || 'Gagal mengambil data aset.');
                         }
                         const asset = await response.json();
@@ -436,7 +464,8 @@ transition-colors">
                     modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
 
                     if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
-                        const currentStatus = (targetRow.querySelector('select[name^="statuses"]') || {}).value || '';
+                        const currentStatus = (targetRow.querySelector('select[name^="statuses"]') || {})
+                            .value || '';
                         const selectHTML = `
                         <label for="modal-status" class="block text-sm font-medium text-gray-700">Status Fisik</label>
                         <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -447,8 +476,10 @@ transition-colors">
                         </select>`;
                         modalDynamicContent.innerHTML = selectHTML;
                     } else if (asset.jenis_aset === 'habis_pakai') {
-                        const currentJumlah = (targetRow.querySelector('input[name^="jumlah_fisik"]') || {}).value || '';
-                        const inputHTML = `
+                        const currentJumlah = (targetRow.querySelector('input[name^="jumlah_fisik"]') || {})
+                            .value || '';
+                        const inputHTML =
+                            `
                         <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
                         <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
                         modalDynamicContent.innerHTML = inputHTML;
@@ -464,7 +495,7 @@ transition-colors">
 
                 if (modalCancelButton) modalCancelButton.addEventListener('click', hideUpdateModal);
 
-                if (modalSaveButton) modalSaveButton.addEventListener('click', function () {
+                if (modalSaveButton) modalSaveButton.addEventListener('click', function() {
                     const assetCode = this.dataset.assetCode;
                     const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
 
@@ -477,14 +508,18 @@ transition-colors">
                         if (targetSelect) {
                             targetSelect.value = newValue;
                             // trigger change to fire autosave
-                            targetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                            targetSelect.dispatchEvent(new Event('change', {
+                                bubbles: true
+                            }));
                         }
                     } else if (modalInput.id === 'modal-jumlah') {
                         const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
                         if (targetInput) {
                             targetInput.value = newValue;
                             // trigger blur or change to fire autosave
-                            targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            targetInput.dispatchEvent(new Event('change', {
+                                bubbles: true
+                            }));
                         }
                     }
 
@@ -497,64 +532,165 @@ transition-colors">
                 });
 
                 // --- LOGIKA TOMBOL SELESAI (SWEETALERT) ---
+                // if (finishButton) {
+                //     finishButton.addEventListener('click', function (event) {
+                //         event.preventDefault();
+                //         Swal.fire({
+                //             title: 'Konfirmasi Penyelesaian',
+                //             text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
+                //             input: 'password',
+                //             inputAttributes: {
+                //                 autocapitalize: 'off'
+                //             },
+                //             showCancelButton: true,
+                //             confirmButtonText: 'Verifikasi & Selesaikan',
+                //             cancelButtonText: 'Batal',
+                //             showLoaderOnConfirm: true,
+                //             preConfirm: (password) => {
+                //                 const csrf = csrfToken;
+                //                 return fetch('{{ route('verifyPassword') }}', {
+                //                         method: 'POST',
+                //                         headers: {
+                //                             'Content-Type': 'application/json',
+                //                             'Accept': 'application/json',
+                //                             'X-CSRF-TOKEN': csrf
+                //                         },
+                //                         credentials: 'same-origin',
+                //                         body: JSON.stringify({
+                //                             password: password
+                //                         })
+                //                     })
+                //                     .then(response => {
+                //                         if (!response.ok) {
+                //                             return response.json().then(err => {
+                //                                 throw new Error(err.message)
+                //                             });
+                //                         }
+                //                         return response.json();
+                //                     })
+                //                     .catch(error => {
+                //                         Swal.showValidationMessage(
+                //                             `Verifikasi gagal: ${error.message}`);
+                //                     });
+                //             },
+                //             allowOutsideClick: () => !Swal.isLoading()
+                //         }).then((result) => {
+                //             if (result.isConfirmed) {
+                //                 Swal.fire({
+                //                     title: 'Terverifikasi!',
+                //                     text: 'Menyelesaikan sesi stock opname...',
+                //                     icon: 'success',
+                //                     timer: 1500,
+                //                     showConfirmButton: false
+                //                 }).then(() => {
+                //                     opnameForm.submit();
+                //                 });
+                //             }
+                //         });
+                //     });
+                // }
                 if (finishButton) {
-                    finishButton.addEventListener('click', function (event) {
-                        event.preventDefault();
+                    finishButton.addEventListener('click', async function(event) {
+                        event.preventDefault(); // Selalu cegah submit form default
+
+                        const csrf = csrfToken;
+                        const validationUrl =
+                            '{{ route('subadmin.opname.validate', $opname->id) }}';
+                        const passwordUrl = '{{ route('verifyPassword') }}';
+
+                        // Tampilkan loading spinner sederhana
                         Swal.fire({
-                            title: 'Konfirmasi Penyelesaian',
-                            text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
-                            input: 'password',
-                            inputAttributes: {
-                                autocapitalize: 'off'
-                            },
-                            showCancelButton: true,
-                            confirmButtonText: 'Verifikasi & Selesaikan',
-                            cancelButtonText: 'Batal',
-                            showLoaderOnConfirm: true,
-                            preConfirm: (password) => {
-                                const csrf = csrfToken;
-                                return fetch('{{ route('verifyPassword') }}', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Accept': 'application/json',
-                                            'X-CSRF-TOKEN': csrf
-                                        },
-                                        credentials: 'same-origin',
-                                        body: JSON.stringify({
-                                            password: password
-                                        })
-                                    })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            return response.json().then(err => {
-                                                throw new Error(err.message)
-                                            });
+                            title: 'Memeriksa Kelengkapan Data...',
+                            text: 'Mohon tunggu sebentar.',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        try {
+                            // Langkah 1: Validasi kelengkapan data terlebih dahulu
+                            const validationResponse = await fetch(validationUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': csrf
+                                }
+                            });
+
+                            if (!validationResponse.ok) {
+                                const err = await validationResponse.json();
+                                throw new Error(err.message || 'Data tidak lengkap.');
+                            }
+
+                            // Langkah 2: Jika data lengkap, minta password
+                            const {
+                                value: password
+                            } = await Swal.fire({
+                                title: 'Data Lengkap!',
+                                text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
+                                input: 'password',
+                                inputPlaceholder: 'Masukkan password Anda',
+                                inputAttributes: {
+                                    autocapitalize: 'off',
+                                    autocorrect: 'off'
+                                },
+                                showCancelButton: true,
+                                confirmButtonText: 'Verifikasi & Selesaikan',
+                                cancelButtonText: 'Batal',
+                                showLoaderOnConfirm: true,
+                                preConfirm: async (password) => {
+                                    try {
+                                        const passResponse = await fetch(passwordUrl, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'application/json',
+                                                'X-CSRF-TOKEN': csrf
+                                            },
+                                            body: JSON.stringify({
+                                                password: password
+                                            })
+                                        });
+                                        if (!passResponse.ok) {
+                                            const err = await passResponse.json();
+                                            throw new Error(err.message ||
+                                                'Password salah.');
                                         }
-                                        return response.json();
-                                    })
-                                    .catch(error => {
+                                        return passResponse.json();
+                                    } catch (error) {
                                         Swal.showValidationMessage(
                                             `Verifikasi gagal: ${error.message}`);
-                                    });
-                            },
-                            allowOutsideClick: () => !Swal.isLoading()
-                        }).then((result) => {
-                            if (result.isConfirmed) {
+                                    }
+                                },
+                                allowOutsideClick: () => !Swal.isLoading()
+                            });
+
+                            // Langkah 3: Jika password diverifikasi, submit form
+                            if (password) {
                                 Swal.fire({
                                     title: 'Terverifikasi!',
                                     text: 'Menyelesaikan sesi stock opname...',
                                     icon: 'success',
                                     timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    opnameForm.submit();
+                                    showConfirmButton: false,
+                                    willClose: () => {
+                                        opnameForm.submit();
+                                    }
                                 });
                             }
-                        });
+
+                        } catch (error) {
+                            // Tangani error dari validasi kelengkapan data
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Proses Gagal',
+                                text: error.message,
+                            });
+                        }
                     });
                 }
-
                 // If dynamic DOM changes could occur, reattach listeners:
                 // You can call attachAutoSaveListeners() after rows update
             });

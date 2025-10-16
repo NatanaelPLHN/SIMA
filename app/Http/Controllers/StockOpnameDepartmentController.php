@@ -127,8 +127,37 @@ class StockOpnameDepartmentController extends Controller
             'jumlah_fisik' => 'nullable|array',
         ]);
 
+        // **LANGKAH 1: VALIDASI KELENGKAPAN SEBELUM MEMPROSES**
+        // Cek apakah ada item yang belum diisi sesuai jenis asetnya.
+        $isIncomplete = $opname->details()->where(function ($query) {
+            // Kondisi 1: Aset (tidak) bergerak yang status fisiknya null
+            $query->where(function ($q) {
+                $q->whereNull('status_fisik')
+                    ->whereHas('asset', function ($subQuery) {
+                        $subQuery->whereIn('jenis_aset', ['bergerak', 'tidak_bergerak']);
+                    });
+            })
+                // ATAU
+                // Kondisi 2: Aset habis pakai yang jumlah fisiknya null
+                ->orWhere(function ($q) {
+                    $q->whereNull('jumlah_fisik')
+                        ->whereHas('asset', function ($subQuery) {
+                            $subQuery->where('jenis_aset', 'habis_pakai');
+                        });
+                });
+        })->exists(); // Cukup cek apakah ada, tidak perlu ambil datanya
+
+        // Jika ditemukan ada yang belum lengkap, kembalikan dengan peringatan.
+        if ($isIncomplete) {
+            return redirect()->back()
+                ->withInput($request->input()) // Mengembalikan input yang sudah diisi
+                ->with('error', 'Peringatan: Masih ada aset yang belum diperiksa atau dihitung. Silakan lengkapi semua item sebelum  menyelesaikan sesi opname.');
+        }
+
+        // **LANGKAH 2: JIKA LENGKAP, LANJUTKAN PROSES UPDATE**
         DB::beginTransaction();
         try {
+            // Loop ini sekarang aman, karena kita tahu semua item sudah diisi
             foreach ($opname->details as $detail) {
                 $asset = $detail->asset;
                 if (!$asset) continue;
@@ -139,17 +168,11 @@ class StockOpnameDepartmentController extends Controller
                 if (in_array($assetType, ['bergerak', 'tidak_bergerak'])) {
                     if ($request->has("statuses.{$detailId}") && !empty($request->statuses[$detailId])) {
                         $statusFisikInput = $request->statuses[$detailId];
-                        // tambahan ku
-                        if ($statusFisikInput == null) {
-                            $statusFisikInput = 'hilang';
-                        }
 
                         $detail->status_fisik = $statusFisikInput;
                         $asset->status = $statusFisikInput;
-
-                        $jumlahFisikHasil = ($statusFisikInput === 'hilang') ? 0 : 1;
-                        $detail->jumlah_fisik = $jumlahFisikHasil;
-                        $asset->jumlah = $jumlahFisikHasil;
+                        $detail->jumlah_fisik = ($statusFisikInput === 'hilang') ? 0 : 1;
+                        $asset->jumlah = ($statusFisikInput === 'hilang') ? 0 : 1;
 
                         $detail->save();
                         $asset->save();
@@ -157,17 +180,11 @@ class StockOpnameDepartmentController extends Controller
                 } elseif ($assetType === 'habis_pakai') {
                     if ($request->has("jumlah_fisik.{$detailId}")) {
                         $jumlahFisikInput = (int) $request->jumlah_fisik[$detailId];
-                        // tambahan ku
-                        if ($jumlahFisikInput == null) {
-                            $jumlahFisikInput = 0;
-                        }
 
                         $detail->jumlah_fisik = $jumlahFisikInput;
                         $asset->jumlah = $jumlahFisikInput;
-
-                        $statusFisikHasil = ($jumlahFisikInput == 0) ? 'habis' : 'tersedia';
-                        $detail->status_fisik = $statusFisikHasil;
-                        $asset->status = $statusFisikHasil;
+                        $detail->status_fisik = ($jumlahFisikInput == 0) ? 'habis' : 'tersedia';
+                        $asset->status = ($jumlahFisikInput == 0) ? 'habis' : 'tersedia';
 
                         $detail->save();
                         $asset->save();
@@ -183,12 +200,82 @@ class StockOpnameDepartmentController extends Controller
             DB::commit();
 
             return redirect(routeForRole('opname', 'index', $opname->id))
-                ->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
+                ->with('success', 'Stock opname berhasil diselesaikan dan data aset telah diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    // public function update(Request $request, StockOpnameSession $opname)
+    // {
+    //     $request->validate([
+    //         'statuses' => 'nullable|array',
+    //         'jumlah_fisik' => 'nullable|array',
+    //     ]);
+
+    //     DB::beginTransaction();
+    //     try {
+    //         foreach ($opname->details as $detail) {
+    //             $asset = $detail->asset;
+    //             if (!$asset) continue;
+
+    //             $detailId = $detail->id;
+    //             $assetType = $asset->jenis_aset;
+
+    //             if (in_array($assetType, ['bergerak', 'tidak_bergerak'])) {
+    //                 if ($request->has("statuses.{$detailId}") && !empty($request->statuses[$detailId])) {
+    //                     $statusFisikInput = $request->statuses[$detailId];
+    //                     // tambahan ku
+    //                     if ($statusFisikInput == null) {
+    //                         $statusFisikInput = 'hilang';
+    //                     }
+
+    //                     $detail->status_fisik = $statusFisikInput;
+    //                     $asset->status = $statusFisikInput;
+
+    //                     $jumlahFisikHasil = ($statusFisikInput === 'hilang') ? 0 : 1;
+    //                     $detail->jumlah_fisik = $jumlahFisikHasil;
+    //                     $asset->jumlah = $jumlahFisikHasil;
+
+    //                     $detail->save();
+    //                     $asset->save();
+    //                 }
+    //             } elseif ($assetType === 'habis_pakai') {
+    //                 if ($request->has("jumlah_fisik.{$detailId}")) {
+    //                     $jumlahFisikInput = (int) $request->jumlah_fisik[$detailId];
+    //                     // tambahan ku
+    //                     if ($jumlahFisikInput == null) {
+    //                         $jumlahFisikInput = 0;
+    //                     }
+
+    //                     $detail->jumlah_fisik = $jumlahFisikInput;
+    //                     $asset->jumlah = $jumlahFisikInput;
+
+    //                     $statusFisikHasil = ($jumlahFisikInput == 0) ? 'habis' : 'tersedia';
+    //                     $detail->status_fisik = $statusFisikHasil;
+    //                     $asset->status = $statusFisikHasil;
+
+    //                     $detail->save();
+    //                     $asset->save();
+    //                 }
+    //             }
+    //         }
+
+    //         $opname->update([
+    //             'status' => 'selesai',
+    //             'tanggal_selesai' => now(),
+    //         ]);
+
+    //         DB::commit();
+
+    //         return redirect(routeForRole('opname', 'index', $opname->id))
+    //             ->with('success', 'Stock opname berhasil disimpan dan data aset telah diperbarui.');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+    //     }
+    // }
 
     public function complete(Request $request, StockOpnameSession $opname)
     {
@@ -339,5 +426,30 @@ class StockOpnameDepartmentController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
         }
+    }
+    public function validateCompletion(StockOpnameSession $opname)
+    {
+        $isIncomplete = $opname->details()->where(function ($query) {
+            $query->where(function ($q) {
+                $q->whereNull('status_fisik')
+                    ->whereHas('asset', function ($subQuery) {
+                        $subQuery->whereIn('jenis_aset', ['bergerak', 'tidak_bergerak']);
+                    });
+            })
+                ->orWhere(function ($q) {
+                    $q->whereNull('jumlah_fisik')
+                        ->whereHas('asset', function ($subQuery) {
+                            $subQuery->where('jenis_aset', 'habis_pakai');
+                        });
+                });
+        })->exists();
+
+        if ($isIncomplete) {
+            return response()->json([
+                'message' => 'Peringatan: Masih ada aset yang belum diperiksa atau dihitung. Silakan lengkapi semua item sebelum menyelesaikan sesi opname.'
+            ], 422); // 422 Unprocessable Entity
+        }
+
+        return response()->json(['message' => 'Data opname sudah lengkap.']);
     }
 }
