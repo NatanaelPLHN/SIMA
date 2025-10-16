@@ -81,7 +81,8 @@ class StockOpnameDepartmentController extends Controller
         // Kode untuk menampilkan daftar sesi (tidak berubah)
         $user = auth()->user();
         $sessions = StockOpnameSession::with(['scheduler', 'details'])
-            ->where('department_id', $user->employee?->department_id) // Filter sesi untuk departemen ini saja
+            ->where('department_id', $user->employee?->department_id)
+            ->whereIn('status', ['dijadwalkan', 'proses','selesai'])
             ->latest()
             ->paginate(10);
 

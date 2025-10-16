@@ -47,9 +47,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($sessions as $index => $session)
-                        @if (
-                            $session->departement->id == $user->employee?->department?->id &&
-                                !in_array($session->status, ['draft', 'cancelled']))
+
                             <tr>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $session->nama }}</td>
@@ -91,7 +89,6 @@
                                     @endif
                                 </td>
                             </tr>
-                        @endif
                     @endforeach
 
                 </tbody>
