@@ -69,6 +69,7 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
     // Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
     Route::resource('asset-usage', AssetUsageController::class)->except(['create','edit','delete','update']);
+    Route::resource('assets', controller: AssetsController::class)->except(['create','edit','destroy','update']);;
 
 });
 
@@ -83,20 +84,18 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
-
-    Route::resource('assets', controller: AssetsController::class);
-
     Route::resource('profile', controller: ProfileController::class);
 
+    Route::resource('assets', controller: AssetsController::class);
     // Custom create forms untuk masing-masing tipe asset
     Route::get('assets/create/bergerak', [AssetsController::class, 'create_gerak'])->name('assets.create_gerak');
     Route::get('assets/create/tidak-bergerak', [AssetsController::class, 'create_tidak'])->name('assets.create_tidak_bergerak');
     Route::get('assets/create/habis', [AssetsController::class, 'create_habis'])->name('assets.create_habis');
+    Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
 
     Route::resource('opname', controller: StockOpnameDepartmentController::class);
     Route::post('opname/{opname}/complete', [StockOpnameDepartmentController::class, 'complete'])->name('opname.complete');
     Route::post('opname/{session}/start', [StockOpnameDepartmentController::class, 'startOpname'])->name('opname.startOpname');
-
 
     // Autosave per-detail (AJAX partial update) — best practice: PATCH
     Route::patch('opname/details/{detail}', [StockOpnameDepartmentController::class, 'updateItem'])
