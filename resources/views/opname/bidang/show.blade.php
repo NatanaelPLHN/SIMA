@@ -157,6 +157,16 @@ transition-colors">
             </div>
         </div>
     </div>
+
+    {{-- Style untuk memperbaiki masalah video ganda pada QR Scanner --}}
+    <style>
+        #qr-reader {
+            /* Atur tinggi container sesuai dengan ukuran qrbox di JS (250px) */
+            height: 250px;
+            /* Sembunyikan video kedua yang mungkin muncul di bawahnya */
+            overflow: hidden;
+        }
+    </style>
 @endsection
 
 @push('scripts')
@@ -336,35 +346,54 @@ transition-colors">
                 // attempt flush any pending on load
                 flushAllPending(false);
 
-                // --- LOGIKA PEMINDAI QR ---
-                function startScanning() {
-                    qrScannerModal.classList.remove('hidden');
-                    html5QrCode = new Html5Qrcode("qr-reader");
-                    const config = {
-                        fps: 10,
-                        qrbox: {
-                            width: 250,
-                            height: 250
-                        }
-                    };
-                    html5QrCode.start({
-                        facingMode: "environment"
-                    }, config, qrCodeSuccessCallback)
-                    .catch(err => {
-                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
-                        try { stopScanning(); } catch(e) {}
-                    });
-                }
+                                // --- LOGIKA PEMINDAI QR (REVISI FINAL DENGAN PEMBERSIHAN PAKSA) ---
+                                function startScanning() {
+                                    qrScannerModal.classList.remove('hidden');
 
+                                    // Selalu buat instance baru untuk memastikan state bersih, seperti di file referensi
+                                    html5QrCode = new Html5Qrcode("qr-reader");
+
+                                    const config = {
+                                        fps: 10,
+                                        qrbox: { width: 250, height: 250 }
+                                    };
+
+                                    html5QrCode.start(
+                                        { facingMode: "environment" },
+                                        config,
+                                        qrCodeSuccessCallback
+                                    ).catch(err => {
+                                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
+                                        // Coba hentikan untuk membersihkan jika ada sisa elemen
+                                        stopScanning();
+                                    });
+                                }
                 function stopScanning() {
-                    if (html5QrCode && typeof html5QrCode.stop === 'function') {
-                        html5QrCode.stop().catch(err => console.error("Gagal menghentikan pemindaian.", err));
+                    if (html5QrCode && html5QrCode.isScanning) {
+                        // Biarkan library menangani penghentian dan pembersihan.
+                        // Kita hanya perlu menangani hasilnya.
+                        html5QrCode.stop()
+                            .then(ignore => {
+                                // Berhasil dihentikan oleh library
+                                console.log("QR Code scanning stopped successfully.");
+                            })
+                            .catch(err => {
+                                // Ini adalah tempat error 'removeChild' terjadi.
+                                // Kita bisa mengabaikannya dengan aman karena tujuannya (menghentikan scan) tercapai.
+                                console.warn("Scanner stop function failed, but this is often ignorable.", err);
+                            })
+                            .finally(() => {
+                                // Apapun yang terjadi (berhasil atau gagal), pastikan modal selalu tersembunyi.
+                                qrScannerModal.classList.add('hidden');
+                            });
+                    } else {
+                        // Jika tidak sedang memindai, cukup sembunyikan modal.
+                        qrScannerModal.classList.add('hidden');
                     }
-                    qrScannerModal.classList.add('hidden');
                 }
 
                 const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                    try { stopScanning(); } catch(e) {}
+                    stopScanning();
                     let assetCode;
                     try {
                         const url = new URL(decodedText);
@@ -373,7 +402,6 @@ transition-colors">
                     } catch (e) {
                         assetCode = decodedText;
                     }
-                    console.log(`[DEBUG] 2. Kode Aset Ditemukan: ${assetCode}`);
                     fetchAssetData(assetCode);
                 };
 

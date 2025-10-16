@@ -70,6 +70,10 @@ class StockOpnameDepartmentController extends Controller
                 if (in_array($assetType, ['bergerak', 'tidak_bergerak'])) {
                     if ($request->has("statuses.{$detailId}") && !empty($request->statuses[$detailId])) {
                         $statusFisikInput = $request->statuses[$detailId];
+                        // tambahan ku
+                        if($statusFisikInput == null){
+                            $statusFisikInput = 'hilang';
+                        }
 
                         $detail->status_fisik = $statusFisikInput;
                         $asset->status = $statusFisikInput;
@@ -84,6 +88,10 @@ class StockOpnameDepartmentController extends Controller
                 } elseif ($assetType === 'habis_pakai') {
                     if ($request->has("jumlah_fisik.{$detailId}")) {
                         $jumlahFisikInput = (int) $request->jumlah_fisik[$detailId];
+                        // tambahan ku
+                        if($jumlahFisikInput == null){
+                            $jumlahFisikInput = 0;
+                        }
 
                         $detail->jumlah_fisik = $jumlahFisikInput;
                         $asset->jumlah = $jumlahFisikInput;

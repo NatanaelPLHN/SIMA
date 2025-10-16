@@ -69,8 +69,11 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($opname->details as $index => $detail)
-                            {{-- PERUBAHAN 1: Menambahkan atribut data-asset-code pada <tr> --}}
-                            <tr data-asset-code="{{ $detail->asset->kode ?? '' }}">
+                            {{-- PERUBAHAN 1: Menambahkan atribut data-asset-code pada <tr> dan data-update-url --}}
+                            <tr
+                                data-asset-code="{{ $detail->asset->kode ?? '' }}"
+                                data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}"
+                            >
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->kode ?? '-' }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->nama_aset ?? '-' }}</td>
@@ -117,7 +120,7 @@
     </div>
 
     <!-- QR Scanner Modal -->
-    <div id="qr-scanner-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div id="qr-scanner-modal" class="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Scan QR Code</h2>
             <div id="qr-reader" class="w-full"></div>
@@ -131,7 +134,7 @@ transition-colors">
 
     {{-- PERUBAHAN 2: Menambahkan HTML untuk Modal Update Aset --}}
     <div id="update-asset-modal"
-        class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        class="fixed inset-0 bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 id="modal-title" class="text-xl font-semibold text-gray-800 mb-2">Update Aset</h2>
             <p id="modal-asset-info" class="text-sm text-gray-600 mb-4"></p>
@@ -158,239 +161,393 @@ transition-colors">
 
 @push('scripts')
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Pastikan
- SweetAlert juga ada jika belum --}}
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- SEMUA ELEMEN YANG DIBUTUHKAN ---
-            const scanButton = document.getElementById('scan-qr-button');
-            const qrScannerModal = document.getElementById('qr-scanner-modal');
-            const closeQrModalButton = document.getElementById('close-modal-button');
-            const qrReaderDiv = document.getElementById('qr-reader');
+        // Bungkus seluruh logic agar tidak terjadi redeclare variabel global
+        (function () {
+            document.addEventListener('DOMContentLoaded', function () {
+                // --- DEKLARASI ELEMEN UTAMA (hanya sekali) ---
+                const opnameForm = document.getElementById('opname-form');
+                const finishButton = document.getElementById('finish-opname-btn');
+                const scanButton = document.getElementById('scan-qr-button');
+                const qrScannerModal = document.getElementById('qr-scanner-modal');
+                const closeQrModalButton = document.getElementById('close-modal-button');
+                let html5QrCode = null;
 
-            const updateAssetModal = document.getElementById('update-asset-modal');
-            const modalAssetInfo = document.getElementById('modal-asset-info');
-            const modalDynamicContent = document.getElementById('modal-dynamic-content');
-            const modalSaveButton = document.getElementById('modal-save-button');
-            const modalCancelButton = document.getElementById('modal-cancel-button');
+                const updateAssetModal = document.getElementById('update-asset-modal');
+                const modalTitle = document.getElementById('modal-title');
+                const modalAssetInfo = document.getElementById('modal-asset-info');
+                const modalDynamicContent = document.getElementById('modal-dynamic-content');
+                const modalSaveButton = document.getElementById('modal-save-button');
+                const modalCancelButton = document.getElementById('modal-cancel-button');
 
-            const opnameForm = document.getElementById('opname-form');
-            const finishButton = document.getElementById('finish-opname-btn');
+                // --- LOGIKA AUTO-SAVE ---
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : null;
 
-            let html5QrCode = null; // Variabel untuk menyimpan instance scanner
+                const autoSaveStatus = document.createElement('div');
+                autoSaveStatus.className =
+                    'text-sm text-gray-500 fixed bottom-4 right-4 bg-gray-100 px-3 py-1 rounded-lg shadow-md';
+                autoSaveStatus.style.display = 'none';
+                document.body.appendChild(autoSaveStatus);
 
-            // --- LOGIKA PEMINDAI QR (YANG DIPERBARUI) ---
+                let debounceTimerMap = {};
 
-            // Fungsi untuk membuka modal dan memulai kamera
-            function startScanning() {
-                if (!html5QrCode) {
-                    html5QrCode = new Html5Qrcode("qr-reader");
-                }
-
-                qrScannerModal.classList.remove('hidden');
-
-                const config = {
-                    fps: 10,
-                    qrbox: {
-                        width: 250,
-                        height: 250
+                function showAutoSave(text, persistent = false) {
+                    autoSaveStatus.textContent = text;
+                    autoSaveStatus.style.display = 'block';
+                    if (!persistent) {
+                        setTimeout(() => {
+                            autoSaveStatus.style.display = 'none';
+                        }, 1800);
                     }
-                };
+                }
 
-                // Mulai kamera
-                html5QrCode.start({
-                        facingMode: "environment"
-                    }, config, onScanSuccess)
-                    .catch(err => {
-                        console.error("Gagal memulai kamera.", err);
-                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin akses kamera pada browser.");
-                        stopScanning(); // Tutup modal jika gagal
-                    });
-            }
-
-            // Fungsi untuk menghentikan kamera dan menutup modal
-            function stopScanning() {
-                if (html5QrCode && html5QrCode.isScanning) {
-                    html5QrCode.stop().catch(err => {
-                        console.error("Gagal menghentikan pemindaian dengan benar.", err);
+                async function sendPatch(url, payload, opts = { keepalive: false }) {
+                    return await fetch(url, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(payload),
+                        credentials: 'same-origin',
+                        keepalive: opts.keepalive === true
                     });
                 }
-                qrScannerModal.classList.add('hidden');
-            }
 
-            // Fungsi yang dijalankan ketika QR code berhasil dipindai
-            const onScanSuccess = (decodedText, decodedResult) => {
-                stopScanning(); // Langsung hentikan kamera dan tutup modal QR
-
-                let assetCode;
-                try {
-                    // Coba parsing sebagai URL, karena QR Anda berisi URL
-                    const url = new URL(decodedText);
-                    const pathParts = url.pathname.split('/');
-                    assetCode = pathParts[pathParts.length - 1];
-                } catch (e) {
-                    // Jika bukan URL, anggap teksnya adalah kodenya langsung
-                    assetCode = decodedText;
-                }
-
-                console.log(`Kode Aset dari QR: ${assetCode}`);
-                fetchAssetData(assetCode); // Panggil fungsi untuk menampilkan modal update
-            };
-
-            // Tambahkan event listener ke tombol
-            if (scanButton) {
-                scanButton.addEventListener('click', startScanning);
-            }
-            if (closeQrModalButton) {
-                closeQrModalButton.addEventListener('click', stopScanning);
-            }
-
-            // --- SISA KODE ANDA (LOGIKA MODAL UPDATE & FINISH BUTTON) TETAP SAMA ---
-            // (Kode di bawah ini adalah kode Anda yang sudah ada, tidak perlu diubah)
-
-            async function fetchAssetData(assetCode) {
-                const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-                if (!targetRow) {
-                    alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
-                    return;
-                }
-
-                try {
-                    // Pastikan route ini ada di web.php atau api.php Anda
-                    const response = await fetch(`/api/asset/${assetCode}`);
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Gagal mengambil data aset.');
+                const localPrefix = 'opname_pending_';
+                function savePending(detailId, url, payload) {
+                    try {
+                        localStorage.setItem(localPrefix + detailId, JSON.stringify({ url, payload, ts: Date.now() }));
+                    } catch (e) {
+                        console.warn('Gagal menyimpan ke localStorage', e);
                     }
-                    const asset = await response.json();
-                    showUpdateModal(asset, targetRow);
-                } catch (error) {
-                    alert(error.message);
-                }
-            }
-
-            function showUpdateModal(asset, targetRow) {
-                modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
-                modalDynamicContent.innerHTML = '';
-
-                if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
-                    const currentStatus = targetRow.querySelector('select[name^="statuses"]').
-                    value;
-                    const selectHTML = `
-                     <label for="modal-status" class="block text-sm font-medium text-gray-700"> Status Fisik</label>
-                     <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                         <option value="tersedia" ${currentStatus === 'tersedia' ? 'selected' : ''}>Tersedia</option>
-                         <option value="dipakai" ${currentStatus === 'dipakai' ? 'selected' : '' }>Dipakai</option>
-                         <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
-                         <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
-                     </select>`;
-                    modalDynamicContent.innerHTML = selectHTML;
-                } else if (asset.jenis_aset === 'habis_pakai') {
-                    const currentJumlah = targetRow.querySelector('input[name^="jumlah_fisik"]').value;
-                    const inputHTML =
-                        `
-                     <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
-                     <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
-                    modalDynamicContent.innerHTML = inputHTML;
                 }
 
-                modalSaveButton.dataset.assetCode = asset.kode;
-                updateAssetModal.classList.remove('hidden');
-            }
-
-            function hideUpdateModal() {
-                updateAssetModal.classList.add('hidden');
-            }
-
-            modalCancelButton.addEventListener('click', hideUpdateModal);
-
-            modalSaveButton.addEventListener('click', function() {
-                const assetCode = this.dataset.assetCode;
-                const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
-                const modalInput = modalDynamicContent.querySelector('select, input');
-                const newValue = modalInput.value;
-
-                if (modalInput.id === 'modal-status') {
-                    targetRow.querySelector('select[name^="statuses"]').value = newValue;
-                } else if (modalInput.id === 'modal-jumlah') {
-                    targetRow.querySelector('input[name^="jumlah_fisik"]').value = newValue;
+                function removePending(detailId) {
+                    localStorage.removeItem(localPrefix + detailId);
                 }
 
-                targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
-                setTimeout(() => {
-                    targetRow.classList.remove('bg-yellow-200');
-                }, 1000);
-
-                hideUpdateModal();
-            });
-
-            if (finishButton) {
-                finishButton.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    Swal.fire({
-                        title: 'Konfirmasi Penyelesaian',
-                        text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
-                        input: 'password',
-                        inputAttributes: {
-                            autocapitalize: 'off'
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: 'Verifikasi & Selesaikan',
-                        cancelButtonText: 'Batal',
-                        showLoaderOnConfirm: true,
-                        preConfirm: (password) => {
-                            const csrfToken = document.querySelector(
-                                'meta[name="csrf-token"]'
-                            ).getAttribute('content');
-                            return fetch('{{ route('verifyPassword') }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': csrfToken
-                                    },
-                                    body: JSON.stringify({
-                                        password: password
-                                    })
-                                })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        return response.json().then(err => {
-                                            throw new Error(err.message)
-                                        });
-                                    }
-                                    return response.json();
-                                })
-                                .catch(error => {
-                                    Swal.showValidationMessage(
-                                        `Verifikasi gagal: ${error.message}`
-                                    );
-                                });
-                        },
-                        allowOutsideClick: () => !Swal.isLoading()
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire({
-                                title: 'Terverifikasi!',
-                                text: 'Menyelesaikan sesi stock opname...',
-                                icon: 'success',
-                                timer: 1500,
-                                showConfirmButton: false
-
-                            }).then(() => {
-                                opnameForm.submit();
-
-                            });
-
+                async function flushPendingItem(detailId, useKeepalive = false) {
+                    const raw = localStorage.getItem(localPrefix + detailId);
+                    if (!raw) return false;
+                    let parsed;
+                    try { parsed = JSON.parse(raw); } catch (e) { removePending(detailId); return false; }
+                    try {
+                        const res = await sendPatch(parsed.url, parsed.payload, { keepalive: useKeepalive });
+                        if (res.ok) {
+                            removePending(detailId);
+                            return true;
                         }
+                        return false;
+                    } catch (e) {
+                        return false;
+                    }
+                }
 
+                async function flushAllPending(useKeepalive = false) {
+                    const keys = Object.keys(localStorage).filter(k => k.startsWith(localPrefix));
+                    if (!keys.length) return;
+                    showAutoSave('Menyinkronkan perubahan...', true);
+                    for (const k of keys) {
+                        const detailId = k.replace(localPrefix, '');
+                        await flushPendingItem(detailId, useKeepalive);
+                    }
+                    showAutoSave('Sinkronisasi selesai.');
+                }
+
+                // Attach auto-save change handler
+                function handleChangeEvent(e) {
+                    const inputElement = e.target;
+                    if (!inputElement.closest('#opname-form')) return; // safety
+                    const row = inputElement.closest('tr');
+                    if (!row) return;
+                    const url = row.dataset.updateUrl;
+                    if (!url) return;
+
+                    const inputName = inputElement.name || '';
+                    const detailIdMatch = inputName.match(/\d+/);
+                    if (!detailIdMatch) return;
+                    const detailId = detailIdMatch[0];
+
+                    const payload = {};
+                    if (inputName.includes('statuses')) {
+                        payload.status_fisik = inputElement.value;
+                    } else if (inputName.includes('jumlah_fisik')) {
+                        payload.jumlah_fisik = Number(inputElement.value);
+                    } else {
+                        return;
+                    }
+
+                    // debounce per detail
+                    if (debounceTimerMap[detailId]) clearTimeout(debounceTimerMap[detailId]);
+                    debounceTimerMap[detailId] = setTimeout(async () => {
+                        showAutoSave('Menyimpan...');
+                        try {
+                            const res = await sendPatch(url, payload);
+                            if (!res.ok) {
+                                const body = await res.json().catch(() => ({ message: res.statusText }));
+                                console.warn('Server error autosave:', body);
+                                savePending(detailId, url, payload);
+                                showAutoSave('Gagal tersimpan — disimpan sementara');
+                                return;
+                            }
+                            const data = await res.json().catch(() => ({}));
+                            removePending(detailId);
+                            showAutoSave(`Tersimpan (${data.timestamp || new Date().toLocaleTimeString()})`);
+                        } catch (err) {
+                            console.error('Autosave network error', err);
+                            savePending(detailId, url, payload);
+                            showAutoSave('Gagal tersimpan — disimpan sementara');
+                        }
+                    }, 800);
+                }
+
+                // Attach listeners to inputs/selects
+                function attachAutoSaveListeners() {
+                    document.querySelectorAll('select[name^="statuses"], input[name^="jumlah_fisik"]').forEach(el => {
+                        // remove previous to avoid duplicate listeners
+                        el.removeEventListener('change', handleChangeEvent);
+                        el.addEventListener('change', handleChangeEvent);
+                        if (el.tagName.toLowerCase() === 'input') {
+                            el.removeEventListener('blur', handleChangeEvent);
+                            el.addEventListener('blur', handleChangeEvent);
+                        }
                     });
+                }
 
+                // flush pending on online
+                window.addEventListener('online', () => {
+                    flushAllPending(false);
                 });
 
-            }
+                // beforeunload try best-effort using keepalive
+                window.addEventListener('beforeunload', () => {
+                    // clear pending debounce timers to let immediate saves run if any
+                    Object.values(debounceTimerMap).forEach(t => clearTimeout(t));
+                    flushAllPending(true);
+                });
 
-        });
+                // initial attach
+                attachAutoSaveListeners();
+                // attempt flush any pending on load
+                flushAllPending(false);
+
+                                // --- LOGIKA PEMINDAI QR (REVISI FINAL DENGAN PEMBERSIHAN PAKSA) ---
+                                function startScanning() {
+                                    qrScannerModal.classList.remove('hidden');
+                                    
+                                    // Selalu buat instance baru untuk memastikan state bersih, seperti di file referensi
+                                    html5QrCode = new Html5Qrcode("qr-reader");
+                                    
+                                    const config = {
+                                        fps: 10,
+                                        qrbox: { width: 250, height: 250 }
+                                    };
+                
+                                    html5QrCode.start(
+                                        { facingMode: "environment" }, 
+                                        config, 
+                                        qrCodeSuccessCallback
+                                    ).catch(err => {
+                                        alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");
+                                        // Coba hentikan untuk membersihkan jika ada sisa elemen
+                                        stopScanning();
+                                    });
+                                }
+                function stopScanning() {
+                    if (html5QrCode && html5QrCode.isScanning) {
+                        // Biarkan library menangani penghentian dan pembersihan.
+                        // Kita hanya perlu menangani hasilnya.
+                        html5QrCode.stop()
+                            .then(ignore => {
+                                // Berhasil dihentikan oleh library
+                                console.log("QR Code scanning stopped successfully.");
+                            })
+                            .catch(err => {
+                                // Ini adalah tempat error 'removeChild' terjadi.
+                                // Kita bisa mengabaikannya dengan aman karena tujuannya (menghentikan scan) tercapai.
+                                console.warn("Scanner stop function failed, but this is often ignorable.", err);
+                            })
+                            .finally(() => {
+                                // Apapun yang terjadi (berhasil atau gagal), pastikan modal selalu tersembunyi.
+                                qrScannerModal.classList.add('hidden');
+                            });
+                    } else {
+                        // Jika tidak sedang memindai, cukup sembunyikan modal.
+                        qrScannerModal.classList.add('hidden');
+                    }
+                }
+
+                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                    stopScanning();
+                    let assetCode;
+                    try {
+                        const url = new URL(decodedText);
+                        const pathParts = url.pathname.split('/');
+                        assetCode = pathParts[pathParts.length - 1];
+                    } catch (e) {
+                        assetCode = decodedText;
+                    }
+                    fetchAssetData(assetCode);
+                };
+
+                if (scanButton) scanButton.addEventListener('click', startScanning);
+                if (closeQrModalButton) closeQrModalButton.addEventListener('click', stopScanning);
+
+                // --- LOGIKA MODAL UPDATE ASET ---
+                async function fetchAssetData(assetCode) {
+                    const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
+                    if (!targetRow) {
+                        console.error(`[DEBUG] GAGAL: Baris tabel untuk aset ${assetCode} tidak ditemukan.`);
+                        alert(`Aset dengan kode ${assetCode} tidak termasuk dalam daftar opname ini.`);
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/asset/${assetCode}`, { credentials: 'same-origin' });
+                        console.log(`[DEBUG] 5. Respons API diterima. Status: ${response.status}`);
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                            throw new Error(errorData.message || 'Gagal mengambil data aset.');
+                        }
+                        const asset = await response.json();
+                        showUpdateModal(asset, targetRow);
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                }
+
+                function showUpdateModal(asset, targetRow) {
+                    modalAssetInfo.textContent = `${asset.kode} - ${asset.nama_aset}`;
+                    modalDynamicContent.innerHTML = ''; // Kosongkan konten sebelumnya
+
+                    if (asset.jenis_aset === 'bergerak' || asset.jenis_aset === 'tidak_bergerak') {
+                        const currentStatus = (targetRow.querySelector('select[name^="statuses"]') || {}).value || '';
+                        const selectHTML = `
+                        <label for="modal-status" class="block text-sm font-medium text-gray-700">Status Fisik</label>
+                        <select id="modal-status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="tersedia" ${currentStatus === 'tersedia' ? 'selected' : ''}>Tersedia</option>
+                            <option value="dipakai" ${currentStatus === 'dipakai' ? 'selected' : ''}>Dipakai</option>
+                            <option value="rusak" ${currentStatus === 'rusak' ? 'selected' : ''}>Rusak</option>
+                            <option value="hilang" ${currentStatus === 'hilang' ? 'selected' : ''}>Hilang</option>
+                        </select>`;
+                        modalDynamicContent.innerHTML = selectHTML;
+                    } else if (asset.jenis_aset === 'habis_pakai') {
+                        const currentJumlah = (targetRow.querySelector('input[name^="jumlah_fisik"]') || {}).value || '';
+                        const inputHTML = `
+                        <label for="modal-jumlah" class="block text-sm font-medium text-gray-700">Jumlah Fisik</label>
+                        <input type="number" id="modal-jumlah" value="${currentJumlah}" class="mt-1 w-full border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">`;
+                        modalDynamicContent.innerHTML = inputHTML;
+                    }
+
+                    modalSaveButton.dataset.assetCode = asset.kode;
+                    updateAssetModal.classList.remove('hidden');
+                }
+
+                function hideUpdateModal() {
+                    updateAssetModal.classList.add('hidden');
+                }
+
+                if (modalCancelButton) modalCancelButton.addEventListener('click', hideUpdateModal);
+
+                if (modalSaveButton) modalSaveButton.addEventListener('click', function () {
+                    const assetCode = this.dataset.assetCode;
+                    const targetRow = document.querySelector(`tr[data-asset-code="${assetCode}"]`);
+
+                    const modalInput = modalDynamicContent.querySelector('select, input');
+                    if (!modalInput) return;
+                    const newValue = modalInput.value;
+
+                    if (modalInput.id === 'modal-status') {
+                        const targetSelect = targetRow.querySelector('select[name^="statuses"]');
+                        if (targetSelect) {
+                            targetSelect.value = newValue;
+                            // trigger change to fire autosave
+                            targetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    } else if (modalInput.id === 'modal-jumlah') {
+                        const targetInput = targetRow.querySelector('input[name^="jumlah_fisik"]');
+                        if (targetInput) {
+                            targetInput.value = newValue;
+                            // trigger blur or change to fire autosave
+                            targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+
+                    targetRow.classList.add('bg-yellow-200', 'transition-colors', 'duration-1000');
+                    setTimeout(() => {
+                        targetRow.classList.remove('bg-yellow-200');
+                    }, 1000);
+
+                    hideUpdateModal();
+                });
+
+                // --- LOGIKA TOMBOL SELESAI (SWEETALERT) ---
+                if (finishButton) {
+                    finishButton.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        Swal.fire({
+                            title: 'Konfirmasi Penyelesaian',
+                            text: 'Masukkan password Anda untuk menyelesaikan sesi stock opname ini.',
+                            input: 'password',
+                            inputAttributes: {
+                                autocapitalize: 'off'
+                            },
+                            showCancelButton: true,
+                            confirmButtonText: 'Verifikasi & Selesaikan',
+                            cancelButtonText: 'Batal',
+                            showLoaderOnConfirm: true,
+                            preConfirm: (password) => {
+                                const csrf = csrfToken;
+                                return fetch('{{ route('verifyPassword') }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': csrf
+                                        },
+                                        credentials: 'same-origin',
+                                        body: JSON.stringify({
+                                            password: password
+                                        })
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            return response.json().then(err => {
+                                                throw new Error(err.message)
+                                            });
+                                        }
+                                        return response.json();
+                                    })
+                                    .catch(error => {
+                                        Swal.showValidationMessage(
+                                            `Verifikasi gagal: ${error.message}`);
+                                    });
+                            },
+                            allowOutsideClick: () => !Swal.isLoading()
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Terverifikasi!',
+                                    text: 'Menyelesaikan sesi stock opname...',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    opnameForm.submit();
+                                });
+                            }
+                        });
+                    });
+                }
+
+                // If dynamic DOM changes could occur, reattach listeners:
+                // You can call attachAutoSaveListeners() after rows update
+            });
+        })();
     </script>
 @endpush

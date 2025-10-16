@@ -18,7 +18,7 @@ return new class extends Migration
             // klo aset dihapus maka ini kehapus ga
             $table->foreignId('aset_id')->constrained('aset')->cascadeOnDelete();
             $table->integer('jumlah_sistem');
-            $table->integer('jumlah_fisik');
+            $table->integer('jumlah_fisik')->nullable();
             $table->enum('status_lama', ['tersedia','dipakai','rusak','hilang','habis'])->nullable();
             $table->enum('status_fisik', ['tersedia','dipakai','rusak','hilang','habis'])->nullable();
             // $table->foreign('checked_by')->references('id')->on('users')->onDelete('cascade'); //foreign key id user yang melakukan opname
