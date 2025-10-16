@@ -94,14 +94,14 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $('.js-select2').select2({
-        placeholder: "-- Kosongkan  --", // wajib
+        placeholder: "-- Pilih  --", // wajib
         allowClear: true, // wajib agar tombol hapus muncul
         width: '100%'
     });
 });
 $('#modalEdit').on('shown.bs.modal', function () {
     $('.js-select2').select2({
-        placeholder: "-- Kosongkan  --",
+        placeholder: "-- Pilih  --",
         allowClear: true,
         width: '100%'
     });

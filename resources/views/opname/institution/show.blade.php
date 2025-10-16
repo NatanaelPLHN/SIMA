@@ -3,130 +3,165 @@
 @section('title', 'Stock Opname')
 
 @section('content')
-    <h1 class="text-lg font-semibold text-gray-800">Stock Opname</h1>
-    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
-        <!-- Stock Opname Header -->
-        <div class="bg-indigo-800 text-white rounded-lg p-4 mb-6">
+<div class="px-4 py-6">
+     <div class="mb-6">
+    <a href="{{ route('admin.opname.index') }}"
+       class="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Kembali ke Daftar Stock Opname
+    </a>
+</div>
+    
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+        <!-- Header Section -->
+        <div class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 p-5">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div id="detail_ini">
-                    <div class="font-medium">{{ $opname->nama }}</div>
-
-                    <div class="text-sm">Tanggal Buat: {{ $opname->tanggal_dijadwalkan }}</div>
-                    @if ($opname->status == 'selesai')
-                    <div class="text-sm">Tanggal Mulai: {{ $opname->tanggal_dimulai }}</div>
-                    <div class="text-sm">Tanggal Selesai: {{ $opname->tanggal_selesai }}</div>
-                    @endif
-                    <div class="text-sm">Status: {{ $opname->status }}</div>
+                <!-- Informasi Utama -->
+                <div id="detail_ini" class="space-y-1">
+                    <h2 class="text-lg font-bold">{{ $opname->nama }}</h2>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-700 dark:text-gray-200">
+                        <span>Tanggal Dijadwalkan: {{ \Carbon\Carbon::parse($opname->tanggal_dijadwalkan)->translatedFormat('d F Y') }}</span>
+                        @if ($opname->status === 'selesai')
+                            <span>Tanggal Mulai: {{ \Carbon\Carbon::parse($opname->tanggal_dimulai)->translatedFormat('d F Y') }}</span>
+                            <span>Tanggal Selesai: {{ \Carbon\Carbon::parse($opname->tanggal_selesai)->translatedFormat('d F Y') }}</span>
+                        @endif
+                        <span class="inline-flex items-center">
+                            Status:
+                            <span class="ml-1 px-2 py-0.5 text-xs font-medium rounded-full
+                                @if($opname->status === 'selesai') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
+                                @elseif($opname->status === 'proses') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
+                                @elseif($opname->status === 'dijadwalkan') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
+                                @elseif($opname->status === 'draft') bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                @elseif($opname->status === 'cancelled') bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300
+                                @else bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                @endif">
+                                {{ ucfirst(str_replace('_', ' ', $opname->status)) }}
+                            </span>
+                        </span>
+                    </div>
                 </div>
-                @if ($opname->status == 'draft')
-                    <form id="start-form" action="{{ routeForRole('opname', 'start', $opname->id) }}" method="POST"
-                        enctype="multipart/form-data" class="contents">
-                        @csrf
-                        <div class="w-full md:w-1/3">
-                            <label for="catatan" class="text-sm font-medium text-white">Catatan</label>
-                            <input type="text" id="catatan" name="catatan"
-                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
-                        <button type="submit"
-                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Jadwalkan
-                        </button>
-                    </form>
-                    @endif
-                    @if ($opname->status == 'draft' || $opname->status == 'dijadwalkan' )
 
-                    <form id="cancel-form" action="{{ routeForRole('opname', 'cancel', $opname->id) }}" method="POST"
-                        enctype="multipart/form-data" class="contents">
-                        @csrf
-                        <button type="submit"
-                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Batalkan
-                        </button>
-                    </form>
+                <!-- Aksi -->
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    @if ($opname->status == 'draft')
+                        <form id="start-form" action="{{ routeForRole('opname', 'start', $opname->id) }}" method="POST" class="flex flex-wrap items-center gap-2">
+                            @csrf
+                            <div class="w-full md:w-auto">
+                                <label for="catatan" class="sr-only">Catatan</label>
+                                <input type="text" id="catatan" name="catatan"
+                                    placeholder="Catatan opsional..."
+                                    class="w-full md:w-48 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <button type="submit"
+                                class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                                Jadwalkan
+                            </button>
+                        </form>
                     @endif
 
-
+                    @if ($opname->status == 'draft' || $opname->status == 'dijadwalkan')
+                        <form id="cancel-form" action="{{ routeForRole('opname', 'cancel', $opname->id) }}" method="POST" class="inline-block">
+                            @csrf
+                            <button type="submit"
+                                class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                                >
+                                Batalkan
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
         </div>
-
+    </div>
         <!-- Data Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-indigo-800">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kode</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama Aset
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sub Kategori
-                        </th>
-                        @if ($opname->status == 'selesai')
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
-                                Lama</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
-                                Baru</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Selisih
-                            </th>
-                        @else
-                            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status
-                            </th>
-                        @endif
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">No</th>
+                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Kode</th>
+                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Nama Aset</th>
+                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Sub Kategori</th>
+                        @if ($opname->status == 'selesai')
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Status Lama</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Status Baru</th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Selisih</th>
+                        @else
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Status</th>
+                        @endif
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($opname->details as $index => $detail)
-                        <tr>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $index + 1 }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->kode ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->nama_aset ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900">{{ $detail->asset->category->nama ?? '-' }}
-                            </td>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    @forelse ($opname->details as $index => $detail)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">{{ $index + 1 }}</td>
+                            <td class="px-4 py-3 text-center text-sm font-mono text-gray-900 dark:text-gray-100">{{ $detail->asset->kode ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">{{ $detail->asset->nama_aset ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">{{ $detail->asset->category->nama ?? '-' }}</td>
 
                             @if ($opname->status == 'selesai')
-                                {{-- @foreach ($stockOpnameSession->details as $index => $detail) --}}
-                                <td class="px-4 py-3 text-sm text-gray-900">
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                        @if ($detail->status_lama == 'tersedia') bg-green-100 text-green-800 @endif
-                                        @if ($detail->status_lama == 'dipakai') bg-green-100 text-green-800 @endif
-                                        @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif
-                                        @if ($detail->status_lama == 'habis') bg-red-100 text-red-800 @endif
-                                        @if ($detail->status_lama == 'hilang') bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($detail->status_lama) }}
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full
+                                        @if(in_array($detail->status_lama, ['tersedia', 'dipakai']))
+                                            bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
+                                        @elseif($detail->status_lama == 'rusak')
+                                            bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
+                                        @elseif(in_array($detail->status_lama, ['habis', 'hilang']))
+                                            bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300
+                                        @else
+                                            bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                        @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $detail->status_lama)) }}
                                     </span>
-
                                 </td>
-                                <td class="px-4 py-3 text-sm text-gray-900">
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if ($detail->status_fisik == 'tersedia') bg-green-100 text-green-800 @endif
-                                @if ($detail->status_fisik == 'dipakai') bg-green-100 text-green-800 @endif
-                                @if ($detail->status_fisik == 'rusak') bg-yellow-100 text-yellow-800 @endif
-                                @if ($detail->status_fisik == 'habis') bg-red-100 text-red-800 @endif
-                                @if ($detail->status_fisik == 'hilang') bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($detail->status_fisik) }}
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full
+                                        @if(in_array($detail->status_fisik, ['tersedia', 'dipakai']))
+                                            bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
+                                        @elseif($detail->status_fisik == 'rusak')
+                                            bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
+                                        @elseif(in_array($detail->status_fisik, ['habis', 'hilang']))
+                                            bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300
+                                        @else
+                                            bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                        @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $detail->status_fisik)) }}
                                     </span>
-
                                 </td>
-                                <td class="px-4 py-3 text-sm text-gray-900">
+                                <td class="px-4 py-3 text-center text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ $detail->jumlah_fisik - $detail->jumlah_sistem }}
                                 </td>
                             @else
-                                <td class="px-4 py-3 text-sm text-gray-900">
-                                    <span
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                @if ($detail->status_lama == 'tersedia') bg-green-100 text-green-800 @endif
-                                @if ($detail->status_lama == 'tidak ditemukan') bg-red-100 text-red-800 @endif
-                                @if ($detail->status_lama == 'rusak') bg-yellow-100 text-yellow-800 @endif">
-                                        {{ ucfirst($detail->status_lama) }}
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full
+                                        @if($detail->status_lama == 'tersedia')
+                                            bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
+                                        @elseif($detail->status_lama == 'tidak ditemukan')
+                                            bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300
+                                        @elseif($detail->status_lama == 'rusak')
+                                            bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
+                                        @else
+                                            bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                        @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $detail->status_lama)) }}
                                     </span>
                                 </td>
                             @endif
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="{{ $opname->status == 'selesai' ? 7 : 5 }}" class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                                Tidak ada data aset dalam sesi ini.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+</div>
 @endsection
