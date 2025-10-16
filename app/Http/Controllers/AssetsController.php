@@ -25,23 +25,201 @@ class AssetsController extends Controller
         // $this->authorizeResource(Asset::class, 'asset');
     }
 
-    public function index()
-    {
-        $user = auth()->user();
-        $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
-        $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
-        $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
+    // public function index()
+    // {
+    //     $user = auth()->user();
+    //     $assetsBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->with(['bergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'bergerak_page');
+    //     $assetsTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->with(['tidakBergerak', 'category.categoryGroup'])->paginate(10, ['*'], 'tidak_bergerak_page');
+    //     $assetsHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->with(['habisPakai', 'category.categoryGroup'])->paginate(10, ['*'], 'habis_pakai_page');
 
-        $jumlahAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->count();
-        $jumlahAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->count();
-        $jumlahAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->count();
+    //     $jumlahAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->count();
+    //     $jumlahAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->count();
+    //     $jumlahAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->count();
 
-        $totalNilaiAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
-        $totalNilaiAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
-        $totalNilaiAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
+    //     $totalNilaiAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
+    //     $totalNilaiAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
+    //     $totalNilaiAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $user->employee?->department_id)->sum('nilai_pembelian');
 
-        return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai', 'jumlahAsetBergerak', 'jumlahAsetTidakBergerak', 'jumlahAsetHabisPakai', 'totalNilaiAsetBergerak', 'totalNilaiAsetTidakBergerak', 'totalNilaiAsetHabisPakai'));
+    //     return view('aset.index', compact('assetsBergerak', 'assetsTidakBergerak', 'assetsHabisPakai', 'jumlahAsetBergerak', 'jumlahAsetTidakBergerak', 'jumlahAsetHabisPakai', 'totalNilaiAsetBergerak', 'totalNilaiAsetTidakBergerak', 'totalNilaiAsetHabisPakai'));
+    // }
+    // public function index(Request $request)
+    // {
+    //     $user = auth()->user();
+    //     $departmentId = $user->employee?->department_id;
+    //     $searchQuery = $request->input('search');
+
+    //     // --- Query untuk Aset Bergerak ---
+    //     $assetsBergerakQuery = Asset::where('jenis_aset', 'bergerak')
+    //         ->where('department_id', $departmentId)
+    //         ->with(['bergerak', 'category.categoryGroup']);
+
+    //     if ($searchQuery) {
+    //         $assetsBergerakQuery->where(function ($query) use ($searchQuery) {
+    //             $query->where('nama_aset', 'like', "%{$searchQuery}%")
+    //                 ->orWhere('kode', 'like', "%{$searchQuery}%")
+    //                 ->orWhere('status', 'like', "%{$searchQuery}%") // Search by status
+    //                 ->orWhereHas('bergerak', function ($q) use ($searchQuery) {
+    //                     $q->where('nomor_serial', 'like', "%{$searchQuery}%")
+    //                         ->orWhere('merk', 'like', "%{$searchQuery}%")
+    //                         ->orWhere('tipe', 'like', "%{$searchQuery}%")
+    //                         ->orWhere('tahun_produksi', 'like', "%{$searchQuery}%"); // Search by tahun_produksi
+    //                 });
+    //         });
+    //     }
+    //     $assetsBergerak = $assetsBergerakQuery->latest()->paginate(10, ['*'], 'bergerak_page')->appends($request->query());
+
+
+    //     // --- Query untuk Aset Tidak Bergerak ---
+    //     $assetsTidakBergerakQuery = Asset::where('jenis_aset', 'tidak_bergerak')
+    //         ->where('department_id', $departmentId)
+    //         ->with(['tidakBergerak', 'category.categoryGroup']);
+
+    //     if ($searchQuery) {
+    //         $assetsTidakBergerakQuery->where(function ($query) use ($searchQuery) {
+    //             $query->where('nama_aset', 'like', "%{$searchQuery}%")
+    //                 ->orWhere('kode', 'like', "%{$searchQuery}%")
+    //                 ->orWhere('status', 'like', "%{$searchQuery}%") // Search by status
+    //                 ->orWhereHas('tidakBergerak', function ($q) use ($searchQuery) {
+    //                     $q->where('ukuran', 'like', "%{$searchQuery}%") // Search by ukuran
+    //                         ->orWhere('bahan', 'like', "%{$searchQuery}%"); // Search by bahan
+    //                 });
+    //         });
+    //     }
+    //     $assetsTidakBergerak = $assetsTidakBergerakQuery->latest()->paginate(10, ['*'], 'tidak_bergerak_page')->appends($request->query());
+
+
+    //     // --- Query untuk Aset Habis Pakai ---
+    //     $assetsHabisPakaiQuery = Asset::where('jenis_aset', 'habis_pakai')
+    //         ->where('department_id', $departmentId)
+    //         ->with(['habisPakai', 'category.categoryGroup']);
+
+    //     if ($searchQuery) {
+    //         $assetsHabisPakaiQuery->where(function ($query) use ($searchQuery) {
+    //             $query->where('nama_aset', 'like', "%{$searchQuery}%")
+    //                 ->orWhere('kode', 'like', "%{$searchQuery}%")
+    //                 ->orWhere('status', 'like', "%{$searchQuery}%") // Search by status
+    //                 ->orWhereHas('habisPakai', function ($q) use ($searchQuery) {
+    //                     $q->where('register', 'like', "%{$searchQuery}%") // Search by register
+    //                         ->orWhere('satuan', 'like', "%{$searchQuery}%"); // Search by satuan
+    //                 });
+    //         });
+    //     }
+    //     $assetsHabisPakai = $assetsHabisPakaiQuery->latest()->paginate(10, ['*'], 'habis_pakai_page')->appends($request->query());
+
+
+    //     // --- Kalkulasi Total (tidak terpengaruh oleh search) ---
+    //     $jumlahAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $departmentId)->count();
+    //     $jumlahAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $departmentId)->count();
+    //     $jumlahAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $departmentId)->count();
+
+    //     $totalNilaiAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $departmentId)->sum('nilai_pembelian');
+    //     $totalNilaiAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $departmentId)->sum('nilai_pembelian');
+    //     $totalNilaiAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $departmentId)->sum('nilai_pembelian');
+
+    //     return view('aset.index', compact(
+    //         'assetsBergerak',
+    //         'assetsTidakBergerak',
+    //         'assetsHabisPakai',
+    //         'jumlahAsetBergerak',
+    //         'jumlahAsetTidakBergerak',
+    //         'jumlahAsetHabisPakai',
+    //         'totalNilaiAsetBergerak',
+    //         'totalNilaiAsetTidakBergerak',
+    //         'totalNilaiAsetHabisPakai'
+    //     ));
+    // }
+    public function index(Request $request)
+{
+    $user = auth()->user();
+    $departmentId = $user->employee?->department_id;
+    $searchQuery = $request->input('search');
+    $activeTab = $request->input('tab', 'bergerak'); // <-- Tambahkan ini
+
+    // Helper: apakah tab ini aktif?
+    $isBergerakActive = $activeTab === 'bergerak';
+    $isTidakBergerakActive = $activeTab === 'tidakbergerak';
+    $isHabisPakaiActive = $activeTab === 'habispakai';
+
+    // --- Aset Bergerak ---
+    $assetsBergerakQuery = Asset::where('jenis_aset', 'bergerak')
+        ->where('department_id', $departmentId)
+        ->with(['bergerak', 'category.categoryGroup']);
+
+    if ($searchQuery && $isBergerakActive) { // <-- Hanya jika tab aktif
+        $assetsBergerakQuery->where(function ($query) use ($searchQuery) {
+            $query->where('nama_aset', 'like', "%{$searchQuery}%")
+                ->orWhere('kode', 'like', "%{$searchQuery}%")
+                ->orWhere('status', 'like', "%{$searchQuery}%")
+                ->orWhereHas('bergerak', function ($q) use ($searchQuery) {
+                    $q->where('nomor_serial', 'like', "%{$searchQuery}%")
+                        ->orWhere('merk', 'like', "%{$searchQuery}%")
+                        ->orWhere('tipe', 'like', "%{$searchQuery}%")
+                        ->orWhere('tahun_produksi', 'like', "%{$searchQuery}%");
+                });
+        });
     }
+    $assetsBergerak = $assetsBergerakQuery->latest()->paginate(10, ['*'], 'bergerak_page')->appends($request->query());
+
+
+    // --- Aset Tidak Bergerak ---
+    $assetsTidakBergerakQuery = Asset::where('jenis_aset', 'tidak_bergerak')
+        ->where('department_id', $departmentId)
+        ->with(['tidakBergerak', 'category.categoryGroup']);
+
+    if ($searchQuery && $isTidakBergerakActive) { // <-- Hanya jika tab aktif
+        $assetsTidakBergerakQuery->where(function ($query) use ($searchQuery) {
+            $query->where('nama_aset', 'like', "%{$searchQuery}%")
+                ->orWhere('kode', 'like', "%{$searchQuery}%")
+                ->orWhere('status', 'like', "%{$searchQuery}%")
+                ->orWhereHas('tidakBergerak', function ($q) use ($searchQuery) {
+                    $q->where('ukuran', 'like', "%{$searchQuery}%")
+                        ->orWhere('bahan', 'like', "%{$searchQuery}%");
+                });
+        });
+    }
+    $assetsTidakBergerak = $assetsTidakBergerakQuery->latest()->paginate(10, ['*'], 'tidak_bergerak_page')->appends($request->query());
+
+
+    // --- Aset Habis Pakai ---
+    $assetsHabisPakaiQuery = Asset::where('jenis_aset', 'habis_pakai')
+        ->where('department_id', $departmentId)
+        ->with(['habisPakai', 'category.categoryGroup']);
+
+    if ($searchQuery && $isHabisPakaiActive) { // <-- Hanya jika tab aktif
+        $assetsHabisPakaiQuery->where(function ($query) use ($searchQuery) {
+            $query->where('nama_aset', 'like', "%{$searchQuery}%")
+                ->orWhere('kode', 'like', "%{$searchQuery}%")
+                ->orWhere('status', 'like', "%{$searchQuery}%")
+                ->orWhereHas('habisPakai', function ($q) use ($searchQuery) {
+                    $q->where('register', 'like', "%{$searchQuery}%")
+                        ->orWhere('satuan', 'like', "%{$searchQuery}%");
+                });
+        });
+    }
+    $assetsHabisPakai = $assetsHabisPakaiQuery->latest()->paginate(10, ['*'], 'habis_pakai_page')->appends($request->query());
+
+
+    // --- Statistik (selalu tanpa filter search) ---
+    $jumlahAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $departmentId)->count();
+    $jumlahAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $departmentId)->count();
+    $jumlahAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $departmentId)->count();
+
+    $totalNilaiAsetBergerak = Asset::where('jenis_aset', 'bergerak')->where('department_id', $departmentId)->sum('nilai_pembelian');
+    $totalNilaiAsetTidakBergerak = Asset::where('jenis_aset', 'tidak_bergerak')->where('department_id', $departmentId)->sum('nilai_pembelian');
+    $totalNilaiAsetHabisPakai = Asset::where('jenis_aset', 'habis_pakai')->where('department_id', $departmentId)->sum('nilai_pembelian');
+
+    return view('aset.index', compact(
+        'assetsBergerak',
+        'assetsTidakBergerak',
+        'assetsHabisPakai',
+        'jumlahAsetBergerak',
+        'jumlahAsetTidakBergerak',
+        'jumlahAsetHabisPakai',
+        'totalNilaiAsetBergerak',
+        'totalNilaiAsetTidakBergerak',
+        'totalNilaiAsetHabisPakai'
+    ));
+}
 
     public function create_gerak()
     {
