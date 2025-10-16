@@ -101,7 +101,7 @@ class StockOpnameController extends Controller
                         'jumlah_sistem' => $asset->jumlah,
                         'jumlah_fisik' => 0,
                         'status_lama' => $asset->status,
-                        'status_fisik' => 'hilang',
+                        'status_fisik' => null,
                         // 'status_fisik' => $asset->status,
                         'checked_by' => $departement->kepala->user->id,
                     ]);

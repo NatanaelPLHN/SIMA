@@ -153,14 +153,17 @@
             <div class="items-center justify-between block sm:flex mb-4">
                 <form method="GET" action="{{ routeForRole('assets', 'index') }}"
                     class="flex items-center space-x-2 sm:pl-4">
+                    <input type="hidden" name="tab" id="search-tab-input" value="{{ request('tab', 'bergerak') }}">
                     <div class="relative w-48 sm:w-64">
                         <input type="text" name="search" value="{{ request('search') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Cari nama, serial number, dll...">
                     </div>
                     @if (request('search'))
-                        <a href="{{ routeForRole('assets', 'index') }}"
-                            class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
+                    <a href="{{ routeForRole('assets', 'index', ['tab' => request('tab', 'bergerak')]) }}"
+                        15             class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
+                        {{-- <a href="{{ routeForRole('assets', 'index') }}"
+                            class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a> --}}
                     @endif
                 </form>
                 @if (auth()->user()->role == 'subadmin')
@@ -179,15 +182,6 @@
                                 <th
                                     class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
                                     No</th>
-                                <th class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-white">
-                                    <a
-                                        href="{{ request()->fullUrlWithQuery(['sort' => 'kode', 'direction' => request('sort') === 'kode' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
-                                        Kode
-                                        @if (request('sort') === 'kode')
-                                            <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
-                                        @endif
-                                    </a>
-                                </th>
                                 <th class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-white">
                                     <a
                                         href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'direction' => request('sort') === 'nama' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
@@ -244,10 +238,6 @@
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                         {{ $index + $assetsBergerak->firstItem() }}
-                                    </td>
-                                    <td
-                                        class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 break-words text-center">
-                                        {{ $asset->kode }}
                                     </td>
                                     <td
                                         class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 break-words text-center">
@@ -388,13 +378,16 @@
                 <div class="items-center justify-between block sm:flex mb-4">
                     <form method="GET" action="{{ routeForRole('assets', 'index') }}"
                         class="flex items-center space-x-2 sm:pl-4">
+                        <input type="hidden" name="tab" id="search-tab-input"
+                            value="{{ request('tab', 'tidakbergerak') }}">
                         <div class="relative w-48 sm:w-64">
                             <input type="text" name="search" value="{{ request('search') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, kode, dll...">
                         </div>
                         @if (request('search'))
-                            <a href="{{ routeForRole('assets', 'index') }}"
+                        {{-- <a href="" ...>Clear</a> --}}
+                            <a href="{{ routeForRole('assets', 'index', ['tab' => 'tidakbergerak']) }}"
                                 class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
                         @endif
                     </form>
@@ -608,13 +601,16 @@
                     <div class="items-center justify-between block sm:flex mb-4">
                         <form method="GET" action="{{ routeForRole('assets', 'index') }}"
                             class="flex items-center space-x-2 sm:pl-4">
+
+                            <input type="hidden" name="tab" id="search-tab-input"
+                                value="{{ request('tab', 'habispakai') }}">
                             <div class="relative w-48 sm:w-64">
                                 <input type="text" name="search" value="{{ request('search') }}"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Cari nama, kode, dll...">
                             </div>
                             @if (request('search'))
-                                <a href="{{ routeForRole('assets', 'index') }}"
+                                <a href="{{ routeForRole('assets', 'index', ['tab' => 'habispakai']) }}"
                                     class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
                             @endif
                         </form>
