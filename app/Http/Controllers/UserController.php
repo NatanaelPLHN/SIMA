@@ -162,12 +162,18 @@ class UserController extends Controller
     {
         // (Method store tidak perlu diubah, validasinya sudah mencakup semua)
         $validated = $request->validate([
+            // 'email' => 'required|email|unique:users,email',
+            // 'password' => 'required|min:6|confirmed',
+            // 'karyawan_id' => 'required|exists:employees,id|unique:users,karyawan_id',
+            // 'role' => 'required|in:admin,subadmin,user',
+            // 'institution_id' => 'required_if:role,admin,subadmin|exists:institutions,id',
+            // 'department_id' => 'required_if:role,subadmin|exists:departements,id',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'karyawan_id' => 'required|exists:employees,id|unique:users,karyawan_id',
             'role' => 'required|in:admin,subadmin,user',
-            'institution_id' => 'required_if:role,admin,subadmin|exists:institutions,id',
-            'department_id' => 'required_if:role,subadmin|exists:departements,id',
+            'institution_id' => 'nullable|required_if:role,admin,subadmin|exists:institutions,id',
+            'department_id' => 'nullable|required_if:role,subadmin|exists:departements,id',
         ], [
             'email.unique' => 'Email sudah digunakan.',
             'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
@@ -414,64 +420,64 @@ class UserController extends Controller
         return response()->json($institutions);
     }
     public function getDepartmentsForRole(Request $request)
-     {
-         $authUser = Auth::user();
-         $role = $request->query('role');
-         $institutionId = $request->query('institution_id');
+    {
+        $authUser = Auth::user();
+        $role = $request->query('role');
+        $institutionId = $request->query('institution_id');
 
-         if (!$institutionId) return response()->json([]);
+        if (!$institutionId) return response()->json([]);
 
-         // Security check: admin/subadmin tidak bisa intip instansi lain
-         if (!$authUser->isSuperAdmin() && $authUser->employee->institution_id != $institutionId
-       ) {
-             return response()->json(['error' => 'Unauthorized'], 403);
-         }
+        // Security check: admin/subadmin tidak bisa intip instansi lain
+        if (
+            !$authUser->isSuperAdmin() && $authUser->employee->institution_id != $institutionId
+        ) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
-         $query = Departement::where('instansi_id', $institutionId);
+        $query = Departement::where('instansi_id', $institutionId);
 
-         if ($authUser->isSubAdmin()) {
-             // Subadmin hanya bisa melihat departemennya sendiri
-             $query->where('id', $authUser->employee->department_id);
-         } elseif ($role === 'subadmin') {
-             // Superadmin/Admin yang ingin membuat subadmin, cari departemen yg belum punya subadmin
-             $query->whereDoesntHave('employees.user', fn($q) => $q->where('role', 'subadmin'));
-         }
+        if ($authUser->isSubAdmin()) {
+            // Subadmin hanya bisa melihat departemennya sendiri
+            $query->where('id', $authUser->employee->department_id);
+        } elseif ($role === 'subadmin') {
+            // Superadmin/Admin yang ingin membuat subadmin, cari departemen yg belum punya subadmin
+            $query->whereDoesntHave('employees.user', fn($q) => $q->where('role', 'subadmin'));
+        }
 
-         $departments = $query->orderBy('nama')->get(['id', 'nama']);
-         return response()->json($departments);
-     }
+        $departments = $query->orderBy('nama')->get(['id', 'nama']);
+        return response()->json($departments);
+    }
 
-     public function getEmployeesForSelection(Request $request)
-     {
-         $authUser = Auth::user();
-         $institutionId = $request->query('institution_id');
-         $departmentId = $request->query('department_id');
+    public function getEmployeesForSelection(Request $request)
+    {
+        $authUser = Auth::user();
+        $institutionId = $request->query('institution_id');
+        $departmentId = $request->query('department_id');
 
-         // Security check
-         if ($authUser->isAdmin() && $authUser->employee->institution_id != $institutionId) {
-              return response()->json(['error' => 'Unauthorized'], 403);
-         }
-         if ($authUser->isSubAdmin() && $authUser->employee->department_id != $departmentId) {
-              return response()->json(['error' => 'Unauthorized'], 403);
-         }
+        // Security check
+        if ($authUser->isAdmin() && $authUser->employee->institution_id != $institutionId) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        if ($authUser->isSubAdmin() && $authUser->employee->department_id != $departmentId) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
-         $query = Employee::whereDoesntHave('user')->orderBy('nama');
+        $query = Employee::whereDoesntHave('user')->orderBy('nama');
 
-         if ($departmentId) {
-             $query->where('department_id', $departmentId);
-         } elseif ($institutionId) {
-             $query->where('institution_id', $institutionId);
-         } else {
-             // Jika tidak ada filter, batasi sesuai peran
-             if ($authUser->isAdmin()) {
-                 $query->where('institution_id', $authUser->employee->institution_id);
-             } elseif ($authUser->isSubAdmin()) {
-                 $query->where('department_id', $authUser->employee->department_id);
-             }
-         }
+        if ($departmentId) {
+            $query->where('department_id', $departmentId);
+        } elseif ($institutionId) {
+            $query->where('institution_id', $institutionId);
+        } else {
+            // Jika tidak ada filter, batasi sesuai peran
+            if ($authUser->isAdmin()) {
+                $query->where('institution_id', $authUser->employee->institution_id);
+            } elseif ($authUser->isSubAdmin()) {
+                $query->where('department_id', $authUser->employee->department_id);
+            }
+        }
 
-         $employees = $query->get(['id', 'nama']);
-         return response()->json($employees);
-     }
-
+        $employees = $query->get(['id', 'nama']);
+        return response()->json($employees);
+    }
 }
