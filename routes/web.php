@@ -68,9 +68,9 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     // Route::get('asset-usage', AssetUsageController::class);
     // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
     // Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
-    Route::resource('asset-usage', AssetUsageController::class)->except(['create','edit','delete','update']);
-    Route::resource('assets', controller: AssetsController::class)->except(['create','edit','destroy','update']);;
-
+    Route::resource('asset-usage', AssetUsageController::class)->except(['create', 'edit', 'delete', 'update']);
+    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
+    Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
 });
 
 // SubAdmin routes
@@ -141,9 +141,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
     Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
-    Route::resource('assets', controller: AssetsController::class)->except(['create','edit','destroy','update']);;
+    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
     Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
-
 });
 
 // Superadmin routes

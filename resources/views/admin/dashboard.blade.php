@@ -112,7 +112,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Jadwal Stock Opname</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400">5 jadwal terdekat</p>
                 </div>
-                <a href="#" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">Lihat Semua</a>
+                <a href="{{ route('admin.opname.index') }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">Lihat Semua</a>
             </div>
             <div class="space-y-3">
                 @foreach($upcomingSchedules as $schedule)

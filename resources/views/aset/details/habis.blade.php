@@ -191,6 +191,18 @@
             Riwayat Aktivitas Aset Ini
         </h2>
 
+        <div class="flex justify-end mt-4">
+            <a href="{{ routeForRole('asset', 'export', $asset->id) }}"
+            {{-- <a href="{{ route('subadmin.asset.export', $asset->id) }}" --}}
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg shadow">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Export Log Aset
+            </a>
+        </div>
+
         @if ($logs->isEmpty())
             <div class="text-gray-500 dark:text-gray-400 text-center py-6">
                 Belum ada aktivitas tercatat untuk aset ini.
