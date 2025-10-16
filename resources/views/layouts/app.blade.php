@@ -41,4 +41,4 @@
 
 
 </html>
-@stack('scripts')
+{{-- @stack('scripts') --}}

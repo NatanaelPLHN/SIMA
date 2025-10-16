@@ -85,7 +85,8 @@
             </div>
             <div>
                 <p class="text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ number_format($jumlahAsetHabisPakai, 0, ',', '.') }} Aset
+                    {{ number_format($jumlahAsetHabisPakai, 0, ',', '.') }}
+                    Aset
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Total Nilai</p>
                 <p class="text-lg font-semibold text-purple-600 dark:text-purple-400 mt-1">

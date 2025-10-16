@@ -24,7 +24,7 @@
                     @if ($opname->status == 'proses')
                         <button type="submit" id="finish-opname-btn"
                             class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Selesai
+                            Selessssai
                         </button>
                     @endif
                 </div>

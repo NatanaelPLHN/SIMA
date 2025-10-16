@@ -211,7 +211,7 @@
 
     <!-- Drawer (Form Tambah Stock Opname) -->
     <div x-show="openDrawer" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 bg-black bg-opacity-50" @click="openDrawer = false"></div>
+        <div class="fixed inset-0 dark:bg-gray-900/80 bg-gray-300/80" @click="openDrawer = false"></div>
         <div class="relative min-h-screen flex items-center justify-center p-4">
             <div x-show="openDrawer" 
                  x-transition:enter="transition ease-out duration-300"
