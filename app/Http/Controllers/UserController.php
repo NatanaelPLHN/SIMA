@@ -255,47 +255,6 @@ class UserController extends Controller
         return view('user.edit_user', $viewData);
     }
 
-    // public function update(Request $request, User $user)
-    // {
-    //     $validated = $request->validate([
-    //         'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-    //         'password' => 'nullable|min:6|confirmed',
-    //         'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
-    //         // === TAMBAHKAN BARIS INI ===
-    //         'role' => 'sometimes|in:admin,subadmin,user',
-    //     ], [
-    //         'email.unique' => 'Email sudah digunakan.',
-    //         'email.required' => 'Email wajib diisi.',
-    //         'password.min' => 'Password minimal 6 karakter.',
-    //         'password.confirmed' => 'Konfirmasi password tidak cocok.',
-    //         'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
-    //         'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
-    //         'role.in' => 'Role yang dipilih tidak valid.',
-    //     ]);
-
-    //     try {
-    //         DB::beginTransaction();
-    //         if (! empty($validated['password'])) {
-    //             $validated['password'] = Hash::make($validated['password']);
-    //         } else {
-    //             unset($validated['password']);
-    //         }
-    //         $user->fill($validated);
-
-    //         if (! $user->isDirty()) {
-    //             DB::rollBack();
-    //             return back()->with('info', 'Tidak ada perubahan pada data user.');
-    //         }
-
-    //         $user->update($validated);
-    //         DB::commit();
-    //         return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
-    //     } catch (\Throwable $e) {
-    //         DB::rollBack();
-
-    //         return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
-    //     }
-    // }
 
     // public function update(Request $request, User $user)
     // {
@@ -316,6 +275,43 @@ class UserController extends Controller
     //         'role.in' => 'Role yang dipilih tidak valid.',
     //     ]);
 
+    //     // === VALIDASI BISNIS UNTUK MENCEGAH DUPLIKAT ROLE ===
+    //     if ($request->filled('role') && $request->filled('karyawan_id')) {
+    //         $newEmployee = Employee::find($validated['karyawan_id']);
+    //         $newRole = $validated['role'];
+
+    //         // 1. Cek duplikat Admin
+    //         if ($newRole === 'admin') {
+    //             $existingAdmin = User::where('role', 'admin')
+    //                 ->where('id', '!=', $user->id) // Abaikan user yang sedang diedit
+    //                 ->whereHas('employee', function ($query) use ($newEmployee) {
+    //                     $query->where('institution_id', $newEmployee->institution_id);
+    //                 })
+    //                 ->exists();
+
+    //             if ($existingAdmin) {
+    //                 return back()->withInput()->with('error', 'Instansi ini sudah memiliki Admin.');
+    //             }
+    //         }
+
+    //         // 2. Cek duplikat Subadmin
+    //         if ($newRole === 'subadmin') {
+    //             // Pastikan karyawan baru punya department_id
+    //             if ($newEmployee->department_id) {
+    //                 $existingSubadmin = User::where('role', 'subadmin')
+    //                     ->where('id', '!=', $user->id) // Abaikan user yang sedang diedit
+    //                     ->whereHas('employee', function ($query) use ($newEmployee) {
+    //                         $query->where('department_id', $newEmployee->department_id);
+    //                     })
+    //                     ->exists();
+
+    //                 if ($existingSubadmin) {
+    //                     return back()->withInput()->with('error', 'Departemen ini sudah memiliki Sub Admin.');
+    //                 }
+    //             }
+    //         }
+    //     }
+
     //     try {
     //         DB::beginTransaction();
 
@@ -333,6 +329,7 @@ class UserController extends Controller
     //         }
 
     //         $user->update($validated);
+
     //         DB::commit();
 
     //         return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
@@ -341,14 +338,17 @@ class UserController extends Controller
     //         return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
     //     }
     // }
+
     public function update(Request $request, User $user)
     {
         $this->authorize('update', $user);
 
+        // === PERBAIKAN VALIDASI DI SINI ===
         $validated = $request->validate([
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'nullable|min:6|confirmed',
-            'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+            // karyawan_id wajib diisi JIKA role juga diisi (artinya bagian edit role dibuka)
+            'karyawan_id' => ['required_with:role', 'nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
             'role' => 'sometimes|in:admin,subadmin,user',
         ], [
             'email.unique' => 'Email sudah digunakan.',
@@ -357,18 +357,19 @@ class UserController extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
             'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+            // Tambahkan pesan error baru
+            'karyawan_id.required_with' => 'Anda harus memilih ulang karyawan jika mengubah role.',
             'role.in' => 'Role yang dipilih tidak valid.',
         ]);
 
-        // === VALIDASI BISNIS UNTUK MENCEGAH DUPLIKAT ROLE ===
+        // Validasi Bisnis Duplikat Role
         if ($request->filled('role') && $request->filled('karyawan_id')) {
             $newEmployee = Employee::find($validated['karyawan_id']);
             $newRole = $validated['role'];
 
-            // 1. Cek duplikat Admin
             if ($newRole === 'admin') {
                 $existingAdmin = User::where('role', 'admin')
-                    ->where('id', '!=', $user->id) // Abaikan user yang sedang diedit
+                    ->where('id', '!=', $user->id)
                     ->whereHas('employee', function ($query) use ($newEmployee) {
                         $query->where('institution_id', $newEmployee->institution_id);
                     })
@@ -379,12 +380,10 @@ class UserController extends Controller
                 }
             }
 
-            // 2. Cek duplikat Subadmin
             if ($newRole === 'subadmin') {
-                // Pastikan karyawan baru punya department_id
                 if ($newEmployee->department_id) {
                     $existingSubadmin = User::where('role', 'subadmin')
-                        ->where('id', '!=', $user->id) // Abaikan user yang sedang diedit
+                        ->where('id', '!=', $user->id)
                         ->whereHas('employee', function ($query) use ($newEmployee) {
                             $query->where('department_id', $newEmployee->department_id);
                         })
@@ -404,6 +403,12 @@ class UserController extends Controller
                 $validated['password'] = Hash::make($validated['password']);
             } else {
                 unset($validated['password']);
+            }
+
+            // Jika role tidak diubah, jangan sertakan karyawan_id dalam update
+            // kecuali memang diisi secara eksplisit.
+            if (!$request->filled('role') && !$request->filled('karyawan_id')) {
+                unset($validated['karyawan_id']);
             }
 
             $user->fill($validated);
