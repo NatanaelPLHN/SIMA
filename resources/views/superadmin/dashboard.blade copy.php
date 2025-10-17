@@ -1,92 +1,65 @@
 @extends('layouts.app')
 
-@section('title', 'Super Admin Dashboard')
-
-@push('styles')
-{{-- <style>
-    /* taruh CSS khusus halaman ini */
-    .dashboard-title { font-size: 1.2rem; color: #4a3d8c; margin-bottom: 10px; }
-    .btn { padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
-    .btn-primary { background-color: #4a3d8c; color: white; }
-    .btn-secondary { background-color: #e0e0e0; color: #333; }
-    .aksi-btn { background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; }
-    .aksi-btn:hover { background-color: #0056b3; }
-</style> --}}
-@endpush
+@section('title', 'Admin Dashboard')
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 
 @section('content')
-    <div class="content-header">
-        <h2 class="dashboard-title">Aset Bergerak</h2>
-        <div class="btn-group">
-            <button class="btn btn-primary">Bergerak</button>
-            <button class="btn btn-secondary">Tidak Bergerak</button>
-            <button class="btn btn-secondary">Habis Pakai</button>
+    <div class="space-y-8">
+        <!-- Header -->
+        <div class="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+            <p class="text-gray-600 dark:text-gray-400">Selamat datang di sistem manajemen aset instansi</p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+            @php
+                $summary = [
+                    [
+                        'title' => 'Total Instansi',
+                        'value' => $institutionCount,
+                        'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+                        'color' => 'from-blue-500 to-cyan-500',
+                    ],
+                    [
+                        'title' => 'Total Pegawai',
+                        'value' => $employeeCount,
+                        'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
+                        'color' => 'from-emerald-500 to-teal-500',
+                    ],
+                ];
+            @endphp
+
+            @foreach ($summary as $card)
+                <div
+                    class="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 rounded-xl overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{{ $card['title'] }}</p>
+                                <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ $card['value'] }}</h3>
+                            </div>
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br {{ $card['color'] }} rounded-2xl flex items-center justify-center shadow-lg">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="{{ $card['icon'] }}"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 
-    <div class="search-box">
-        <label>Tampilkan:</label>
-        <select>
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
-            <option>100</option>
-        </select>
-        <label>entri</label>
-        <input type="text" placeholder="Cari..." />
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama Aset</th>
-                <th>Seri/Number</th>
-                <th>Merk/Type</th>
-                <th>Tahun Produksi</th>
-                <th>Kondisi</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td><td>Audrey Mckinney</td><td>12345</td><td>Dell</td><td>2023</td><td>Baik</td>
-                <td><button class="aksi-btn"><i class="fas fa-edit"></i></button></td>
-            </tr>
-            <tr>
-                <td>2</td><td>Savannah Howard</td><td>54321</td><td>HP</td><td>2022</td><td>Rusak</td>
-                <td><button class="aksi-btn"><i class="fas fa-edit"></i></button></td>
-            </tr>
-        </tbody>
-    </table>
-@endsection
-
-@push('scripts')
-<script>
-    // tombol filter
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.btn').forEach(b => b.classList.remove('btn-primary'));
-            this.classList.add('btn-primary');
-        });
-    });
-
-    // pencarian tabel
-    const searchInput = document.querySelector('.search-box input');
-    searchInput.addEventListener('keyup', function() {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            let found = false;
-            cells.forEach(cell => {
-                if (cell.textContent.toLowerCase().includes(searchTerm)) {
-                    found = true;
-                }   
+    <script>
+        document.getElementById('activity-search').addEventListener('keyup', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('#activity-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
             });
-            row.style.display = found ? '' : 'none';
         });
-    });
-</script>
-@endpush
+    </script>
+@endsection
