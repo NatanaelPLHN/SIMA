@@ -9,22 +9,36 @@ use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $groups = CategoryGroup::all();
+        $categories = [
+            'Elektronik' => [
+                'Laptop', 'Komputer', 'Printer', 'Proyektor', 'Scanner'
+            ],
+            'Furniture' => [
+                'Meja', 'Kursi', 'Lemari Arsip', 'Rak Buku', 'Filing Cabinet'
+            ],
+            'Kendaraan' => [
+                'Mobil Dinas', 'Motor Dinas', 'Sepeda Kantor'
+            ],
+            'Alat Tulis' => [
+                'Pulpen', 'Buku Catatan', 'Kertas A4', 'Map Dokumen', 'Stapler'
+            ],
+            'Bangunan' => [
+                'Ruang Rapat', 'Gudang', 'Kantor Utama'
+            ],
+        ];
 
-        foreach ($groups as $group) {
-            for ($i = 1; $i <= 10; $i++) {
-                $nama = $group->nama . " Kategori " . $i;
+        foreach ($categories as $groupName => $names) {
+            $group = CategoryGroup::where('nama', $groupName)->first();
 
+            if (!$group) continue;
+
+            foreach ($names as $name) {
                 Category::create([
-                    'nama' => $nama,
-                    // 'alias' => $group->id,
-                    'alias' => Str::slug($nama) . '-' . $group->id,
-                    'deskripsi' => "Kategori $i untuk grup " . $group->nama,
+                    'nama' => $name,
+                    'alias' => Str::slug($name),
+                    'deskripsi' => "Kategori aset untuk $groupName - $name",
                     'category_group_id' => $group->id,
                 ]);
             }
