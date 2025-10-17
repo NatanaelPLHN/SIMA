@@ -59,6 +59,14 @@ Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployee
 // untuk menyimpan progress opname bidang
 // Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
 
+Route::middleware(['auth', 'role:superadmin,admin,subadmin'])->group(function () {
+    Route::prefix('users/ajax')->name('users.ajax.')->group(function () {
+        Route::get('/get-institutions', [UserController::class, 'getInstitutionsForRole'])->name('get-institutions');
+        Route::get('/get-departments', [UserController::class, 'getDepartmentsForRole'])->name('get-departments');
+        Route::get('/get-employees', [UserController::class, 'getEmployeesForSelection'])->name('get-employees');
+    });
+});
+
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
