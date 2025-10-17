@@ -70,7 +70,7 @@ Route::middleware(['auth', 'role:superadmin,admin,subadmin'])->group(function ()
 // User routes
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('in', [AuthController::class, 'login']);
-    Route::get('dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
     Route::resource('profile', controller: ProfileController::class);
     // Route::get('asset-usage', AssetUsageController::class);
     // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');

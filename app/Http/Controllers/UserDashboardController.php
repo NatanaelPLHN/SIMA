@@ -6,7 +6,7 @@ use App\Models\Asset;
 
 class UserDashboardController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
         // Pegawai hanya bisa melihat daftar aset
         $assets = Asset::paginate(10);
