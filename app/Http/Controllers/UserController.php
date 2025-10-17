@@ -50,60 +50,6 @@ class UserController extends Controller
 
     // public function create()
     // {
-    //     $login = Auth::user();
-    //     $user_role = $login->role;
-
-    //     $employees = collect();
-    //     $creatable_role = '';
-
-    //     $departments = Departement::whereDoesntHave('employees.user', function ($query) {
-    //         $query->where('role', 'admin');
-    //     })->get();
-
-    //     if ($user_role === 'superadmin') {
-    //         $creatable_role = 'admin';
-    //         $kepalaInstansiIds = Institution::whereNotNull('kepala_instansi_id')->pluck('kepala_instansi_id');
-    //         $employees = Employee::whereIn('id', $kepalaInstansiIds)
-    //             ->whereDoesntHave('user')
-    //             ->orderBy('nama')
-    //             ->get();
-    //     } elseif ($user_role === 'admin') {
-    //         $creatable_role = 'subadmin';
-    //         $kepalaDepartemenIds = Departement::where('instansi_id', $login->employee->institution_id)
-    //             ->whereNotNull('kepala_bidang_id')
-    //             ->pluck('kepala_bidang_id');
-    //         $employees = Employee::whereIn('id', $kepalaDepartemenIds)
-    //             ->whereDoesntHave('user')
-    //             ->orderBy('nama')
-    //             ->get();
-    //     } elseif ($user_role === 'subadmin') {
-    //         $creatable_role = 'user';
-    //         $employees = Employee::where('department_id', $login->employee->department_id)
-    //             ->whereDoesntHave('user')
-    //             ->orderBy('nama')
-    //             ->get();
-    //     }
-
-    //     return view('user.create_user', compact('creatable_role', 'employees', 'login', 'departments'));
-    // }
-    // public function create()
-    // {
-    //     $this->authorize('create', User::class);
-    //     $authUser = Auth::user();
-    //     $roles = [];
-
-    //     if ($authUser->isSuperAdmin()) {
-    //         $roles = ['admin' => 'Admin', 'subadmin' => 'Sub Admin', 'user' => 'User'];
-    //     } elseif ($authUser->isAdmin()) {
-    //         $roles = ['subadmin' => 'Sub Admin', 'user' => 'User'];
-    //     } elseif ($authUser->isSubAdmin()) {
-    //         $roles = ['user' => 'User'];
-    //     }
-
-    //     return view('user.create_user', compact('roles'));
-    // }
-    // public function create()
-    // {
     //     $this->authorize('create', User::class);
     //     $authUser = Auth::user();
     //     $viewData = [];
@@ -113,12 +59,10 @@ class UserController extends Controller
     //     } elseif ($authUser->isAdmin()) {
     //         $viewData['roles'] = ['subadmin' => 'Sub Admin', 'user' => 'User'];
 
-    //         // Ambil semua departemen di instansi admin
     //         $allDepartments = Departement::where('instansi_id', $authUser->employee->institution_id)
     //             ->orderBy('nama')
     //             ->get();
 
-    //         // Ambil ID departemen yang sudah punya subadmin
     //         $departmentsWithSubadmin = User::where('role', 'subadmin')
     //             ->whereHas('employee.department', function ($query) use ($authUser) {
     //                 $query->where('instansi_id', $authUser->employee->institution_id);
@@ -128,21 +72,18 @@ class UserController extends Controller
     //             ->pluck('employee.department_id')
     //             ->filter();
 
-    //         // Filter departemen yang belum punya subadmin
-    //         $viewData['departmentsForSubadmin'] = $allDepartments->whereNotIn('id', $departmentsWithSubadmin);
+    //         // === PERBAIKAN DI SINI ===
+    //         // Gunakan ->values()->all() untuk memastikan hasilnya adalah array bersih
+    //         $viewData['departmentsForSubadmin'] = $allDepartments->whereNotIn('id', $departmentsWithSubadmin)->values()->all();
 
-    //         // Sediakan semua departemen untuk role 'user'
     //         $viewData['allDepartments'] = $allDepartments;
 
-    //         // Ambil semua karyawan di instansi admin yang belum punya akun
-    //         $viewData['employees'] = Employee::where('institution_id', $authUser
-    //             ->employee->institution_id)
+    //         $viewData['employees'] = Employee::where('institution_id', $authUser->employee->institution_id)
     //             ->whereDoesntHave('user')
     //             ->orderBy('nama')
     //             ->get();
     //     } elseif ($authUser->isSubAdmin()) {
     //         $viewData['roles'] = ['user' => 'User'];
-    //         // Logika untuk SubAdmin bisa ditambahkan di sini jika perlu
     //     }
 
     //     return view('user.create_user', $viewData);
@@ -172,9 +113,7 @@ class UserController extends Controller
                 ->pluck('employee.department_id')
                 ->filter();
 
-            // === PERBAIKAN DI SINI ===
-            // Gunakan ->values()->all() untuk memastikan hasilnya adalah array bersih
-            $viewData['departmentsForSubadmin'] = $allDepartments->whereNotIn('id', $departmentsWithSubadmin)->values()->all();
+            $viewData['departmentsForSubadmin'] = $allDepartments->whereNotIn('id', $departmentsWithSubadmin)->values();
 
             $viewData['allDepartments'] = $allDepartments;
 
@@ -183,13 +122,18 @@ class UserController extends Controller
                 ->orderBy('nama')
                 ->get();
         } elseif ($authUser->isSubAdmin()) {
+            // === LOGIKA BARU UNTUK SUBADMIN ===
             $viewData['roles'] = ['user' => 'User'];
+
+            // Ambil semua karyawan di departemen subadmin yang belum punya akun
+            $viewData['employees'] = Employee::where('department_id', $authUser->employee->department_id)
+                ->whereDoesntHave('user')
+                ->orderBy('nama')
+                ->get();
         }
 
         return view('user.create_user', $viewData);
     }
-
-
     // public function store(Request $request)
     // {
     //     $validated = $request->validate([

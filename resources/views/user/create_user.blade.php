@@ -134,10 +134,19 @@
                                     @enderror
                                 </div>
                             </div>
+                        @elseif(auth()->user()->isSubAdmin())
+                            {{-- FORM BARU UNTUK SUBADMIN (TANPA JAVASCRIPT) --}}
+                            <div id="subadmin-fields">
+                                <!-- Hidden inputs untuk mengirimkan data konteks -->
+                                <input type="hidden" name="institution_id"
+                                    value="{{ auth()->user()->employee->institution_id }}">
+                                <input type="hidden" name="department_id"
+                                    value="{{ auth()->user()->employee->department_id }}">
+                            </div>
                         @endif
 
                         {{-- DROPDOWN KARYAWAN (UMUM) --}}
-                        <div id="employee-wrapper" class="hidden">
+                        <div id="employee-wrapper" class="@if (!auth()->user()->isSubAdmin()) hidden @endif">
                             <label for="karyawan_id"
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pegawai <span
                                     class="text-red-500">*</span></label>
@@ -145,7 +154,18 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 required>
                                 <option value="">-- Pilih Pegawai --</option>
-                                {{-- Opsi diisi oleh JavaScript --}}
+
+                                @if (auth()->user()->isSubAdmin())
+                                    {{-- Untuk Subadmin, isi langsung dari controller --}}
+                                    @foreach ($employees as $employee)
+                                        <option value="{{ $employee->id }}"
+                                            {{ old('karyawan_id') == $employee->id ? 'selected' : '' }}>
+                                            {{ $employee->nama }}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    {{-- Untuk role lain, opsi diisi oleh JavaScript --}}
+                                @endif
                             </select>
                             @error('karyawan_id')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
@@ -156,7 +176,8 @@
                     <!-- Kolom Kanan (Tidak berubah) -->
                     <div class="space-y-6">
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email
+                            <label for="email"
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email
                                 <span class="text-red-500">*</span></label>
                             <input type="email" name="email" id="email"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
