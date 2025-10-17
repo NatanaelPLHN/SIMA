@@ -152,18 +152,18 @@
         <!-- Tab: Bergerak -->
         <div id="bergerak" class="table-content hidden p-4" role="tabpanel" aria-labelledby="tab-bergerak">
             <div class="items-center justify-between block sm:flex mb-4">
-                <form method="GET" action="{{ routeForRole('assets', 'index') }}"
-                    class="flex items-center space-x-2 sm:pl-4">
+                {{-- <form method="GET" action="{{ routeForRole('assets', 'index') }}"
+                    class="flex items-center space-x-2 sm:pl-4"> --}}
                     <div class="relative w-48 sm:w-64">
                         <input type="text" name="search" value="{{ request('search') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Cari nama, serial number, dll...">
                     </div>
-                    @if (request('search'))
+                    {{-- @if (request('search'))
                         <a href="{{ routeForRole('assets', 'index') }}"
                             class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
-                    @endif
-                </form>
+                    @endif --}}
+                {{-- </form> --}}
                 @if (auth()->user()->role == 'subadmin')
                     <a href="{{ route('subadmin.assets.create_gerak') }}"
                         class="mt-2 sm:mt-0 text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
@@ -387,18 +387,18 @@
             <!-- Tab: Tidak Bergerak -->
             <div id="tidakbergerak" class="table-content hidden p-4" role="tabpanel" aria-labelledby="tab-tidak-bergerak">
                 <div class="items-center justify-between block sm:flex mb-4">
-                    <form method="GET" action="{{ routeForRole('assets', 'index') }}"
-                        class="flex items-center space-x-2 sm:pl-4">
+                    {{-- <form method="GET" action="{{ routeForRole('assets', 'index') }}"
+                        class="flex items-center space-x-2 sm:pl-4"> --}}
                         <div class="relative w-48 sm:w-64">
                             <input type="text" name="search" value="{{ request('search') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, kode, dll...">
                         </div>
-                        @if (request('search'))
+                        {{-- @if (request('search'))
                             <a href="{{ routeForRole('assets', 'index') }}"
                                 class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
                         @endif
-                    </form>
+                    </form> --}}
                     @if (auth()->user()->role == 'subadmin')
                         <a href="{{ route('subadmin.assets.create_tidak_bergerak') }}"
                             class="mt-2 sm:mt-0 text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
@@ -607,17 +607,17 @@
                 <!-- Tab: Habis Pakai -->
                 <div id="habispakai" class="table-content hidden p-4" role="tabpanel" aria-labelledby="tab-habis-pakai">
                     <div class="items-center justify-between block sm:flex mb-4">
-                        <form method="GET" action="{{ routeForRole('assets', 'index') }}"
-                            class="flex items-center space-x-2 sm:pl-4">
+                        {{-- <form method="GET" action="{{ routeForRole('assets', 'index') }}"
+                            class="flex items-center space-x-2 sm:pl-4"> --}}
                             <div class="relative w-48 sm:w-64">
                                 <input type="text" name="search" value="{{ request('search') }}"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Cari nama, kode, dll...">
                             </div>
-                            @if (request('search'))
+                            {{-- @if (request('search'))
                                 <a href="{{ routeForRole('assets', 'index') }}"
                                     class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
-                            @endif
+                            @endif --}}
                         </form>
                         @if (auth()->user()->role == 'subadmin')
                             <a href="{{ route('subadmin.assets.create_habis') }}"
