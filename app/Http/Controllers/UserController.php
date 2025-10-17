@@ -292,12 +292,59 @@ class UserController extends Controller
         return view('user.edit_user', compact('user', 'employees', 'login', 'departments'));
     }
 
+    // public function update(Request $request, User $user)
+    // {
+    //     $validated = $request->validate([
+    //         'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+    //         'password' => 'nullable|min:6|confirmed',
+    //         'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+    //     ], [
+    //         'email.unique' => 'Email sudah digunakan.',
+    //         'email.required' => 'Email wajib diisi.',
+    //         'password.min' => 'Password minimal 6 karakter.',
+    //         'password.confirmed' => 'Konfirmasi password tidak cocok.',
+    //         'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
+    //         'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+    //     ]);
+
+    //     $original = $user->replicate();
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         if (! empty($validated['password'])) {
+    //             $validated['password'] = Hash::make($validated['password']);
+    //         } else {
+    //             unset($validated['password']);
+    //         }
+
+    //         $user->fill($validated);
+
+    //         if (! $user->isDirty()) {
+    //             DB::rollBack();
+
+    //             return back()->with('info', 'Tidak ada perubahan pada data user.');
+    //         }
+
+    //         $user->update($validated);
+
+    //         DB::commit();
+
+    //         return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
+    //     } catch (\Throwable $e) {
+    //         DB::rollBack();
+
+    //         return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
+    //     }
+    // }
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'nullable|min:6|confirmed',
             'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+            // === TAMBAHKAN BARIS INI ===
+            'role' => 'sometimes|in:admin,subadmin,user',
         ], [
             'email.unique' => 'Email sudah digunakan.',
             'email.required' => 'Email wajib diisi.',
@@ -305,31 +352,25 @@ class UserController extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
             'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+            'role.in' => 'Role yang dipilih tidak valid.',
         ]);
-
-        $original = $user->replicate();
 
         try {
             DB::beginTransaction();
-
             if (! empty($validated['password'])) {
                 $validated['password'] = Hash::make($validated['password']);
             } else {
                 unset($validated['password']);
             }
-
             $user->fill($validated);
 
             if (! $user->isDirty()) {
                 DB::rollBack();
-
                 return back()->with('info', 'Tidak ada perubahan pada data user.');
             }
 
             $user->update($validated);
-
             DB::commit();
-
             return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
         } catch (\Throwable $e) {
             DB::rollBack();
