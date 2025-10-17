@@ -32,7 +32,7 @@ class UpdateStockOpnameStatusCommand extends Command
 
         $today = Carbon::today();
 
-        // Ambil sesi yang statusnya masih berjalan (dijadwalkan/proses) dan sudah melewati deadline
+        // Ambil sesi yang statusnya masih berjalan dan sudah melewati deadline
         $overdueSessions = StockOpnameSession::whereIn('status', ['dijadwalkan', 'proses'])
             ->where('tanggal_deadline', '<', $today)
             ->get();
@@ -45,44 +45,58 @@ class UpdateStockOpnameStatusCommand extends Command
         $this->info("Found {$overdueSessions->count()} overdue session(s). Processing...");
 
         foreach ($overdueSessions as $session) {
+            $this->info("Processing session #{$session->id} for department ID: {$session->department_id}...");
             try {
                 DB::transaction(function () use ($session) {
-                    // 1. Ubah status sesi utama
+                    // Langkah 1: Tandai sesi sebagai selesai
                     $session->status = 'selesai';
-                    $session->tanggal_selesai = Carbon::now();
+                    $session->tanggal_selesai = now();
                     $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
                     $session->save();
 
-                    $session->details()->whereNull('status_fisik')->update(['status_fisik' => 'hilang']);
-                    // 2. Proses detail yang belum diverifikasi
-                    // Asumsi 'belum diproses' adalah jika status fisik belum diubah dari status awal
+                    // Langkah 2: Proses Aset Bergerak & Tidak Bergerak yang belum dicek
+                    $unprocessedMovable = $session->details()
+                        ->whereNull('status_fisik')
+                        ->whereHas('asset', fn($q) => $q->whereIn('jenis_aset', ['bergerak', 'tidak_bergerak']))
+                        ->with('asset')
+                        ->get();
 
-                    // --------------------------------
-                    // PERLU DIPERHATIKAN YG BAWAH INI , KARENA BISA JADI SEMUA SUDAH SESUAI KARENA STATUS LAMA DAN FISIK SUDAH SESUAI
-                    // -------------------------------
-                    // $unprocessedDetails = $session->details()->whereColumn('status_lama', 'status_fisik')->get();
+                    foreach ($unprocessedMovable as $detail) {
+                        $asset = $detail->asset;
+                        $detail->status_fisik = 'hilang';
+                        $detail->jumlah_fisik = 0;
+                        $detail->save();
 
-                    // foreach ($unprocessedDetails as $detail) {
-                    //     $asset = $detail->asset;
-                    //     if (!$asset) continue;
+                        if ($asset) {
+                            $asset->status = 'hilang';
+                            $asset->jumlah = 0;
+                            $asset->save();
+                        }
+                    }
+                    $this->info("- Processed {$unprocessedMovable->count()} movable/immovable assets.");
 
-                    //     // Logika default saat deadline terlewat
-                    //     if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
-                    //         // Jika status masih 'tersedia', anggap 'hilang'
-                    //         if ($detail->status_fisik === 'tersedia') {
-                    //             $detail->status_fisik = 'hilang';
-                    //             $detail->jumlah_fisik = 0;
-                    //         }
-                    //     } elseif ($asset->jenis_aset === 'habis_pakai') {
-                    //         // Jika habis pakai, anggap jumlahnya 0 dan statusnya 'habis'
-                    //         $detail->jumlah_fisik = 0;
-                    //         $detail->status_fisik = 'habis';
-                    //     }
+                    // Langkah 3: Proses Aset Habis Pakai yang belum dihitung
+                    $unprocessedConsumable = $session->details()
+                        ->whereNull('jumlah_fisik')
+                        ->whereHas('asset', fn($q) => $q->where('jenis_aset', 'habis_pakai'))
+                        ->with('asset')
+                        ->get();
 
-                    //     $detail->save();
-                    // }
+                    foreach ($unprocessedConsumable as $detail) {
+                        $asset = $detail->asset;
+                        $detail->jumlah_fisik = 0;
+                        $detail->status_fisik = 'habis';
+                        $detail->save();
+
+                        if ($asset) {
+                            $asset->jumlah = 0;
+                            $asset->status = 'habis';
+                            $asset->save();
+                        }
+                    }
+                    $this->info("- Processed {$unprocessedConsumable->count()} consumable assets.");
                 });
-                $this->info("Session #{$session->id} ('{$session->nama}') has been marked as 'selesai'.");
+                $this->info("Session #{$session->id} ('{$session->nama}') has been successfully marked as 'selesai'.");
             } catch (\Exception $e) {
                 $this->error("Failed to update session #{$session->id}: " . $e->getMessage());
             }

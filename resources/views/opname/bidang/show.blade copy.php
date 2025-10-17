@@ -339,18 +339,18 @@ transition-colors">
                                 // --- LOGIKA PEMINDAI QR (REVISI FINAL DENGAN PEMBERSIHAN PAKSA) ---
                                 function startScanning() {
                                     qrScannerModal.classList.remove('hidden');
-                                    
+
                                     // Selalu buat instance baru untuk memastikan state bersih, seperti di file referensi
                                     html5QrCode = new Html5Qrcode("qr-reader");
-                                    
+
                                     const config = {
                                         fps: 10,
                                         qrbox: { width: 250, height: 250 }
                                     };
-                
+
                                     html5QrCode.start(
-                                        { facingMode: "environment" }, 
-                                        config, 
+                                        { facingMode: "environment" },
+                                        config,
                                         qrCodeSuccessCallback
                                     ).catch(err => {
                                         alert("Gagal memulai kamera. Pastikan Anda memberikan izin.");

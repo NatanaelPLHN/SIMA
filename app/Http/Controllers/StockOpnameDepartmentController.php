@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
+// \Illuminate\Support\Facades\
 use App\Models\StockOpnameDetail;
 use App\Models\Asset;
 use App\Models\Departement;
@@ -391,6 +392,7 @@ class StockOpnameDepartmentController extends Controller
 
     public function updateItem(Request $request, StockOpnameDetail $detail)
     {
+        Log::info('Fungsi updateItem DIPANGGIL. Detail ID: ' . $detail->id);
         // Optional: policy/authorize
         // $this->authorize('update', $detail);
         activity()->disableLogging();
