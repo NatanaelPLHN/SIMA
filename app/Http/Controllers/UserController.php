@@ -398,24 +398,55 @@ class UserController extends Controller
 
         return Excel::download(new UsersExport($users), 'akun pegawai.xlsx');
     }
+    // public function getInstitutionsForRole(Request $request)
+    // {
+    //     $authUser = Auth::user();
+    //     $role = $request->query('role');
+    //     $query = Institution::query();
+
+    //     if ($authUser->isSuperAdmin()) {
+    //         if ($role === 'admin') {
+    //             $query->whereDoesntHave('employees.user', fn($q) => $q->where(
+    //                 'role',
+    //                 'admin'
+    //             ));
+    //         }
+    //     } else {
+    //         // Admin & Subadmin hanya bisa melihat instansinya sendiri
+    //         $query->where('id', $authUser->employee->institution_id);
+    //     }
+
+    //     $institutions = $query->orderBy('nama')->get(['id', 'nama']);
+    //     return response()->json($institutions);
+    // }
+
     public function getInstitutionsForRole(Request $request)
     {
         $authUser = Auth::user();
         $role = $request->query('role');
+        $targetUserId = $request->query('user_id'); // <-- Ambil user_id dari request
+
         $query = Institution::query();
 
         if ($authUser->isSuperAdmin()) {
             if ($role === 'admin') {
-                $query->whereDoesntHave('employees.user', fn($q) => $q->where(
-                    'role',
-                    'admin'
-                ));
+                $query->where(function ($q) use ($targetUserId) {
+                    // Kondisi 1: Instansi yang sama sekali belum punya admin
+                    $q->whereDoesntHave('employees.user', function ($sub) {
+                        $sub->where('role', 'admin');
+                    });
+                    // Kondisi 2: ATAU instansi yang adminnya adalah user yang sedang diedit
+                    if ($targetUserId) {
+                        $q->orWhereHas('employees.user', function ($sub) use ($targetUserId) {
+                            $sub->where('role', 'admin')->where('users.id', $targetUserId);
+                        });
+                    }
+                });
             }
         } else {
             // Admin & Subadmin hanya bisa melihat instansinya sendiri
             $query->where('id', $authUser->employee->institution_id);
         }
-
         $institutions = $query->orderBy('nama')->get(['id', 'nama']);
         return response()->json($institutions);
     }
