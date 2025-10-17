@@ -30,7 +30,7 @@ class UserController extends Controller
             // $query->where('role', 'admin');
             $query->whereIn('role', ['admin', 'subadmin', 'user']);
         } elseif ($user->role === 'admin') {
-            $query->where('role', 'subadmin')
+            $query->whereIn('role', ['subadmin', 'user'])
                 ->whereHas('employee.institution', function ($q) use ($user) {
                     $q->where('id', $user->employee->institution_id);
                 });
@@ -134,62 +134,8 @@ class UserController extends Controller
 
         return view('user.create_user', $viewData);
     }
-    // public function store(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'email' => 'required|email|unique:users,email',
-    //         'password' => 'required|min:6|confirmed',
-    //         'karyawan_id' => 'required|exists:employees,id|unique:users,karyawan_id',
-    //     ], [
-    //         'email.unique' => 'Email sudah digunakan.',
-    //         'email.required' => 'Email wajib diisi.',
-    //         'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
-    //     ]);
 
-    //     $user = Auth::user();
-    //     $user_role = $user->role;
-    //     $new_role = '';
-    //     $employee = Employee::find($validated['karyawan_id']);
 
-    //     // Tentukan role baru & validasi tambahan
-    //     if ($user_role === 'superadmin') {
-    //         $new_role = 'admin';
-    //         $isKepalaInstansi = Institution::where('kepala_instansi_id', $employee->id)->exists();
-    //         if (! $isKepalaInstansi) {
-    //             return back()->withInput()->withErrors(['karyawan_id' => 'Superadmin hanya bisa membuat akun untuk Kepala Instansi.']);
-    //         }
-    //     } elseif ($user_role === 'admin') {
-    //         $new_role = 'subadmin';
-    //         $isKepalaDepartemen = Departement::where('kepala_bidang_id', $employee->id)->exists();
-    //         if (! $isKepalaDepartemen) {
-    //             return back()->withInput()->withErrors(['karyawan_id' => 'Admin hanya bisa membuat akun untuk Kepala Departemen.']);
-    //         }
-    //     } elseif ($user_role === 'subadmin') {
-    //         $new_role = 'user';
-    //         if ($employee->department_id !== $user->employee->department_id) {
-    //             return back()->withInput()->withErrors(['karyawan_id' => 'Subadmin hanya bisa membuat akun untuk karyawan di departemennya sendiri.']);
-    //         }
-    //     } else {
-    //         return back()->with('error', 'Anda tidak memiliki izin untuk membuat pengguna.');
-    //     }
-
-    //     try {
-    //         DB::beginTransaction();
-
-    //         $validated['password'] = Hash::make($validated['password']);
-    //         $validated['role'] = $new_role;
-
-    //         User::create($validated);
-
-    //         DB::commit();
-
-    //         return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil ditambahkan.');
-    //     } catch (\Throwable $e) {
-    //         DB::rollBack();
-
-    //         return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
-    //     }
-    // }
     public function store(Request $request)
     {
         // (Method store tidak perlu diubah, validasinya sudah mencakup semua)
@@ -261,35 +207,52 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $login = Auth::user();
-        $user->load('employee');
+        $this->authorize('update', $user);
+        $authUser = Auth::user();
+        $viewData = ['user' => $user->load('employee.institution', 'employee.department')];
 
-        $query = Employee::query();
+        if ($authUser->isSuperAdmin()) {
+            // Untuk Superadmin, kita biarkan AJAX yang bekerja.
+            // Kita hanya perlu menyediakan daftar role.
+            $viewData['roles'] = ['admin' => 'Admin', 'subadmin' => 'Sub Admin', 'user' => 'User'];
+        } elseif ($authUser->isAdmin()) {
+            // Untuk Admin, siapkan semua data di awal.
+            $viewData['roles'] = ['subadmin' => 'Sub Admin', 'user' => 'User'];
+            $institutionId = $authUser->employee->institution_id;
 
-        $departments = Departement::whereDoesntHave('employees.user', function ($query) {
-            $query->where('role', 'admin');
-        })->get();
-        // Query HANYA mengambil karyawan yang BELUM punya akun,
-        // ATAU karyawan yang saat ini terhubung dengan akun INI.
-        $query->where(function ($q) use ($user) {
-            $q->whereDoesntHave('user')
-                ->orWhere('id', $user->karyawan_id);
-        });
+            // 1. Ambil semua departemen di instansi Admin
+            $viewData['departments'] = Departement::where('instansi_id', $institutionId)
+                ->orderBy('nama')
+                ->get();
 
-        // Terapkan filter role (ini harus ditambahkan setelah filter user_id)
-        if ($login->role === 'superadmin') {
-            $query->where('institution_id', $user->employee->institution_id);
-        } elseif ($login->role === 'admin') {
-            $query->where('institution_id', $login->employee->institution_id)
-                ->where('id', '!=', $login->employee->id);
-        } elseif ($login->role === 'subadmin') {
-            $query->where('department_id', $login->employee->department_id)
-                ->where('id', '!=', $login->employee->id);
+            // 2. Ambil semua karyawan di instansi Admin yang:
+            //    - Belum punya akun, ATAU
+            //    - Adalah karyawan yang sedang diedit saat ini.
+            $viewData['employees'] = Employee::where('institution_id', $institutionId)
+                ->where(function ($query) use ($user) {
+                    $query->whereDoesntHave('user')
+                        ->orWhere('id', $user->karyawan_id);
+                })
+                ->orderBy('nama')
+                ->get();
+        } elseif ($authUser->isSubAdmin()) {
+            // Untuk Subadmin, siapkan data yang lebih terbatas.
+            $viewData['roles'] = ['user' => 'User'];
+            $departmentId = $authUser->employee->department_id;
+
+            // Ambil karyawan di departemen Subadmin yang:
+            // - Belum punya akun, ATAU
+            // - Adalah karyawan yang sedang diedit.
+            $viewData['employees'] = Employee::where('department_id', $departmentId)
+                ->where(function ($query) use ($user) {
+                    $query->whereDoesntHave('user')
+                        ->orWhere('id', $user->karyawan_id);
+                })
+                ->orderBy('nama')
+                ->get();
         }
 
-        $employees = $query->orderBy('nama')->get();
-
-        return view('user.edit_user', compact('user', 'employees', 'login', 'departments'));
+        return view('user.edit_user', $viewData);
     }
 
     // public function update(Request $request, User $user)
@@ -298,6 +261,8 @@ class UserController extends Controller
     //         'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
     //         'password' => 'nullable|min:6|confirmed',
     //         'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+    //         // === TAMBAHKAN BARIS INI ===
+    //         'role' => 'sometimes|in:admin,subadmin,user',
     //     ], [
     //         'email.unique' => 'Email sudah digunakan.',
     //         'email.required' => 'Email wajib diisi.',
@@ -305,9 +270,51 @@ class UserController extends Controller
     //         'password.confirmed' => 'Konfirmasi password tidak cocok.',
     //         'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
     //         'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+    //         'role.in' => 'Role yang dipilih tidak valid.',
     //     ]);
 
-    //     $original = $user->replicate();
+    //     try {
+    //         DB::beginTransaction();
+    //         if (! empty($validated['password'])) {
+    //             $validated['password'] = Hash::make($validated['password']);
+    //         } else {
+    //             unset($validated['password']);
+    //         }
+    //         $user->fill($validated);
+
+    //         if (! $user->isDirty()) {
+    //             DB::rollBack();
+    //             return back()->with('info', 'Tidak ada perubahan pada data user.');
+    //         }
+
+    //         $user->update($validated);
+    //         DB::commit();
+    //         return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
+    //     } catch (\Throwable $e) {
+    //         DB::rollBack();
+
+    //         return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
+    //     }
+    // }
+
+    // public function update(Request $request, User $user)
+    // {
+    //     $this->authorize('update', $user);
+
+    //     $validated = $request->validate([
+    //         'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+    //         'password' => 'nullable|min:6|confirmed',
+    //         'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
+    //         'role' => 'sometimes|in:admin,subadmin,user',
+    //     ], [
+    //         'email.unique' => 'Email sudah digunakan.',
+    //         'email.required' => 'Email wajib diisi.',
+    //         'password.min' => 'Password minimal 6 karakter.',
+    //         'password.confirmed' => 'Konfirmasi password tidak cocok.',
+    //         'karyawan_id.exists' => 'Karyawan tidak ditemukan.',
+    //         'karyawan_id.unique' => 'Karyawan ini sudah memiliki akun.',
+    //         'role.in' => 'Role yang dipilih tidak valid.',
+    //     ]);
 
     //     try {
     //         DB::beginTransaction();
@@ -322,28 +329,26 @@ class UserController extends Controller
 
     //         if (! $user->isDirty()) {
     //             DB::rollBack();
-
     //             return back()->with('info', 'Tidak ada perubahan pada data user.');
     //         }
 
     //         $user->update($validated);
-
     //         DB::commit();
 
     //         return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
     //     } catch (\Throwable $e) {
     //         DB::rollBack();
-
     //         return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
     //     }
     // }
     public function update(Request $request, User $user)
     {
+        $this->authorize('update', $user);
+
         $validated = $request->validate([
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'nullable|min:6|confirmed',
             'karyawan_id' => ['nullable', 'exists:employees,id', Rule::unique('users', 'karyawan_id')->ignore($user->id)],
-            // === TAMBAHKAN BARIS INI ===
             'role' => 'sometimes|in:admin,subadmin,user',
         ], [
             'email.unique' => 'Email sudah digunakan.',
@@ -355,13 +360,52 @@ class UserController extends Controller
             'role.in' => 'Role yang dipilih tidak valid.',
         ]);
 
+        // === VALIDASI BISNIS UNTUK MENCEGAH DUPLIKAT ROLE ===
+        if ($request->filled('role') && $request->filled('karyawan_id')) {
+            $newEmployee = Employee::find($validated['karyawan_id']);
+            $newRole = $validated['role'];
+
+            // 1. Cek duplikat Admin
+            if ($newRole === 'admin') {
+                $existingAdmin = User::where('role', 'admin')
+                    ->where('id', '!=', $user->id) // Abaikan user yang sedang diedit
+                    ->whereHas('employee', function ($query) use ($newEmployee) {
+                        $query->where('institution_id', $newEmployee->institution_id);
+                    })
+                    ->exists();
+
+                if ($existingAdmin) {
+                    return back()->withInput()->with('error', 'Instansi ini sudah memiliki Admin.');
+                }
+            }
+
+            // 2. Cek duplikat Subadmin
+            if ($newRole === 'subadmin') {
+                // Pastikan karyawan baru punya department_id
+                if ($newEmployee->department_id) {
+                    $existingSubadmin = User::where('role', 'subadmin')
+                        ->where('id', '!=', $user->id) // Abaikan user yang sedang diedit
+                        ->whereHas('employee', function ($query) use ($newEmployee) {
+                            $query->where('department_id', $newEmployee->department_id);
+                        })
+                        ->exists();
+
+                    if ($existingSubadmin) {
+                        return back()->withInput()->with('error', 'Departemen ini sudah memiliki Sub Admin.');
+                    }
+                }
+            }
+        }
+
         try {
             DB::beginTransaction();
+
             if (! empty($validated['password'])) {
                 $validated['password'] = Hash::make($validated['password']);
             } else {
                 unset($validated['password']);
             }
+
             $user->fill($validated);
 
             if (! $user->isDirty()) {
@@ -370,11 +414,12 @@ class UserController extends Controller
             }
 
             $user->update($validated);
+
             DB::commit();
+
             return redirect(routeForRole('user', 'index'))->with('success', 'User berhasil diperbarui.');
         } catch (\Throwable $e) {
             DB::rollBack();
-
             return back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage());
         }
     }

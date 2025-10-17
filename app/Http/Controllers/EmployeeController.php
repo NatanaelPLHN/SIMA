@@ -42,7 +42,7 @@ class EmployeeController extends Controller
         $query = Employee::with(['department', 'institution', 'user']);
 
         if ($user->role == 'superadmin') {
-            $query->whereNull('department_id');
+            // $query->whereNull('department_id'); //  agar hanya menampilkan department id kosong
         } elseif ($user->role == 'admin') {
             $query->whereHas('institution', function ($q) use ($user) {
                 $q->where('id', $user->employee?->institution->id);
