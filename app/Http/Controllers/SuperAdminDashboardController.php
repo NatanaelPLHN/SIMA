@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+// use App\Models\Institution;
+use App\Models\Employee;
 use App\Models\Institution;
 use App\Models\Category;
 use App\Models\CategoryGroup;
@@ -16,7 +17,7 @@ class SuperadminDashboardController extends Controller
         $totalCategories = Category::count();          // Total Kategori
         $totalCategoryGroups = CategoryGroup::count(); // Total Grup Kategori
         $totalUsers = User::count();
-
+        $totalEmployees = Employee::count();
         // Opsional: Tetap ambil aktivitas jika ingin ditampilkan nanti
         $recentActivities = Activity::with('causer')
             ->latest()
@@ -28,6 +29,7 @@ class SuperadminDashboardController extends Controller
             'totalCategories',
             'totalCategoryGroups',
             'totalUsers',
+            'totalEmployees',
             'recentActivities'
         ));
     }
