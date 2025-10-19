@@ -14,15 +14,15 @@
                             <a href="{{ route('superadmin.dashboard') }}" @elseif (auth()->user()->role == 'admin') <a
                                 href="{{ route('admin.dashboard') }}" @elseif (auth()->user()->role == 'subadmin') <a
                                     href="{{ route('subadmin.dashboard') }}" @endif
-                                class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                    </path>
-                                </svg>
-                                Dashboard
-                            </a>
+                                    class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                                    <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                        </path>
+                                    </svg>
+                                    Dashboard
+                                </a>
                         </li>
                         <li>
                             <div class="flex items-center">
@@ -109,8 +109,8 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="password"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password Baru</label>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password
+                            Baru</label>
                         <input type="password" name="password" id="password"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Kosongkan jika tidak diubah">
@@ -127,75 +127,35 @@
                             placeholder="••••••••">
                     </div>
                 </div>
-
-                {{-- TOMBOL UNTUK UBAH ROLE/KARYAWAN --}}
                 <div class="mt-6 border-t pt-4 dark:border-gray-700">
                     <button type="button" id="change-role-btn"
                         class="text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
-                        Ubah Role atau Karyawan Tertaut
+                        Ubah Role
                     </button>
                 </div>
 
-                {{-- FORM DINAMIS UBAH ROLE & KARYAWAN --}}
+                {{-- TOMBOL UNTUK UBAH ROLE/KARYAWAN --}}
                 <div id="change-role-section" class="hidden mt-4 pt-4 border-t dark:border-gray-600">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="role"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role Baru</label>
+                            <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role
+                                Baru</label>
                             <select id="role" name="role"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">-- Jangan Ubah Role --</option>
                                 @foreach ($roles as $key => $value)
-                                    <option value="{{ $key }}" {{ old('role') == $key ? 'selected' : '' }}>
+                                    {{-- Hanya tampilkan role yang bisa di-assign oleh user saat ini --}}
+                                    <option value="{{ $key }}"
+                                        {{ old('role') == $key
+                                            ? '
+                                                                                                                                                                                                                        selected'
+                                            : '' }}>
                                         {{ $value }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div></div> {{-- Placeholder --}}
-
-                        @if (auth()->user()->isSuperAdmin())
-                            <div id="institution-wrapper" class="hidden">
-                                <label for="institution_id"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Instansi</label>
-                                <select id="institution_id" name="institution_id"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                                </select>
-                            </div>
-                        @endif
-
-                        <div id="department-wrapper" class="hidden">
-                            <label for="department_id"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Departemen</label>
-                            <select id="department_id" name="department_id"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                                @if (auth()->user()->isAdmin())
-                                    <option value="">-- Pilih Departemen --</option>
-                                    @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}"
-                                            data-institution-id="{{ $department->instansi_id }}">{{ $department->nama }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-
-                        <div id="employee-wrapper" class="hidden">
-                            <label for="karyawan_id"
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Karyawan</label>
-                            <select id="karyawan_id" name="karyawan_id"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                                <option value="">-- Pilih Karyawan --</option>
-                                @if (!auth()->user()->isSuperAdmin())
-                                    @foreach ($employees as $employee)
-                                        <option value="{{ $employee->id }}"
-                                            data-department-id="{{ $employee->department_id }}"
-                                            {{-- PERBAIKAN: Tambahkan 'selected' jika ini adalah karyawan saat ini --}}
-                                            {{ $employee->id == $user->karyawan_id ? 'selected' : '' }}>
-                                            {{ $employee->nama }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
+                            @error('role')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -219,145 +179,17 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const loggedInUserRole = '{{ auth()->user()->role }}';
             const changeBtn = document.getElementById('change-role-btn');
             const changeSection = document.getElementById('change-role-section');
-
             const roleSelect = document.getElementById('role');
-            const employeeSelect = document.getElementById('karyawan_id');
-            const departmentSelect = document.getElementById('department_id');
-
-            const employeeWrapper = document.getElementById('employee-wrapper');
-            const departmentWrapper = document.getElementById('department-wrapper');
 
             changeBtn.addEventListener('click', () => {
                 changeSection.classList.toggle('hidden');
+                // Jika disembunyikan, reset pilihan role agar tidak terkirim
                 if (changeSection.classList.contains('hidden')) {
                     roleSelect.value = "";
-                    roleSelect.dispatchEvent(new Event('change'));
                 }
             });
-
-            function resetDynamicFields() {
-                employeeWrapper.classList.add('hidden');
-                departmentWrapper.classList.add('hidden');
-                if (loggedInUserRole === 'superadmin') {
-                    document.getElementById('institution-wrapper').classList.add('hidden');
-                }
-            }
-
-            roleSelect.addEventListener('change', function() {
-                const role = this.value;
-                resetDynamicFields();
-
-                if (!role) return;
-
-                employeeWrapper.classList.remove('hidden');
-                if (role === 'subadmin' || role === 'user') {
-                    departmentWrapper.classList.remove('hidden');
-                }
-
-                if (loggedInUserRole === 'superadmin') {
-                    document.getElementById('institution-wrapper').classList.remove('hidden');
-                    fetchInstitutions(role);
-                } else {
-                    handleDepartmentChange();
-                    // PERBAIKAN: Pastikan karyawan saat ini terpilih secara default
-                    employeeSelect.value = "{{ $user->karyawan_id ?? '' }}";
-                }
-            });
-
-            if (loggedInUserRole !== 'superadmin') {
-                const allEmployeeOptions = Array.from(employeeSelect.options).slice(1);
-
-                function handleDepartmentChange() {
-                    const selectedDeptId = departmentSelect.value;
-                    employeeSelect.options.length = 1;
-
-                    allEmployeeOptions.forEach(option => {
-                        if (!selectedDeptId || option.dataset.departmentId == selectedDeptId) {
-                            employeeSelect.add(option.cloneNode(true));
-                        }
-                    });
-                }
-                departmentSelect.addEventListener('change', handleDepartmentChange);
-                handleDepartmentChange();
-            }
-
-            if (loggedInUserRole === 'superadmin') {
-                const institutionSelect = document.getElementById('institution_id');
-
-                institutionSelect.addEventListener('change', function() {
-                    const role = roleSelect.value;
-                    const institutionId = this.value;
-                    fetchDepartments(role, institutionId);
-                    fetchEmployees(institutionId, null);
-                });
-
-                departmentSelect.addEventListener('change', function() {
-                    const institutionId = institutionSelect.value;
-                    const departmentId = this.value;
-                    fetchEmployees(institutionId, departmentId);
-                });
-
-                function fetchInstitutions(role) {
-                    const targetUserId = {{ $user->id }};
-                    let url = new URL("{{ route('users.ajax.get-institutions') }}");
-                    url.searchParams.append('role', role);
-                    url.searchParams.append('user_id', targetUserId);
-
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            institutionSelect.innerHTML = '<option value="">-- Pilih Instansi --</option>';
-                            data.forEach(item => {
-                                const option = new Option(item.nama, item.id);
-                                institutionSelect.add(option);
-                            });
-                        });
-                }
-
-                function fetchDepartments(role, institutionId) {
-                    if (!institutionId) return;
-                    let url = new URL("{{ route('users.ajax.get-departments') }}");
-                    url.searchParams.append('role', role);
-                    url.searchParams.append('institution_id', institutionId);
-
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            departmentSelect.innerHTML = '<option value="">-- Pilih Departemen --</option>';
-                            data.forEach(item => {
-                                const option = new Option(item.nama, item.id);
-                                departmentSelect.add(option);
-                            });
-                        });
-                }
-
-                function fetchEmployees(institutionId, departmentId) {
-                    if (!institutionId) return;
-                    let url = new URL("{{ route('users.ajax.get-employees') }}");
-                    url.searchParams.append('institution_id', institutionId);
-                    if (departmentId) {
-                        url.searchParams.append('department_id', departmentId);
-                    }
-                    url.searchParams.append('include_user_id', {{ $user->id }});
-
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            employeeSelect.innerHTML = '<option value="">-- Pilih Karyawan --</option>';
-                            data.forEach(item => {
-                                let text = item.nama;
-                                const option = new Option(text, item.id);
-                                if (item.id == {{ $user->karyawan_id ?? 'null' }}) {
-                                    option.selected = true;
-                                }
-                                employeeSelect.add(option);
-                            });
-                        });
-                }
-            }
         });
     </script>
 @endpush
