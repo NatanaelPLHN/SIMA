@@ -72,8 +72,8 @@ class CategoryGroupController extends Controller
                 'deskripsi' => 'nullable|string',
                 'alias' => 'required|string|max:255|unique:category_groups,alias',
             ], [
-                'nama.required' => 'Nama group kategori wajib diisi.',
-                'nama.unique' => 'Nama group kategori sudah digunakan.',
+                'nama.required' => 'Nama grup kategori wajib diisi.',
+                'nama.unique' => 'Nama grup kategori sudah digunakan.',
                 'alias.required' => 'Alias wajib diisi.',
                 'alias.unique' => 'Alias sudah digunakan.',
             ]);
@@ -107,11 +107,11 @@ class CategoryGroupController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Gagal menyimpan data group kategori. Silakan coba lagi.'
+                    'message' => 'Gagal menyimpan data grup kategori. Silakan coba lagi.'
                 ], 500);
             }
 
-            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data group kategori.');
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data grup kategori.');
         }
     }
 
@@ -143,8 +143,8 @@ class CategoryGroupController extends Controller
                 'deskripsi' => 'nullable|string',
                 'alias' => 'required|string|max:255|unique:category_groups,alias,' . $categoryGroup->id,
             ], [
-                'nama.required' => 'Nama group kategori wajib diisi.',
-                'nama.unique' => 'Nama group kategori sudah digunakan.',
+                'nama.required' => 'Nama grup kategori wajib diisi.',
+                'nama.unique' => 'Nama grup kategori sudah digunakan.',
                 'alias.required' => 'Alias wajib diisi.',
                 'alias.unique' => 'Alias sudah digunakan.',
             ]);
@@ -191,7 +191,7 @@ class CategoryGroupController extends Controller
                 ], 500);
             }
 
-            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data group kategori.');
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data grup kategori.');
         }
     }
 
@@ -201,9 +201,9 @@ class CategoryGroupController extends Controller
     public function destroy(CategoryGroup $categoryGroup)
     {
         try {
-            // Cek apakah masih ada kategori yang menggunakan group ini
+            // Cek apakah masih ada kategori yang menggunakan grup ini
             if ($categoryGroup->categories()->count() > 0) {
-                return redirect()->route('superadmin.category-groups.index')->with('error', 'Tidak dapat menghapus group kategori karena masih digunakan oleh kategori.');
+                return redirect()->route('superadmin.category-groups.index')->with('error', 'Tidak dapat menghapus grup kategori karena masih digunakan oleh kategori.');
             }
 
             DB::beginTransaction();
@@ -211,14 +211,14 @@ class CategoryGroupController extends Controller
                 $categoryGroup->delete();
                 DB::commit();
 
-                return redirect()->route('superadmin.category-groups.index')->with('success', 'Group kategori berhasil dihapus.');
+                return redirect()->route('superadmin.category-groups.index')->with('success', 'Grup kategori berhasil dihapus.');
             } catch (\Exception $e) {
                 DB::rollBack();
                 throw $e;
             }
         } catch (\Exception $e) {
             Log::error('Error deleting category group: ' . $e->getMessage(), ['exception' => $e, 'category_group_id' => $categoryGroup->id]);
-            return redirect()->route('superadmin.category-groups.index')->with('error', 'Gagal menghapus group kategori.');
+            return redirect()->route('superadmin.category-groups.index')->with('error', 'Gagal menghapus grup kategori.');
         }
     }
 }
