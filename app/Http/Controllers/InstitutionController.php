@@ -69,13 +69,15 @@ class InstitutionController extends Controller
             'nama' => 'required|string|max:255',
             'pemerintah' => 'required|string|max:255',
             'telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'email' => 'required|email|max:255',
             'alamat' => 'nullable|string',
             'alias' => 'required|string|max:255',
             'kepala_instansi_id' => 'nullable|exists:employees,id',
         ], [
             'nama.required' => 'Nama instansi wajib diisi.',
             'pemerintah.required' => 'Nama pemerintah wajib diisi.',
+            'email.required' => 'Email instansi wajib diisi.',
+            'alias.required' => 'Alias instansi wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'kepala_instansi_id.exists' => 'Kepala instansi tidak ditemukan.',
         ]);
