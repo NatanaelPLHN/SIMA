@@ -12,7 +12,7 @@
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 px-4">
             @php
                 $summary = [
                     // ['title' => 'Total Bidang', 'value' => $stats['bidang'], 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', 'color' => 'from-blue-500 to-cyan-500', 'change' => '', 'changeType' => 'up'],

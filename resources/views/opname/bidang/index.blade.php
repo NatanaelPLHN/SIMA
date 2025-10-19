@@ -108,8 +108,8 @@
                                             data-start-url="{{ routeForRole('opname', 'startOpname', $session->id) }}"
                                             data-show-url="{{ routeForRole('opname', 'show', $session->id) }}"
                                             title="Mulai Opname">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H15M9 10v4a2 2 0 002 2h2a2 2 0 002-2v-4M9 10V9a2 2 0 012-2h2a2 2 0 012 2v1"></path>
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8 5v14l11-7z" />
                                             </svg>
                                         </button>
                                     @else

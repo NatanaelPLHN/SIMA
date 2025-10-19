@@ -111,16 +111,52 @@ class StockOpnameDepartmentController extends Controller
 
     //     return view('opname.bidang.index', compact('sessions', 'user'));
     // }
+// 11111
+    // public function show(StockOpnameSession $opname)
+    // {
+    //     if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
+    //         abort(404);
+    //     }
 
-    public function show(StockOpnameSession $opname)
-    {
-        if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
-            abort(404);
-        }
+    //     $opname->load(['details', 'scheduler']);
+    //     return view('opname.bidang.show', compact('opname'));
+    // }
+// 1111
 
-        $opname->load(['details', 'scheduler']);
-        return view('opname.bidang.show', compact('opname'));
+public function show(Request $request, StockOpnameSession $opname)
+{
+    if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
+        abort(404);
     }
+
+    // Ambil keyword pencarian dari form (GET)
+    $search = $request->input('search');
+
+    // Ambil semua detail, tapi kalau ada pencarian, filter berdasarkan nama_aset / kode
+    $detailsQuery = $opname->details()->with('asset');
+
+    if (!empty($search)) {
+        $detailsQuery->whereHas('asset', function ($q) use ($search) {
+            $q->where('nama_aset', 'like', '%' . $search . '%')
+              ->orWhere('kode', 'like', '%' . $search . '%')
+                ->orWhereHas('category', function ($qc) use ($search) {
+              $qc->where('nama', 'like', '%' . $search . '%');
+          });
+        });
+    }
+
+    $filteredDetails = $detailsQuery->get();
+
+    // Load juga relasi scheduler agar view tetap utuh
+    $opname->load('scheduler');
+
+    return view('opname.bidang.show', [
+        'opname' => $opname,
+        'filteredDetails' => $filteredDetails,
+        'search' => $search,
+    ]);
+}
+
 
     public function update(Request $request, StockOpnameSession $opname)
     {
