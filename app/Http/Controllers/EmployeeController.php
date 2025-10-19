@@ -140,7 +140,7 @@ class EmployeeController extends Controller
         // Business rules per role
         if ($user->role == 'superadmin') {
             if (empty($validated['institution_id'])) {
-                return back()->withErrors(['institution_id' => 'Institusi dan Bidang wajib dipilih.'])->withInput();
+                return back()->withErrors(['institution_id' => 'Instansi wajib dipilih.'])->withInput();
             }
         } elseif ($user->role == 'admin') {
             $validated['institution_id'] = $user->employee?->institution->id;

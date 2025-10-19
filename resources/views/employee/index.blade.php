@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Pegawai')
+@section('title', 'Daftar Karyawan')
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -74,12 +74,12 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500"
-                                    aria-current="page">Pegawai</span>
+                                    aria-current="page">Karyawan</span>
                             </div>
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Daftar Pegawai</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Daftar Karyawan</h1>
             </div>
 
             <!-- Controls: Search, Add Button -->
@@ -166,7 +166,7 @@
                             class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-400">
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'direction' => request('sort') === 'nama' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
-                                Nama Pegawai
+                                Nama Karyawan
                                 @if (request('sort') === 'nama')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
@@ -237,7 +237,7 @@
                                 {{ $pegawai->department->nama ?? '-' }}</td>
                             <td class="p-4 whitespace-nowrap text-center">
                                 <div class="flex items-center justify-center gap-x-3">
-                                    <a href="{{ routeForRole('employee', 'edit', $pegawai->id) }}" 
+                                    <a href="{{ routeForRole('employee', 'edit', $pegawai->id) }}"
                                     class="inline-flex items-center justify-center w-9 h-9 rounded-lg
                                             bg-yellow-500 text-white/90 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300
                                             dark:bg-yellow-900/40 dark:text-yellow-300 dark:hover:bg-yellow-800/60 dark:focus:ring-yellow-800/50
