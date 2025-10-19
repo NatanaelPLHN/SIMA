@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
-class UserController extends Controller
+class UserCopyController extends Controller
 {
     public function __construct()
     {
