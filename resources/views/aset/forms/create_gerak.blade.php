@@ -12,55 +12,58 @@
                     <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
                         <li class="inline-flex items-center">
                             @switch(auth()->user()->role)
-                            @case('superadmin')
-                            <a href="{{ route('superadmin.dashboard') }}"
-                                class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                    </path>
-                                </svg>
-                                Dashboard
-                            </a>
-                            @break
-                            @case('admin')
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                    </path>
-                                </svg>
-                                Dashboard
-                            </a>
-                            @break
-                            @case('subadmin')
-                            <a href="{{ route('subadmin.dashboard') }}"
-                                class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                    </path>
-                                </svg>
-                                Dashboard
-                            </a>
-                            @break
-                            @case('user')
-                            <a href="{{ route('user.dashboard') }}"
-                                class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                    </path>
-                                </svg>
-                                Dashboard
-                            </a>
-                            @break
-                        @endswitch
+                                @case('superadmin')
+                                    <a href="{{ route('superadmin.dashboard') }}"
+                                        class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                                        <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                            </path>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                @break
+
+                                @case('admin')
+                                    <a href="{{ route('admin.dashboard') }}"
+                                        class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                                        <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                            </path>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                @break
+
+                                @case('subadmin')
+                                    <a href="{{ route('subadmin.dashboard') }}"
+                                        class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                                        <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                            </path>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                @break
+
+                                @case('user')
+                                    <a href="{{ route('user.dashboard') }}"
+                                        class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                                        <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                            </path>
+                                        </svg>
+                                        Dashboard
+                                    </a>
+                                @break
+                            @endswitch
                         </li>
                         <li class="inline-flex items-center">
                             <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20"
@@ -99,45 +102,50 @@
                     <input type="hidden" name="jenis_aset" value="bergerak">
 
                     {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> --}}
-                        <div>
-                            <label for="merk"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Merk</label>
-                            <input type="text" id="merk" name="merk"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
+                    <div>
+                        <label for="merk"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Merk</label>
+                        <input type="text" id="merk" name="merk" pattern="[A-Z a-z0-9,.]{0,30}"
+                            placeholder="Masukkan merk aset..." minlength="4" maxlength="30"
+                            title="Only letters, numbers, and spaces allowed"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
 
-                        <div>
-                            <label for="tipe"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Type</label>
-                            <input type="text" id="tipe" name="tipe"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                        </div>
+                    <div>
+                        <label for="tipe"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Type</label>
+                        <input type="text" id="tipe" name="tipe" pattern="[A-Z a-z0-9,.]{0,30}"
+                            placeholder="Masukkan tipe aset..." minlength="4" maxlength="30"
+                            title="Only letters, numbers, and spaces allowed"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
                     {{-- </div> --}}
                     {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> --}}
-                        <div>
-                            <label for="nomor_serial"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Serial
-                                Number<span class="text-red-500">*</span></label>
-                            <input type="text" id="nomor_serial" name="nomor_serial"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <div>
+                        <label for="nomor_serial"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Nomor Serial<span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="nomor_serial" name="nomor_serial" pattern="[0-9]{0,30}"
+                            placeholder="Masukkan nomor serial aset..." minlength="0" maxlength="50"
+                            title="Only letters, numbers, and spaces allowed"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 
-                        </div>
+                    </div>
 
-                        <div>
-                            <label for="tahun_produksi"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
-                                Tahun Produksi
-                            </label>
-                            <select id="tahun_produksi" name="tahun_produksi"
-                                class="js-select2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="">Pilih Tahun</option>
-                                @for ($year = date('Y'); $year >= 1900; $year--)
-                                    <option value="{{ $year }}" {{ old('tahun_produksi') == $year ? 'selected' : '' }}>
-                                        {{ $year }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </div>
+                    <div>
+                        <label for="tahun_produksi" class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
+                            Tahun Produksi
+                        </label>
+                        <select id="tahun_produksi" name="tahun_produksi"
+                            class="js-select2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Pilih Tahun</option>
+                            @for ($year = date('Y'); $year >= 1900; $year--)
+                                <option value="{{ $year }}" {{ old('tahun_produksi') == $year ? 'selected' : '' }}>
+                                    {{ $year }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
                     {{-- </div> --}}
 
                     {{-- @include('assets._assets') --}}

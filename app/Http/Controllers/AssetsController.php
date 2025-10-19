@@ -382,6 +382,7 @@ class AssetsController extends Controller
             'kode.required' => 'Kode aset wajib diisi.',
             'nama_aset.required' => 'Nama aset wajib diisi.',
             'jenis_aset.required' => 'Jenis aset wajib dipilih.',
+            'lokasi_terakhir.required' => 'Lokasi aset wajib diisi.',
             'jumlah.min' => 'Jumlah minimal 1.',
             'tgl_pembelian.before_or_equal' => 'Tanggal pembelian tidak boleh melebihi tanggal hari ini.',
             'nilai_pembelian.min' => 'Nilai pembelian tidak boleh negatif.',
