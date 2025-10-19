@@ -45,26 +45,26 @@ class UserController extends Controller
         }
 
         if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->whereHas('employee', function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%");
-            })
-            ->orWhere('email', 'like', "%{$search}%")
-            ->orWhere('role', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('employee', function ($sub) use ($search) {
+                    $sub->where('nama', 'like', "%{$search}%");
+                })
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('role', 'like', "%{$search}%")
 
-            ->orWhereHas('employee.institution', function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%"); // asumsi kolom nama instansi = 'name'
-            })
-            // Cari di nama department
-            ->orWhereHas('employee.department', function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%"); // asumsi kolom nama department = 'name'
+                    ->orWhereHas('employee.institution', function ($sub) use ($search) {
+                        $sub->where('nama', 'like', "%{$search}%"); // asumsi kolom nama instansi = 'name'
+                    })
+                    // Cari di nama department
+                    ->orWhereHas('employee.department', function ($sub) use ($search) {
+                        $sub->where('nama', 'like', "%{$search}%"); // asumsi kolom nama department = 'name'
+                    });
             });
-        });
         }
 
         $users = $query->with('employee.institution', 'employee.department')
-                    ->paginate(10)
-                    ->appends(['search' => $search]); // Pertahankan parameter search di pagination
+            ->paginate(10)
+            ->appends(['search' => $search]); // Pertahankan parameter search di pagination
 
         return view('user.index', compact('users'));
         // $users = $query->with('employee.institution', 'employee.department')->paginate(10);
@@ -626,20 +626,39 @@ class UserController extends Controller
         $this->authorize('viewAny', User::class);
 
         $authUser = auth()->user();
-
+        $query = User::query();
         if ($authUser->role === 'superadmin') {
             // Superadmin can export only admin users
-            $users = User::where('role', 'admin')->get();
+            // $users = User::where('role', 'admin')->get();
+            $query->whereIn('role', ['admin', 'subadmin', 'user']);
         } elseif ($authUser->role === 'admin') {
             // Admin can export only subadmin users
-            $users = User::where('role', 'subadmin')->get();
+            // $users = User::where('role', 'subadmin')->get();
+            // Admin mengekspor subadmin dan user di dalam instansinya
+            $query->whereIn('role', ['subadmin', 'user'])
+                ->whereHas('employee', function ($q) use ($authUser) {
+                    $q->where('institution_id', $authUser->employee->institution_id);
+                });
         } elseif ($authUser->role === 'subadmin') {
             // Subadmin can export only normal users
-            $users = User::where('role', 'user')->get();
+            // $users = User::where('role', 'user')->get();
+            $query->where('role', 'user')
+                ->whereHas('employee', function ($q) use ($authUser) {
+                    $q->where('department_id', $authUser->employee->department_id);
+                });
         } else {
             abort(403, 'You are not authorized to export user data.');
         }
 
+        // === PENAMBAHAN SORTING DI SINI ===
+        // 1. Join dengan tabel employees untuk bisa sorting berdasarkan nama karyawan
+        // 2. Urutkan berdasarkan urutan custom untuk role
+        // 3. Urutkan berdasarkan nama karyawan
+        $users = $query->join('employees', 'users.karyawan_id', '=', 'employees.id')
+            ->orderBy(DB::raw("CASE users.role WHEN 'admin' THEN 1 WHEN 'subadmin' THEN 2 WHEN 'user' THEN 3 ELSE 4 END"))
+            ->orderBy('employees.nama', 'asc')
+            ->select('users.*') // Pilih semua kolom dari tabel users untuk menghindari konflik nama kolom
+            ->get();
         return Excel::download(new UsersExport($users), 'akun pegawai.xlsx');
     }
     // public function getInstitutionsForRole(Request $request)
