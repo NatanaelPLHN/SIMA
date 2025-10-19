@@ -63,9 +63,9 @@
                 </form>
 
                 <!-- Footer -->
-                <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                {{-- <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
                     Belum punya akun? <a href="#" class="text-indigo-600 hover:underline dark:text-indigo-400">Hubungi Admin</a>
-                </p>
+                </p> --}}
             </div>
         </div>
 
