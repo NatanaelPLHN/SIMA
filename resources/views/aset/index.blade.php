@@ -152,22 +152,26 @@
         <!-- Tab: Bergerak -->
         <div id="bergerak" class="table-content hidden p-4" role="tabpanel" aria-labelledby="tab-bergerak">
             <div class="items-center justify-between block sm:flex mb-4">
-                {{-- <form method="GET" action="{{ routeForRole('assets', 'index') }}"
-                    class="flex items-center space-x-2 sm:pl-4"> --}}
+                <form method="GET" action="{{ routeForRole('assets', 'index') }}"
+                    class="flex items-center space-x-2 sm:pl-4">
+                    {{-- <input type="hidden" name="tab" value="bergerak"> --}}
+                    <input type="hidden" name="tab" value="bergerak">
                     <div class="relative w-48 sm:w-64">
-                        <input type="text" name="search" value="{{ request('search') }}"
+                        <input type="text" name="search_bergerak" value="{{ request('search_bergerak') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Cari nama, serial number, dll...">
                     </div>
-                    {{-- @if (request('search'))
-                        <a href="{{ routeForRole('assets', 'index') }}"
-                            class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
-                    @endif --}}
-                {{-- </form> --}}
+                    @if (request('search_bergerak'))
+                        <a href="{{ routeForRole('assets', 'index', ['tab' => 'bergerak']) }}"
+                            class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                            dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
+                        Clear</a>
+                    @endif
+                </form>
                 @if (auth()->user()->role == 'subadmin')
                     <a href="{{ route('subadmin.assets.create_gerak') }}"
                         class="mt-2 sm:mt-0 text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
-                        Tambah Aset B
+                        Tambah Aset Bergerak
                     </a>
                 @endif
             </div>
@@ -387,22 +391,25 @@
             <!-- Tab: Tidak Bergerak -->
             <div id="tidakbergerak" class="table-content hidden p-4" role="tabpanel" aria-labelledby="tab-tidak-bergerak">
                 <div class="items-center justify-between block sm:flex mb-4">
-                    {{-- <form method="GET" action="{{ routeForRole('assets', 'index') }}"
-                        class="flex items-center space-x-2 sm:pl-4"> --}}
+                    <form method="GET" action="{{ routeForRole('assets', 'index') }}"
+                        class="flex items-center space-x-2 sm:pl-4">
+                        <input type="hidden" name="tab" value="tidakbergerak">
                         <div class="relative w-48 sm:w-64">
-                            <input type="text" name="search" value="{{ request('search') }}"
+                            <input type="text" name="search_tidak_bergerak" value="{{ request('search_tidak_bergerak') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, kode, dll...">
                         </div>
-                        {{-- @if (request('search'))
-                            <a href="{{ routeForRole('assets', 'index') }}"
-                                class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
+                        @if (request('search_tidak_bergerak'))
+                            <a href="{{ routeForRole('assets', 'index', ['tab' => 'tidakbergerak']) }}"
+                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
+                            Clear</a>
                         @endif
-                    </form> --}}
+                    </form>
                     @if (auth()->user()->role == 'subadmin')
                         <a href="{{ route('subadmin.assets.create_tidak_bergerak') }}"
                             class="mt-2 sm:mt-0 text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
-                            Tambah Aset T
+                            Tambah Aset Tidak Bergerak
                         </a>
                     @endif
                 </div>
@@ -607,22 +614,25 @@
                 <!-- Tab: Habis Pakai -->
                 <div id="habispakai" class="table-content hidden p-4" role="tabpanel" aria-labelledby="tab-habis-pakai">
                     <div class="items-center justify-between block sm:flex mb-4">
-                        {{-- <form method="GET" action="{{ routeForRole('assets', 'index') }}"
-                            class="flex items-center space-x-2 sm:pl-4"> --}}
+                        <form method="GET" action="{{ routeForRole('assets', 'index') }}"
+                            class="flex items-center space-x-2 sm:pl-4">
+                            <input type="hidden" name="tab" value="habispakai">
                             <div class="relative w-48 sm:w-64">
-                                <input type="text" name="search" value="{{ request('search') }}"
+                                <input type="text" name="search_habis_pakai" value="{{ request('search_habis_pakai') }}"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Cari nama, kode, dll...">
                             </div>
-                            {{-- @if (request('search'))
-                                <a href="{{ routeForRole('assets', 'index') }}"
-                                    class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">Clear</a>
-                            @endif --}}
+                            @if (request('search_habis_pakai'))
+                                <a href="{{ routeForRole('assets', 'index', ['tab' => 'habispakai']) }}"
+                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                            dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
+                                Clear</a>
+                            @endif
                         </form>
                         @if (auth()->user()->role == 'subadmin')
                             <a href="{{ route('subadmin.assets.create_habis') }}"
                                 class="mt-2 sm:mt-0 text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800">
-                                Tambah Aset H
+                                Tambah Aset Habis Pakai
                             </a>
                         @endif
                     </div>
@@ -882,5 +892,5 @@
                         switchTab(activeTab);
                     });
                 </script>
-
+    
             @endsection

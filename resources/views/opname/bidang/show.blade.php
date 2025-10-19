@@ -3,6 +3,7 @@
 @section('title', 'Stock Opname')
 
 @section('content')
+
 <form id="opname-form" action="{{ routeForRole('opname', 'update', $opname->id) }}" method="POST"
     enctype="multipart/form-data" class="contents">
     @method('PUT')
@@ -70,19 +71,48 @@
                         </div>
                     </div>
                 </div>
-                <div class="my-5 ml-5">
-                    <label for="search-opname" class="text-sm font-medium text-gray-700 dark:text-gray-300"></label>
-                    <input type="text" id="search-opname" placeholder="Cari: Nama, Kategori dll.."
-                        class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400">
-                    @if ($opname->status == 'proses')
-                        <button type="button" id="scan-qr-button"
-                            class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                            Scan QR
-                        </button>
-                    @endif
-                </div>
+                
         </div>
         <!-- Data Table -->
+        <div class="my-5 ml-5">
+                    <label for="search-aset" class="text-sm font-medium text-gray-700 dark:text-gray-300"></label>
+                    <form action="{{ routeForRole('opname', 'show', $opname->id) }}" method="GET" id="searchForm" class="flex items-center gap-2 mb-4 ml-5">
+                        <input 
+                            type="text"
+                            name="search" 
+                            value="{{ request('search') }}" 
+                            placeholder="Cari berdasarkan Nama Aset atau Kode..."
+                            class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                        >
+                        @if (request('search'))
+                            <a href="{{ routeForRole('opname', 'show', $opname->id) }}"
+                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
+                            Clear</a>
+                        @endif
+                
+                        @if ($opname->status == 'proses')
+                            <button type="button" id="scan-qr-button"
+                                class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                                Scan QR
+                            </button>
+                        @endif
+                    </form>
+                </div>
+                <script>
+                document.addEventListener('keydown', function(e) {
+                    const searchInput = document.querySelector('input[name="search"]');
+                    // Jika Enter ditekan di dalam input search, cegah submit form utama
+                    if (e.key === 'Enter' && e.target === searchInput) {
+                        e.preventDefault();
+                        // Jalankan pencarian manual (redirect GET)
+                        const baseUrl = "{{ routeForRole('opname', 'show', $opname->id) }}";
+                        const searchValue = searchInput.value.trim();
+                        window.location.href = baseUrl + '?search=' + encodeURIComponent(searchValue);
+                    }
+                });
+                </script>
+
         <div
             class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="overflow-x-auto">
@@ -125,7 +155,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse ($opname->details as $index => $detail)
+                        @forelse ($filteredDetails ?? $opname->details as $index => $detail)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                                 data-asset-code="{{ $detail->asset->kode ?? '' }}"
                                 data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}">

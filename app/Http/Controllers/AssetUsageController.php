@@ -26,52 +26,163 @@ class AssetUsageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $user = auth()->user();
+    // public function index()
+    // {
+    //     $user = auth()->user();
+    //     $departmentId = $user->employee?->department_id;
+    //     // 2. Persiapan Query: Siapkan query dasar
+    //     $baseQuery = AssetUsage::with(['asset', 'user', 'department']);
+
+    //     // 3. Scoping Query: Filter data berdasarkan peran pengguna
+    //     if ($user->role === 'subadmin') {
+    //         // Subadmin melihat semua usage di departemennya
+    //         $baseQuery->whereHas('asset', function ($query) use ($departmentId) {
+    //             $query->where('department_id', $departmentId);
+    //         });
+    //     } elseif ($user->role === 'user') {
+    //         // User hanya melihat usage miliknya sendiri
+    //         $employeeId = $user->employee?->id;
+    //         $baseQuery->where('used_by', $employeeId);
+    //     }
+
+        
+
+    //     // 4. Eksekusi Query: Clone dan paginate untuk setiap jenis aset
+    //     $usagesBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
+    //         $query->where('jenis_aset', 'bergerak');
+    //     })->latest()->paginate(10, ['*'], 'bergerak_page');
+
+    //     $usagesTidakBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
+    //         $query->where('jenis_aset', 'tidak_bergerak');
+    //     })->latest()->paginate(10, ['*'], 'tidak_bergerak_page');
+
+    //     $usagesHabisPakai = (clone $baseQuery)->whereHas('asset', function ($query) {
+    //         $query->where('jenis_aset', 'habis_pakai');
+    //     })->latest()->paginate(10, ['*'], 'habis_pakai_page');
+
+    //     if ($user->role === 'subadmin') {
+    //         return view('usage.bidang.index', compact(
+    //             'usagesBergerak',
+    //             'usagesTidakBergerak',
+    //             'usagesHabisPakai'
+    //         ));
+    //     } elseif ($user->role === 'user') {
+    //         return view('usage.user.index', compact(
+    //             'usagesBergerak',
+    //             'usagesTidakBergerak',
+    //             'usagesHabisPakai'
+    //         ));
+    //     }
+    // }
+    public function index(Request $request)
+{
+    $user = auth()->user();
+    $activeTab = $request->input('tab', 'bergerak');
+
+    // Ambil parameter pencarian per tab
+    $searchBergerak = $request->input('search_bergerak');
+    $searchTidakBergerak = $request->input('search_tidak_bergerak');
+    $searchHabisPakai = $request->input('search_habis_pakai');
+
+    // Query dasar dengan relasi
+    $baseQuery = AssetUsage::with(['asset', 'user', 'department']);
+
+    // Scoping berdasarkan peran
+    if ($user->role === 'subadmin') {
         $departmentId = $user->employee?->department_id;
-        // 2. Persiapan Query: Siapkan query dasar
-        $baseQuery = AssetUsage::with(['asset', 'user', 'department']);
-
-        // 3. Scoping Query: Filter data berdasarkan peran pengguna
-        if ($user->role === 'subadmin') {
-            // Subadmin melihat semua usage di departemennya
-            $baseQuery->whereHas('asset', function ($query) use ($departmentId) {
-                $query->where('department_id', $departmentId);
-            });
-        } elseif ($user->role === 'user') {
-            // User hanya melihat usage miliknya sendiri
-            $employeeId = $user->employee?->id;
-            $baseQuery->where('used_by', $employeeId);
-        }
-
-        // 4. Eksekusi Query: Clone dan paginate untuk setiap jenis aset
-        $usagesBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
-            $query->where('jenis_aset', 'bergerak');
-        })->latest()->paginate(10, ['*'], 'bergerak_page');
-
-        $usagesTidakBergerak = (clone $baseQuery)->whereHas('asset', function ($query) {
-            $query->where('jenis_aset', 'tidak_bergerak');
-        })->latest()->paginate(10, ['*'], 'tidak_bergerak_page');
-
-        $usagesHabisPakai = (clone $baseQuery)->whereHas('asset', function ($query) {
-            $query->where('jenis_aset', 'habis_pakai');
-        })->latest()->paginate(10, ['*'], 'habis_pakai_page');
-
-        if ($user->role === 'subadmin') {
-            return view('usage.bidang.index', compact(
-                'usagesBergerak',
-                'usagesTidakBergerak',
-                'usagesHabisPakai'
-            ));
-        } elseif ($user->role === 'user') {
-            return view('usage.user.index', compact(
-                'usagesBergerak',
-                'usagesTidakBergerak',
-                'usagesHabisPakai'
-            ));
-        }
+        $baseQuery->whereHas('asset', function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        });
+    } elseif ($user->role === 'user') {
+        $employeeId = $user->employee?->id;
+        $baseQuery->where('used_by', $employeeId);
     }
+
+    // --- Aset Bergerak ---
+    $usagesBergerakQuery = (clone $baseQuery)->whereHas('asset', function ($query) {
+        $query->where('jenis_aset', 'bergerak');
+    });
+
+    if ($searchBergerak) {
+        $usagesBergerakQuery->where(function ($q) use ($searchBergerak) {
+            $q->whereHas('asset', function ($subq) use ($searchBergerak) {
+                $subq->where('kode', 'like', "%{$searchBergerak}%")
+                     ->orWhere('nama_aset', 'like', "%{$searchBergerak}%")
+                     ->orWhere('start_date', 'like', "%{$searchBergerak}%")
+                     ->orWhere('tujuan_penggunaan', 'like', "%{$searchBergerak}%");
+
+            
+                    })
+            ->orWhereHas('user', function ($subq) use ($searchBergerak) {
+                $subq->where('nama', 'like', "%{$searchBergerak}%");
+            });
+        });
+    }
+
+    $usagesBergerak = $usagesBergerakQuery->latest()
+        ->paginate(10, ['*'], 'bergerak_page')
+        ->appends($request->except(['search_tidak_bergerak', 'search_habis_pakai']));
+
+    // --- Aset Tidak Bergerak ---
+    $usagesTidakBergerakQuery = (clone $baseQuery)->whereHas('asset', function ($query) {
+        $query->where('jenis_aset', 'tidak_bergerak');
+    });
+
+    if ($searchTidakBergerak) {
+        $usagesTidakBergerakQuery->where(function ($q) use ($searchTidakBergerak) {
+            $q->whereHas('asset', function ($subq) use ($searchTidakBergerak) {
+                $subq->where('kode', 'like', "%{$searchTidakBergerak}%")
+                     ->orWhere('nama_aset', 'like', "%{$searchTidakBergerak}%")
+                      ->orWhere('start_date', 'like', "%{$searchTidakBergerak}%")
+                     ->orWhere('tujuan_penggunaan', 'like', "%{$searchTidakBergerak}%");
+
+            })
+            ->orWhereHas('user', function ($subq) use ($searchTidakBergerak) {
+                $subq->where('nama', 'like', "%{$searchTidakBergerak}%");
+            });
+        });
+    }
+
+    $usagesTidakBergerak = $usagesTidakBergerakQuery->latest()
+        ->paginate(10, ['*'], 'tidak_bergerak_page')
+        ->appends($request->except(['search_bergerak', 'search_habis_pakai']));
+
+    // --- Aset Habis Pakai ---
+    $usagesHabisPakaiQuery = (clone $baseQuery)->whereHas('asset', function ($query) {
+        $query->where('jenis_aset', 'habis_pakai');
+    });
+
+    if ($searchHabisPakai) {
+        $usagesHabisPakaiQuery->where(function ($q) use ($searchHabisPakai) {
+            $q->whereHas('asset', function ($subq) use ($searchHabisPakai) {
+                $subq->where('kode', 'like', "%{$searchHabisPakai}%")
+                     ->orWhere('nama_aset', 'like', "%{$searchHabisPakai}%")
+                      ->orWhere('start_date', 'like', "%{$searchHabisPakai}%")
+                     ->orWhere('tujuan_penggunaan', 'like', "%{$searchHabisPakai}%");
+
+            })
+            ->orWhereHas('user', function ($subq) use ($searchHabisPakai) {
+                $subq->where('nama', 'like', "%{$searchHabisPakai}%");
+            });
+        });
+    }
+
+    $usagesHabisPakai = $usagesHabisPakaiQuery->latest()
+        ->paginate(10, ['*'], 'habis_pakai_page')
+        ->appends($request->except(['search_bergerak', 'search_tidak_bergerak']));
+
+    // Tentukan view berdasarkan role
+    $view = $user->role === 'subadmin' 
+        ? 'usage.bidang.index' 
+        : 'usage.user.index';
+
+    return view($view, compact(
+        'usagesBergerak',
+        'usagesTidakBergerak',
+        'usagesHabisPakai',
+        'activeTab'
+    ));
+}
 
     /**
      * Show the form for creating a new resource.

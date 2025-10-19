@@ -3,8 +3,8 @@
     <p class="text-sm text-gray-600 dark:text-gray-400">
       &copy; 2025 SIM Aset. Dikembangkan oleh 
       <a href="https://ourteam-five.vercel.app/" target="_blank" rel="noopener noreferrer">
-        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 transition">
-        Tim PKL
+         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500 text-white hover:bg-blue-200 dark:bg-blue-1000 dark:text-white dark:hover:bg-blue-900/50 transition">
+          Tim PKL
         </span>
       </a>
     </p>

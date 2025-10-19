@@ -52,7 +52,8 @@
                         </div>
                         @if(request('search'))
                             <a href="{{ route('superadmin.categories.index') }}"
-                                class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium">
+                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                            dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors"">
                                 Clear
                             </a>
                         @endif
