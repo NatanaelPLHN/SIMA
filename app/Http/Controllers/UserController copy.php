@@ -14,18 +14,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
-class UserController extends Controller
+class UserCopyController extends Controller
 {
     public function __construct()
     {
         $this->authorizeResource(User::class, 'user');
     }
 
-    public function index(Request $request)
+    public function index()
     {
         $user = Auth::user();
         $query = User::query();
-        $search = $request->input('search');
 
         if ($user->role === 'superadmin') {
             // $query->where('role', 'admin');
@@ -43,32 +42,8 @@ class UserController extends Controller
         } else {
             $query->whereRaw('1 = 0');
         }
-
-        if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->whereHas('employee', function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%");
-            })
-            ->orWhere('email', 'like', "%{$search}%")
-            ->orWhere('role', 'like', "%{$search}%")
-
-            ->orWhereHas('employee.institution', function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%"); // asumsi kolom nama instansi = 'name'
-            })
-            // Cari di nama department
-            ->orWhereHas('employee.department', function ($sub) use ($search) {
-                $sub->where('nama', 'like', "%{$search}%"); // asumsi kolom nama department = 'name'
-            });
-        });
-        }
-
-        $users = $query->with('employee.institution', 'employee.department')
-                    ->paginate(10)
-                    ->appends(['search' => $search]); // Pertahankan parameter search di pagination
-
+        $users = $query->with('employee.institution', 'employee.department')->paginate(10);
         return view('user.index', compact('users'));
-        // $users = $query->with('employee.institution', 'employee.department')->paginate(10);
-        // return view('user.index', compact('users'));
         // $users = $query->with('employee')->paginate(10);
         // return view('user.index', compact('users'));
     }

@@ -31,7 +31,7 @@
                             </svg>
                             <a href="{{ route('superadmin.institution.index') }}"
                                 class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                Daftar Institusi
+                                Daftar Instansi
                             </a>
                             </svg>
                         </li>
@@ -44,12 +44,12 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">
-                                    Ubah Institusi</span>
+                                    Ubah Instansi</span>
                             </div>
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Ubah Institusi</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Ubah Instansi</h1>
             </div>
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-lg p-6">
                 <form action="{{ routeForRole('institution', 'update', $institution->id) }}" method="POST"

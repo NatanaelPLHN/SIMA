@@ -71,7 +71,7 @@
                             </svg>
                             <a href="{{ routeForRole('employee', 'index') }}"
                                 class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                Daftar Pegawai
+                                Daftar Karyawan
                             </a>
                             </svg>
                         </li>
@@ -84,7 +84,7 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">
-                                    Tambah Pegawai</span>
+                                    Tambah Karyawan</span>
                             </div>
                         </li>
                     </ol>

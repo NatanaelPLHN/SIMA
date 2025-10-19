@@ -31,8 +31,8 @@
                                         d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500"
-                                    aria-current="page">Grup Kategori</span>
+                                <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">Grup
+                                    Kategori</span>
                             </div>
                         </li>
                     </ol>
@@ -50,7 +50,7 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, Deskripsi, dll...">
                         </div>
-                        @if(request('search'))
+                        @if (request('search'))
                             <a href="{{ route('superadmin.category-groups.index') }}"
                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
                             dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
@@ -62,8 +62,9 @@
 
                 <button id="createCategoryGroupButton"
                     class="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none dark:focus:ring-indigo-800"
-                    type="button" data-drawer-target="drawer-create-grup-category" data-drawer-show="drawer-create-grup-category"
-                    aria-controls="drawer-create-grup-category" data-drawer-placement="right">
+                    type="button" data-drawer-target="drawer-create-grup-category"
+                    data-drawer-show="drawer-create-grup-category" aria-controls="drawer-create-grup-category"
+                    data-drawer-placement="right">
                     Tambah Grup Kategori
                 </button>
             </div>
@@ -84,7 +85,7 @@
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'alias', 'direction' => request('sort') === 'alias' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Alias
-                                @if(request('sort') === 'alias')
+                                @if (request('sort') === 'alias')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
                             </a>
@@ -94,7 +95,7 @@
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'direction' => request('sort') === 'nama' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Nama Grup Kategori
-                                @if(request('sort') === 'nama')
+                                @if (request('sort') === 'nama')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
                             </a>
@@ -104,7 +105,7 @@
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'deskripsi', 'direction' => request('sort') === 'deskripsi' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Deskripsi
-                                @if(request('sort') === 'deskripsi')
+                                @if (request('sort') === 'deskripsi')
                                     <span class="ml-1">{!! request('direction') === 'asc' ? '↑' : '↓' !!}</span>
                                 @endif
                             </a>
@@ -133,32 +134,40 @@
                             </td>
                             <td class="p-4 whitespace-nowrap text-center">
                                 <div class="flex items-center justify-center gap-x-3">
-                                    <button type="button" data-drawer-target="drawer-update-group-category" data-drawer-show="drawer-update-group-category"
+                                    <button type="button" data-drawer-target="drawer-update-group-category"
+                                        data-drawer-show="drawer-update-group-category"
                                         aria-controls="drawer-update-group-category" data-drawer-placement="right"
                                         class="updateCategoryGroupButton inline-flex items-center justify-center w-9 h-9 rounded-lg
                                             bg-yellow-500 text-white/90 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300
                                             dark:bg-yellow-900/40 dark:text-yellow-300 dark:hover:bg-yellow-800/60 dark:focus:ring-yellow-800/50
                                             transition-all"
                                         data-id="{{ $categoryGroup->id }}" data-nama="{{ $categoryGroup->nama }}"
-                                        data-alias="{{ $categoryGroup->alias }}" data-deskripsi="{{ $categoryGroup->deskripsi }}"
-                                        >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        data-alias="{{ $categoryGroup->alias }}"
+                                        data-deskripsi="{{ $categoryGroup->deskripsi }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                            </path>
                                         </svg>
 
                                     </button>
 
-                                    <form method="POST" action="{{ route('superadmin.category-groups.destroy', $categoryGroup->id) }}"
+                                    <form method="POST"
+                                        action="{{ route('superadmin.category-groups.destroy', $categoryGroup->id) }}"
                                         class="inline delete-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="inline-flex items-center justify-center w-9 h-9 rounded-lg
+                                            class="inline-flex items-center justify-center w-9 h-9 rounded-lg
                                                     bg-red-500 text-white/90 hover:bg-red-600 focus:ring-4 focus:ring-red-300
                                                     dark:bg-red-900/40 dark:text-red-300 dark:hover:bg-red-800/60 dark:focus:ring-red-800/50
                                                     transition-all">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
                                             </svg>
                                         </button>
                                     </form>
@@ -168,7 +177,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data Grup Kategori.
+                            <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">Tidak ada data
+                                Grup Kategori.
                             </td>
                         </tr>
                     @endforelse
@@ -210,27 +220,33 @@
             <span class="sr-only">Close menu</span>
         </button>
 
-        <!-- NOTE: keep form id createForm WITHOUT action attribute so IS handled by AJAX.
-             If you want a non-AJAX fallback, you could add action/method attributes, but
-             ensure JS prevents default submit when AJAX available. -->
+        {{-- NOTE: keep form id createForm WITHOUT action attribute so IS handled by AJAX.
+        If you want a non-AJAX fallback, you could add action/method attributes, but
+        ensure JS prevents default submit when AJAX available. --}}
         <form id="createForm" enctype="multipart/form-data" novalidate>
             @csrf
             <div class="mb-4">
-                <label for="create-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Grup Kategori<span class="text-red-500">*</span></label>
-                <input type="text" name="nama" id="create-nama"
+                <label for="create-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Grup
+                    Kategori<span class="text-red-500">*</span></label>
+                <input type="text" name="nama" id="create-nama" pattern="[A-Z a-z0-9,.]{0,30}"
+                    placeholder="Masukkan nama grup kategori..." minlength="4" maxlength="20"
+                    title="Only letters, numbers, and spaces allowed"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
             </div>
             <div class="mb-4">
-                <label for="create-alias" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alias<span class="text-red-500">*</span></label>
-                <input type="text" name="alias" id="create-alias"
+                <label for="create-alias" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alias<span
+                        class="text-red-500">*</span></label>
+                <input type="text" name="alias" id="create-alias" pattern="[A-Za-z0-9,-.]{0,30}"
+                    placeholder="Masukkan alias..." minlength="3" maxlength="30"
+                    title="Only letters, numbers, and - allowed"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
             </div>
             <div class="mb-6">
                 <label for="create-deskripsi"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deskripsi</label>
-                <textarea name="deskripsi" id="create-deskripsi" rows="3"
+                <textarea name="deskripsi" id="create-deskripsi" rows="3" placeholder="Deskripsi grup kategori..."
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
             </div>
             <button type="submit" id="createSubmitBtn"
@@ -248,7 +264,8 @@
             class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 dark:text-gray-400">
             Edit Grup Kategori
         </h5>
-        <button type="button" data-drawer-hide="drawer-update-group-category" aria-controls="drawer-update-group-category"
+        <button type="button" data-drawer-hide="drawer-update-group-category"
+            aria-controls="drawer-update-group-category"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
             <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
@@ -264,13 +281,15 @@
             @method('PUT')
             <input type="hidden" id="update-id" name="id">
             <div class="mb-4">
-                <label for="update-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Grup Kategori<span class="text-red-500">*</span></label>
+                <label for="update-nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Grup
+                    Kategori<span class="text-red-500">*</span></label>
                 <input type="text" name="nama" id="update-nama"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
             </div>
             <div class="mb-4">
-                <label for="update-alias" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alias<span class="text-red-500">*</span></label>
+                <label for="update-alias" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alias<span
+                        class="text-red-500">*</span></label>
                 <input type="text" name="alias" id="update-alias"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     readonly>
@@ -291,7 +310,7 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const createDrawer = document.getElementById('drawer-create-grup-category');
             const updateDrawer = document.getElementById('drawer-update-group-category');
 
@@ -319,14 +338,14 @@
             }
 
             // CREATE - open drawer and reset
-            document.getElementById('createCategoryGroupButton').addEventListener('click', function () {
+            document.getElementById('createCategoryGroupButton').addEventListener('click', function() {
                 createForm.reset();
                 // clear potential previous validation display (if any)
                 openDrawer(createDrawer);
             });
 
             // CREATE submit (AJAX)
-            createForm.addEventListener('submit', function (e) {
+            createForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -339,60 +358,62 @@
                 const formData = new FormData(this);
 
                 fetch("{{ route('superadmin.category-groups.store') }}", {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(async response => {
-                    // parse json safely
-                    let data = {};
-                    try {
-                        data = await response.json();
-                    } catch (err) {
-                        data = {};
-                    }
-
-                    if (!response.ok) {
-                        // show validation / error message from server
-                        let errorMessage = data.message || 'Terjadi kesalahan.';
-                        if (data.errors) {
-                            const errorList = Object.values(data.errors).flat().join('<br>');
-                            errorMessage += '<br><br>' + errorList;
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
                         }
-                        Swal.fire({
-                            title: 'Gagal!',
-                            html: errorMessage,
-                            icon: 'error'
-                        });
-                        return;
-                    }
+                    })
+                    .then(async response => {
+                        // parse json safely
+                        let data = {};
+                        try {
+                            data = await response.json();
+                        } catch (err) {
+                            data = {};
+                        }
 
-                    // success
-                    if (data.success) {
-                        Swal.fire('Berhasil!', 'Grup Kategori berhasil ditambahkan!', 'success')
-                            .then(() => location.reload());
-                    } else {
-                        // fallback message
-                        Swal.fire('Info', data.message || 'Operasi selesai.', 'info')
-                            .then(() => location.reload());
-                    }
-                })
-                .catch(() => {
-                    Swal.fire('Error!', 'Gagal menyimpan data. Cek koneksi atau coba lagi.', 'error');
-                })
-                .finally(() => {
-                    createSubmitBtn.disabled = false;
-                    createSubmitBtn.innerHTML = originalCreateText;
-                });
+                        if (!response.ok) {
+                            // show validation / error message from server
+                            let errorMessage = data.message || 'Terjadi kesalahan.';
+                            if (data.errors) {
+                                const errorList = Object.values(data.errors).flat().join('<br>');
+                                errorMessage += '<br><br>' + errorList;
+                            }
+                            Swal.fire({
+                                title: 'Gagal!',
+                                html: errorMessage,
+                                icon: 'error'
+                            });
+                            return;
+                        }
+
+                        // success
+                        if (data.success) {
+                            Swal.fire('Berhasil!', 'Grup Kategori berhasil ditambahkan!', 'success')
+                                .then(() => location.reload());
+                        } else {
+                            // fallback message
+                            Swal.fire('Info', data.message || 'Operasi selesai.', 'info')
+                                .then(() => location.reload());
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire('Error!', 'Gagal menyimpan data. Cek koneksi atau coba lagi.',
+                            'error');
+                    })
+                    .finally(() => {
+                        createSubmitBtn.disabled = false;
+                        createSubmitBtn.innerHTML = originalCreateText;
+                    });
             });
 
             // UPDATE drawer opening (fill form)
             document.querySelectorAll('.updateCategoryGroupButton').forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
                     const id = this.getAttribute('data-id');
                     const nama = this.getAttribute('data-nama');
                     const alias = this.getAttribute('data-alias');
@@ -408,7 +429,7 @@
             });
 
             // UPDATE submit (AJAX with method override)
-            updateForm.addEventListener('submit', function (e) {
+            updateForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -424,57 +445,59 @@
                 formData.set('_method', 'PUT');
 
                 fetch("{{ url('superadmin/category-groups') }}/" + id, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-HTTP-Method-Override': 'PUT',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(async response => {
-                    let data = {};
-                    try {
-                        data = await response.json();
-                    } catch (err) {
-                        data = {};
-                    }
-
-                    if (!response.ok) {
-                        let errorMessage = data.message || 'Terjadi kesalahan.';
-                        if (data.errors) {
-                            const errorList = Object.values(data.errors).flat().join('<br>');
-                            errorMessage += '<br><br>' + errorList;
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-HTTP-Method-Override': 'PUT',
+                            'Accept': 'application/json'
                         }
-                        Swal.fire({
-                            title: 'Gagal!',
-                            html: errorMessage,
-                            icon: 'error'
-                        });
-                        return;
-                    }
+                    })
+                    .then(async response => {
+                        let data = {};
+                        try {
+                            data = await response.json();
+                        } catch (err) {
+                            data = {};
+                        }
 
-                    if (data.success) {
-                        Swal.fire('Berhasil!', data.message || 'Data berhasil diperbarui.', 'success').then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire('Gagal!', data.message || 'Terjadi kesalahan.', 'error');
-                    }
-                })
-                .catch(() => {
-                    Swal.fire('Error!', 'Gagal memperbarui data.', 'error');
-                })
-                .finally(() => {
-                    updateSubmitBtn.disabled = false;
-                    updateSubmitBtn.innerHTML = originalUpdateText;
-                });
+                        if (!response.ok) {
+                            let errorMessage = data.message || 'Terjadi kesalahan.';
+                            if (data.errors) {
+                                const errorList = Object.values(data.errors).flat().join('<br>');
+                                errorMessage += '<br><br>' + errorList;
+                            }
+                            Swal.fire({
+                                title: 'Gagal!',
+                                html: errorMessage,
+                                icon: 'error'
+                            });
+                            return;
+                        }
+
+                        if (data.success) {
+                            Swal.fire('Berhasil!', data.message || 'Data berhasil diperbarui.',
+                                'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Gagal!', data.message || 'Terjadi kesalahan.', 'error');
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire('Error!', 'Gagal memperbarui data.', 'error');
+                    })
+                    .finally(() => {
+                        updateSubmitBtn.disabled = false;
+                        updateSubmitBtn.innerHTML = originalUpdateText;
+                    });
             });
 
             // Close drawers on close button
             document.querySelectorAll('[data-drawer-hide]').forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const target = this.getAttribute('data-drawer-hide');
                     const el = document.getElementById(target);
                     if (el) {

@@ -71,7 +71,7 @@
                             </svg>
                             <a href="{{ routeForRole('employee', 'index') }}"
                                 class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
-                                Daftar Pegawai
+                                Daftar Karyawan
                             </a>
                             </svg>
                         </li>
