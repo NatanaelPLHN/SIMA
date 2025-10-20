@@ -92,7 +92,7 @@
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Instansi <span
                                             class="text-red-500">*</span></label>
                                     <select id="institution_id" name="institution_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                        class="select2-basic bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                         <option value="">-- Pilih Instansi --</option>
                                     </select>
                                     @error('institution_id')
@@ -105,7 +105,7 @@
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Departemen
                                         <span class="text-red-500">*</span></label>
                                     <select id="department_id" name="department_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                        class="select2-basic bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                         <option value="">-- Pilih Departemen --</option>
                                     </select>
                                     @error('department_id')
@@ -125,7 +125,7 @@
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Departemen
                                         <span class="text-red-500">*</span></label>
                                     <select id="department_id_admin" name="department_id"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                        class="select2-basic bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                         <option value="">-- Pilih Departemen --</option>
                                         {{-- Opsi akan diisi oleh JavaScript --}}
                                     </select>
@@ -151,7 +151,7 @@
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pegawai <span
                                     class="text-red-500">*</span></label>
                             <select id="karyawan_id" name="karyawan_id"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                class="select2-basic bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 required>
                                 <option value="">-- Pilih Pegawai --</option>
 

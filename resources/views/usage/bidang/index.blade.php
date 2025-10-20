@@ -40,7 +40,7 @@
             </nav>
             <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Daftar Pengguna Aset</h1>
         </div>
-       
+
     <!-- === TABS (dari versi sebelumnya) === -->
     <div class="mb-4">
         <ul class="grid grid-cols-1 md:grid-cols-3 gap-2" id="default-tab" data-tabs-toggle="#default-tab-content"
@@ -108,7 +108,7 @@
                     </div>
                      @if (request('search_bergerak'))
                                 <a href="{{ route('subadmin.asset-usage.index', ['tab' => 'bergerak']) }}"
-                                    class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                    class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                     dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                 Clear</a>
                         @endif
@@ -147,7 +147,7 @@
                                         @endif
                                     </a>
                                 </th>
-                                
+
                                 <th class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-white">
                                     <a
                                         href="{{ request()->fullUrlWithQuery(['sort' => 'pengguna', 'direction' => request('sort') === 'pengguna' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
@@ -253,7 +253,7 @@
                                                 </span>
                                         @endswitch
                                     </td>
-                                
+
                                     <td class="p-4 whitespace-nowrap text-center">
                                         <div class="flex items-center justify-center gap-x-3">
                                             <!-- View -->
@@ -328,10 +328,10 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, kode, dll...">
                         </div>
-                         
+
                         @if (request('search_tidak_bergerak'))
                                 <a href="{{ route('subadmin.asset-usage.index', ['tab' => 'tidakbergerak']) }}"
-                                    class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                    class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                     dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                 Clear</a>
                         @endif
@@ -420,7 +420,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                @forelse($usagesTidakBergerak as $index => $asset)
+                                @forelse($usagesTidakBergerak as $index => $usage)
                                     <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                         <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                             {{ $index + $usagesTidakBergerak->firstItem() }}
@@ -556,7 +556,7 @@
                             </div>
                             @if (request('search_habis_pakai'))
                                 <a href="{{ route('subadmin.asset-usage.index', ['tab' => 'habispakai']) }}"
-                                    class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                    class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                     dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                 Clear</a>
                             @endif
@@ -646,7 +646,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                    @forelse($usagesHabisPakai as $index => $asset)
+                                    @forelse($usagesHabisPakai as $index => $usage)
                                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                                 {{ $index + $usagesHabisPakai->firstItem() }}

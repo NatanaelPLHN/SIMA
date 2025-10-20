@@ -139,7 +139,7 @@
                         <select id="tahun_produksi" name="tahun_produksi"
                             class="js-select2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             <option value="">Pilih Tahun</option>
-                            @for ($year = date('Y'); $year >= 1900; $year--)
+                            @for ($year = date('Y'); $year >= 1980; $year--)
                                 <option value="{{ $year }}" {{ old('tahun_produksi') == $year ? 'selected' : '' }}>
                                     {{ $year }}
                                 </option>
