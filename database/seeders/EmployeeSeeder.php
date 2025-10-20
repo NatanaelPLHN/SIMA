@@ -4,107 +4,100 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Employee;
+use App\Models\Departement;
 
 class EmployeeSeeder extends Seeder
 {
     public function run(): void
     {
-        // Kepala Dinas
-        $budi = Employee::create([
-            'nip' => '19780101001',
-            'nama' => 'Budi Santoso',
-            'alamat' => 'Jl. Melati No.5',
-            'telepon' => '08123456789',
-            'department_id' => 1,
-            'institution_id' => 1,
-        ]);
+        // Perluas daftar nama depan (total 80 nama realistis Indonesia)
+        $namaDepan = [
+            // Asli dari Anda (50)
+            'Budi', 'Andi', 'Fajar', 'Agus', 'Rizky', 'Ahmad', 'Eko', 'Yusuf', 'Rian', 'Hendra',
+            'Imam', 'Bayu', 'Adi', 'Doni', 'Irfan', 'Rizal', 'Taufik', 'Galih', 'Ferry', 'Rudi',
+            'Joko', 'Arif', 'Teguh', 'Nanda', 'Bagus',
+            'Siti', 'Dina', 'Rina', 'Putri', 'Nina', 'Mega', 'Tasya', 'Lina', 'Dewi', 'Fitri',
+            'Ayu', 'Wulan', 'Rani', 'Yuni', 'Maya', 'Silvi', 'Laila', 'Intan', 'Dwi', 'Citra',
+            'Desi', 'Ratna', 'Nadya', 'Tiara', 'Elsa',
 
-        $siti = Employee::create([
-            'nip' => '19800202002',
-            'nama' => 'Siti Aminah',
-            'alamat' => 'Jl. Mawar No.8',
-            'telepon' => '08129876543',
-            'department_id' => 3,
-            'institution_id' => 2,
-        ]);
+            // Tambahan 30 nama umum (laki & perempuan)
+            'Reza', 'Dedi', 'Hadi', 'Wawan', 'Asep', 'Dani', 'Raka', 'Gilang', 'Raka', 'Wildan',
+            'Siska', 'Lia', 'Anita', 'Rika', 'Novi', 'Yanti', 'Rina', 'Sari', 'Lusi', 'Indah',
+            'Hari', 'Deni', 'Wahyu', 'Ilham', 'Raka', 'Bima', 'Kevin', 'Michelle', 'Stevani', 'Alif'
+        ];
 
-        // Kepala Bidang
-        $anandita = Employee::create([
-            'nip' => '19800303003',
-            'nama' => 'Anandita Agung',
-            'alamat' => 'Jl. Perjuangan No.10',
-            'telepon' => '085865748901',
-            'department_id' => 2,
-            'institution_id' => 1,
-        ]);
+        $namaBelakang = [
+            'Santoso', 'Pratama', 'Supriyadi', 'Nugroho', 'Setiawan', 'Hidayat', 'Fauzi', 'Saputra',
+            'Maulana', 'Firmansyah', 'Gunawan', 'Kurniawan', 'Sutanto', 'Wibowo', 'Nugraha',
+            'Permana', 'Suryadi', 'Wijaya', 'Kusuma', 'Lesmana', 'Susanto', 'Saputro', 'Syahputra',
+            'Ramadhan', 'Prayoga', 'Hermawan', 'Purnama', 'Wardana', 'Utama', 'Mahendra',
+            'Raharja', 'Surya', 'Adinata', 'Wirawan', 'Darmawan', 'Prasetyo', 'Hakim', 'Rahman',
+            'Irawan', 'Suryono'
+        ];
 
-        $asep = Employee::create([
-            'nip' => '19800404004',
-            'nama' => 'Asep Saepudin',
-            'alamat' => 'Jl. Suka Maju No.2',
-            'telepon' => '085712345678',
-            'department_id' => 4,
-            'institution_id' => 2,
-        ]);
+        $jalan = [
+            'Jl. Melati', 'Jl. Mawar', 'Jl. Kenanga', 'Jl. Anggrek', 'Jl. Dahlia',
+            'Jl. Cempaka', 'Jl. Flamboyan', 'Jl. Teratai', 'Jl. Kamboja', 'Jl. Bougenville',
+            'Jl. Seroja', 'Jl. Sedap Malam', 'Jl. Mawar Putih', 'Jl. Tulip', 'Jl. Lavender',
+            'Jl. Kenari', 'Jl. Pahlawan', 'Jl. Sudirman', 'Jl. Diponegoro', 'Jl. Gatot Subroto'
+        ];
 
-        $dina = Employee::create([
-            'nip' => '19800505005',
-            'nama' => 'Dina Kartika',
-            'alamat' => 'Jl. Bahagia No.12',
-            'telepon' => '085623456789',
-            'department_id' => 5,
-            'institution_id' => 3,
-        ]);
+        // === Generate semua kombinasi unik ===
+        $allNames = [];
+        foreach ($namaDepan as $depan) {
+            foreach ($namaBelakang as $belakang) {
+                $allNames[] = $depan . ' ' . $belakang;
+            }
+        }
 
-        // Staf Biasa
-        Employee::create([
-            'nip' => '19900101006',
-            'nama' => 'Rahmat Hidayat',
-            'alamat' => 'Jl. Damai No.4',
-            'telepon' => '08125678901',
-            'department_id' => 1,
-            'institution_id' => 1,
-        ]);
+        $allNames = array_unique($allNames);
+        shuffle($allNames);
 
-        Employee::create([
-            'nip' => '19920102007',
-            'nama' => 'Tasya Anindya',
-            'alamat' => 'Jl. Anggrek No.9',
-            'telepon' => '08131234567',
-            'department_id' => 2,
-            'institution_id' => 1,
-        ]);
+        if (count($allNames) < 2000) {
+            throw new \Exception("Jumlah kombinasi nama (" . count($allNames) . ") masih kurang dari 2000.");
+        }
 
-        Employee::create([
-            'nip' => '19930303008',
-            'nama' => 'Joko Purwanto',
-            'alamat' => 'Jl. Cendana No.20',
-            'telepon' => '082134567890',
-            'department_id' => 3,
-            'institution_id' => 2,
-        ]);
+        // Ambil 2000 nama pertama
+        $selectedNames = array_slice($allNames, 0, 2000);
 
-        Employee::create([
-            'nip' => '19940404009',
-            'nama' => 'Mega Saputri',
-            'alamat' => 'Jl. Raya Barat No.15',
-            'telepon' => '08137777777',
-            'department_id' => 5,
-            'institution_id' => 3,
-        ]);
+        // Hitung jumlah departemen agar distribusi merata
+        $departements = Departement::all();
+        if ($departements->isEmpty()) {
+            throw new \Exception("Tidak ada departemen. Jalankan DepartementSeeder terlebih dahulu.");
+        }
 
-        Employee::create([
-            'nip' => '19950505010',
-            'nama' => 'Rio Firmansyah',
-            'alamat' => 'Jl. Kemakmuran No.8',
-            'telepon' => '085688899900',
-            'department_id' => 6,
-            'institution_id' => 4,
-        ]);
+        $totalEmployees = 2000;
+        $perDepartment = intval(ceil($totalEmployees / count($departements)));
+        $counter = 0;
+        $nameIndex = 0;
 
-        // Set Kepala Bidang
-        $anandita->department->update(['kepala_bidang_id' => $anandita->id]);
-        $asep->department->update(['kepala_bidang_id' => $asep->id]);
-        $dina->department->update(['kepala_bidang_id' => $dina->id]);
+        foreach ($departements as $departement) {
+            for ($i = 1; $i <= $perDepartment; $i++) {
+                if ($nameIndex >= 2000) break;
+
+                $nama = $selectedNames[$nameIndex];
+                $nameIndex++;
+
+                $employee = Employee::create([
+                    'nip' => '1979' . str_pad($departement->id, 3, '0', STR_PAD_LEFT) . str_pad(($i % 1000), 3, '0', STR_PAD_LEFT),
+                    'nama' => $nama,
+                    'alamat' => $jalan[array_rand($jalan)] . ' No.' . rand(1, 150),
+                    'telepon' => '08' . rand(1000000000, 9999999999),
+                    'department_id' => $departement->id,
+                    'institution_id' => $departement->instansi_id,
+                ]);
+
+                // Pegawai pertama di tiap departemen jadi kepala bidang
+                if ($i === 1) {
+                    $departement->update(['kepala_bidang_id' => $employee->id]);
+                }
+
+                $counter++;
+                if ($counter >= 2000) break;
+            }
+            if ($counter >= 2000) break;
+        }
+
+        echo "Seeder selesai membuat {$counter} pegawai dengan nama **unik**.\n";
     }
 }
