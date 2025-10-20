@@ -10,6 +10,7 @@ use App\Models\AsetTidakBergerak;
 use App\Models\Asset;
 use App\Models\Category;
 use App\Models\CategoryGroup;
+use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,153 @@ class AssetsController extends Controller
         // $this->authorizeResource(Asset::class, 'asset');
     }
 
-   
+
+    // public function index(Request $request)
+    // {
+    //     $user = auth()->user();
+    //     $searchQuery = $request->input('search');
+    //     $activeTab = $request->input('tab', 'bergerak');
+
+    //     // --- Query Dasar ---
+    //     $baseQuery = Asset::query();
+
+    //     // Terapkan filter berdasarkan peran
+    //     if ($user->role === 'admin') {
+    //         $institutionId = $user->employee?->institution_id;
+    //         if ($institutionId) {
+    //             $baseQuery->whereHas('departement', function ($query) use ($institutionId) {
+    //                 $query->where('instansi_id', $institutionId);
+    //             });
+    //         }
+    //     } elseif ($user->role === 'subadmin') {
+    //         $departmentId = $user->employee?->department_id;
+    //         if ($departmentId) {
+    //             $baseQuery->where('department_id', $departmentId);
+    //         }
+    //     }
+    //     // Untuk superadmin, tidak ada filter tambahan pada baseQuery
+
+    //     // Helper: apakah tab ini aktif?
+    //     $isBergerakActive = $activeTab === 'bergerak';
+    //     $isTidakBergerakActive = $activeTab === 'tidakbergerak';
+    //     $isHabisPakaiActive = $activeTab === 'habispakai';
+
+    //     $searchBergerak = $request->input('search_bergerak');
+    //     $searchTidakBergerak = $request->input('search_tidak_bergerak');
+    //     $searchHabisPakai = $request->input('search_habis_pakai');
+
+    //     // --- Aset Bergerak ---
+    //     $assetsBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'bergerak')
+    //         ->with(['bergerak', 'category.categoryGroup']);
+
+    //     // --- Aset Bergerak ---
+    //     $assetsBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'bergerak')
+    //         ->with(['bergerak', 'category.categoryGroup']);
+
+    //     if ($searchBergerak) {
+    //         $assetsBergerakQuery->where(function ($q) use ($searchBergerak) {
+    //             $q->where('kode', 'like', "%{$searchBergerak}%")
+    //             ->orWhere('nama_aset', 'like', "%{$searchBergerak}%")
+    //             ->orWhere('status', 'like', "%{$searchBergerak}%")
+
+    //             ->orWhereHas('bergerak', function ($subq) use ($searchBergerak) {
+    //                 $subq->where('nomor_serial', 'like', "%{$searchBergerak}%")
+    //                     ->orWhere('merk', 'like', "%{$searchBergerak}%")
+    //                     ->orWhere('tipe', 'like', "%{$searchBergerak}%")
+    //                     ->orWhere('tahun_produksi', 'like', "%{$searchBergerak}%");
+
+    //             });
+    //         });
+    //     }
+    //     $assetsBergerak = $assetsBergerakQuery->latest()->paginate(10, ['*'], 'bergerak_page')
+    //         ->appends($request->except(['search_tidak_bergerak', 'search_habis_pakai']));
+    //     // --- Aset Tidak Bergerak ---
+    //     $assetsTidakBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'tidak_bergerak')
+    //         ->with(['tidakBergerak', 'category.categoryGroup']);
+
+    //     // --- Aset Tidak Bergerak ---
+    //     $assetsTidakBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'tidak_bergerak')
+    //         ->with(['tidakBergerak', 'category.categoryGroup']);
+
+    //     // --- Aset Tidak Bergerak ---
+    //     if ($searchTidakBergerak) {
+    //         $assetsTidakBergerakQuery->where(function ($q) use ($searchTidakBergerak) {
+    //             $q->where('kode', 'like', "%{$searchTidakBergerak}%")
+    //             ->orWhere('nama_aset', 'like', "%{$searchTidakBergerak}%")
+    //             ->orWhere('status', 'like', "%{$searchTidakBergerak}%")
+    //             ->orWhereHas('tidakBergerak', function ($subq) use ($searchTidakBergerak) {
+    //                 $subq->where('bahan', 'like', "%{$searchTidakBergerak}%")
+    //                     ->orWhere('ukuran', 'like', "%{$searchTidakBergerak}%");
+    //             });
+    //         });
+    //     }
+    //     $assetsTidakBergerak = $assetsTidakBergerakQuery->latest()->paginate(10, ['*'], 'tidak_bergerak_page')
+    //         ->appends($request->except(['search_bergerak', 'search_habis_pakai']));
+    //             // $assetsTidakBergerak = $assetsTidakBergerakQuery->latest()->paginate(
+    //     //
+    //     //     ['*'],
+    //     //     'tidak_bergerak_page'
+    //     // )->appends($request->query());
+
+    //     // --- Aset Habis Pakai ---
+    //     // --- Aset Habis Pakai ---
+    //     $assetsHabisPakaiQuery = $baseQuery->clone()->where('jenis_aset', 'habis_pakai')
+    //         ->with(['habisPakai', 'category.categoryGroup']);
+
+    //     if ($searchHabisPakai) {
+    //         $assetsHabisPakaiQuery->where(function ($q) use ($searchHabisPakai) {
+    //             $q->where('kode', 'like', "%{$searchHabisPakai}%")
+    //             ->orWhere('nama_aset', 'like', "%{$searchHabisPakai}%")
+    //             ->orWhere('status', 'like', "%{$searchHabisPakai}%")
+
+    //             ->orWhereHas('habisPakai', function ($subq) use ($searchHabisPakai) {
+    //                 $subq->where('register', 'like', "%{$searchHabisPakai}%")
+    //                     ->orWhere('satuan', 'like', "%{$searchHabisPakai}%");
+    //             });
+    //         });
+    //     }
+    //     $assetsHabisPakai = $assetsHabisPakaiQuery->latest()->paginate(10, ['*'], 'habis_pakai_page')->appends($request->except(['search_bergerak', 'search_tidak_bergerak']));
+
+    //     // --- Statistik ---
+    //     $statsQuery = Asset::query();
+    //     if ($user->role === 'admin') {
+    //         $institutionId = $user->employee?->institution_id;
+    //         if ($institutionId) {
+    //             $statsQuery->whereHas('departement', function ($query) use ($institutionId) {
+    //                 $query->where('instansi_id', $institutionId);
+    //             });
+    //         }
+    //     } elseif ($user->role === 'subadmin') {
+    //         $departmentId = $user->employee?->department_id;
+    //         if ($departmentId) {
+    //             $statsQuery->where('department_id', $departmentId);
+    //         }
+    //     }
+
+    //     $jumlahAsetBergerak = $statsQuery->clone()->where('jenis_aset', 'bergerak')->count();
+    //     $jumlahAsetTidakBergerak = $statsQuery->clone()->where('jenis_aset', 'tidak_bergerak')->count();
+    //     $jumlahAsetHabisPakai = $statsQuery->clone()->where('jenis_aset', 'habis_pakai')->count();
+
+    //     $totalNilaiAsetBergerak = $statsQuery->clone()->where('jenis_aset', 'bergerak')->sum(
+    //         'nilai_pembelian'
+    //     );
+    //     $totalNilaiAsetTidakBergerak = $statsQuery->clone()->where('jenis_aset', 'tidak_bergerak')->sum('nilai_pembelian');
+    //     $totalNilaiAsetHabisPakai = $statsQuery->clone()->where('jenis_aset', 'habis_pakai')->sum(
+    //         'nilai_pembelian'
+    //     );
+
+    //     return view('aset.index', compact(
+    //         'assetsBergerak',
+    //         'assetsTidakBergerak',
+    //         'assetsHabisPakai',
+    //         'jumlahAsetBergerak',
+    //         'jumlahAsetTidakBergerak',
+    //         'jumlahAsetHabisPakai',
+    //         'totalNilaiAsetBergerak',
+    //         'totalNilaiAsetTidakBergerak',
+    //         'totalNilaiAsetHabisPakai'
+    //     ));
+    // }
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -35,18 +182,31 @@ class AssetsController extends Controller
         // --- Query Dasar ---
         $baseQuery = Asset::query();
 
+        // Cek apakah user adalah kepala instansi
+        $isHeadOfInstitution = false;
+        $institutionIdAsHead = null;
+        if ($user->employee) {
+            $institution = Institution::where('kepala_instansi_id', $user->employee->id)->first();
+            if ($institution) {
+                $isHeadOfInstitution = true;
+                $institutionIdAsHead = $institution->id;
+            }
+        }
+
         // Terapkan filter berdasarkan peran
-        if ($user->role === 'admin') {
-            $institutionId = $user->employee?->institution_id;
+        if ($user->role === 'admin' || $isHeadOfInstitution) {
+            $institutionId = $isHeadOfInstitution ? $institutionIdAsHead : $user->employee?->institution_id;
             if ($institutionId) {
                 $baseQuery->whereHas('departement', function ($query) use ($institutionId) {
                     $query->where('instansi_id', $institutionId);
                 });
             }
-        } elseif ($user->role === 'subadmin') {
+        } elseif ($user->role === 'subadmin' || $user->role === 'user') { // Gabungkan user biasa dan subadmin
             $departmentId = $user->employee?->department_id;
             if ($departmentId) {
                 $baseQuery->where('department_id', $departmentId);
+            } else if (!$isHeadOfInstitution) { // Jika user biasa tapi tak punya departemen
+                $baseQuery->whereRaw('1 = 0'); // Jangan tampilkan apa-apa
             }
         }
         // Untuk superadmin, tidak ada filter tambahan pada baseQuery
@@ -64,56 +224,41 @@ class AssetsController extends Controller
         $assetsBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'bergerak')
             ->with(['bergerak', 'category.categoryGroup']);
 
-        // --- Aset Bergerak ---
-        $assetsBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'bergerak')
-            ->with(['bergerak', 'category.categoryGroup']);
-
         if ($searchBergerak) {
             $assetsBergerakQuery->where(function ($q) use ($searchBergerak) {
                 $q->where('kode', 'like', "%{$searchBergerak}%")
-                ->orWhere('nama_aset', 'like', "%{$searchBergerak}%")
-                ->orWhere('status', 'like', "%{$searchBergerak}%")
-               
-                ->orWhereHas('bergerak', function ($subq) use ($searchBergerak) {
-                    $subq->where('nomor_serial', 'like', "%{$searchBergerak}%")
-                        ->orWhere('merk', 'like', "%{$searchBergerak}%")
-                        ->orWhere('tipe', 'like', "%{$searchBergerak}%")
-                        ->orWhere('tahun_produksi', 'like', "%{$searchBergerak}%");
+                    ->orWhere('nama_aset', 'like', "%{$searchBergerak}%")
+                    ->orWhere('status', 'like', "%{$searchBergerak}%")
 
-                });
+                    ->orWhereHas('bergerak', function ($subq) use ($searchBergerak) {
+                        $subq->where('nomor_serial', 'like', "%{$searchBergerak}%")
+                            ->orWhere('merk', 'like', "%{$searchBergerak}%")
+                            ->orWhere('tipe', 'like', "%{$searchBergerak}%")
+                            ->orWhere('tahun_produksi', 'like', "%{$searchBergerak}%");
+                    });
             });
         }
         $assetsBergerak = $assetsBergerakQuery->latest()->paginate(10, ['*'], 'bergerak_page')
             ->appends($request->except(['search_tidak_bergerak', 'search_habis_pakai']));
-        // --- Aset Tidak Bergerak ---
-        $assetsTidakBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'tidak_bergerak')
-            ->with(['tidakBergerak', 'category.categoryGroup']);
 
         // --- Aset Tidak Bergerak ---
         $assetsTidakBergerakQuery = $baseQuery->clone()->where('jenis_aset', 'tidak_bergerak')
             ->with(['tidakBergerak', 'category.categoryGroup']);
 
-        // --- Aset Tidak Bergerak ---
         if ($searchTidakBergerak) {
             $assetsTidakBergerakQuery->where(function ($q) use ($searchTidakBergerak) {
                 $q->where('kode', 'like', "%{$searchTidakBergerak}%")
-                ->orWhere('nama_aset', 'like', "%{$searchTidakBergerak}%")
-                ->orWhere('status', 'like', "%{$searchTidakBergerak}%")
-                ->orWhereHas('tidakBergerak', function ($subq) use ($searchTidakBergerak) {
-                    $subq->where('bahan', 'like', "%{$searchTidakBergerak}%")
-                        ->orWhere('ukuran', 'like', "%{$searchTidakBergerak}%");
-                });
+                    ->orWhere('nama_aset', 'like', "%{$searchTidakBergerak}%")
+                    ->orWhere('status', 'like', "%{$searchTidakBergerak}%")
+                    ->orWhereHas('tidakBergerak', function ($subq) use ($searchTidakBergerak) {
+                        $subq->where('bahan', 'like', "%{$searchTidakBergerak}%")
+                            ->orWhere('ukuran', 'like', "%{$searchTidakBergerak}%");
+                    });
             });
         }
         $assetsTidakBergerak = $assetsTidakBergerakQuery->latest()->paginate(10, ['*'], 'tidak_bergerak_page')
             ->appends($request->except(['search_bergerak', 'search_habis_pakai']));
-                // $assetsTidakBergerak = $assetsTidakBergerakQuery->latest()->paginate(
-        //     10,
-        //     ['*'],
-        //     'tidak_bergerak_page'
-        // )->appends($request->query());
 
-        // --- Aset Habis Pakai ---
         // --- Aset Habis Pakai ---
         $assetsHabisPakaiQuery = $baseQuery->clone()->where('jenis_aset', 'habis_pakai')
             ->with(['habisPakai', 'category.categoryGroup']);
@@ -121,32 +266,23 @@ class AssetsController extends Controller
         if ($searchHabisPakai) {
             $assetsHabisPakaiQuery->where(function ($q) use ($searchHabisPakai) {
                 $q->where('kode', 'like', "%{$searchHabisPakai}%")
-                ->orWhere('nama_aset', 'like', "%{$searchHabisPakai}%")
-                ->orWhere('status', 'like', "%{$searchHabisPakai}%")
-                
-                ->orWhereHas('habisPakai', function ($subq) use ($searchHabisPakai) {
-                    $subq->where('register', 'like', "%{$searchHabisPakai}%")
-                        ->orWhere('satuan', 'like', "%{$searchHabisPakai}%");
-                });
+                    ->orWhere('nama_aset', 'like', "%{$searchHabisPakai}%")
+                    ->orWhere('status', 'like', "%{$searchHabisPakai}%")
+
+                    ->orWhereHas('habisPakai', function ($subq) use ($searchHabisPakai) {
+                        $subq->where('register', 'like', "%{$searchHabisPakai}%")
+                            ->orWhere('satuan', 'like', "%{$searchHabisPakai}%");
+                    });
             });
         }
-        $assetsHabisPakai = $assetsHabisPakaiQuery->latest()->paginate(10, ['*'], 'habis_pakai_page')->appends($request->except(['search_bergerak', 'search_tidak_bergerak']));
+        $assetsHabisPakai = $assetsHabisPakaiQuery->latest()->paginate(10, ['*'], 'habis_pakai_page')->appends($request->except([
+            'search_bergerak',
+            'search_tidak_bergerak'
+        ]));
 
         // --- Statistik ---
-        $statsQuery = Asset::query();
-        if ($user->role === 'admin') {
-            $institutionId = $user->employee?->institution_id;
-            if ($institutionId) {
-                $statsQuery->whereHas('departement', function ($query) use ($institutionId) {
-                    $query->where('instansi_id', $institutionId);
-                });
-            }
-        } elseif ($user->role === 'subadmin') {
-            $departmentId = $user->employee?->department_id;
-            if ($departmentId) {
-                $statsQuery->where('department_id', $departmentId);
-            }
-        }
+        // Gunakan baseQuery yang sudah difilter untuk statistik
+        $statsQuery = $baseQuery;
 
         $jumlahAsetBergerak = $statsQuery->clone()->where('jenis_aset', 'bergerak')->count();
         $jumlahAsetTidakBergerak = $statsQuery->clone()->where('jenis_aset', 'tidak_bergerak')->count();
