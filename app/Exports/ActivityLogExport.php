@@ -11,12 +11,50 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\Asset;
+
 
 class ActivityLogExport implements FromCollection, WithMapping, WithHeadings, WithStyles
 {
     public function collection()
     {
-        return Activity::all();
+        $user = Auth::user();
+        $query = Activity::query();
+
+        // Hanya ambil log yang terkait dengan model Asset
+        $query->where('subject_type', Asset::class);
+
+        if ($user->role === 'admin') {
+            $institutionId = $user->employee?->institution_id;
+            if ($institutionId) {
+                // Filter log dimana subject (Asset) memiliki departemen
+                // yang berada di dalam instansi admin
+                $query->whereHasMorph('subject', [Asset::class], function ($assetQuery) use ($institutionId) {
+                    $assetQuery->whereHas('departement', function ($deptQuery) use ($institutionId) {
+                        $deptQuery->where('instansi_id', $institutionId);
+                    });
+                });
+            } else {
+                // Jika admin tidak punya instansi, jangan tampilkan apa-apa
+                return collect();
+            }
+        } elseif ($user->role === 'subadmin') {
+            $departmentId = $user->employee?->department_id;
+            if ($departmentId) {
+                // Filter log dimana subject (Asset) memiliki department_id yang cocok
+                $query->whereHasMorph('subject', [Asset::class], function ($assetQuery) use ($departmentId) {
+                    $assetQuery->where('department_id', $departmentId);
+                });
+            } else {
+                // Jika subadmin tidak punya departemen, jangan tampilkan apa-apa
+                return collect();
+            }
+        }
+        // Untuk superadmin, tidak ada filter tambahan, jadi dia akan mendapatkan semua log aset.
+
+        return $query->get();
     }
 
     public function map($activitylog): array
