@@ -2,9 +2,9 @@
 <div>
     <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama instansi<span
             class="text-red-500">*</span></label>
-    <input type="text" id="nama" name="nama" pattern="[A-Z a-z0-9,.]{0,30}" placeholder="Masukkan nama instansi..."
-        minlength="6" maxlength="30" title="Only letters, numbers, and spaces allowed"
-        value="{{ old('nama', $institution->nama ?? '') }}"
+    <input type="text" id="nama" name="nama" pattern="[A-Z a-z0-9,.]{0,30}"
+        placeholder="Masukkan nama instansi..." minlength="6" maxlength="30"
+        title="Only letters, numbers, and spaces allowed" value="{{ old('nama', $institution->nama ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         required autofocus>
 </div>
@@ -12,8 +12,8 @@
     <label for="alias" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alias <span
             class="text-red-500">*</span></label>
     <input type="text" id="alias" name="alias" pattern="[A-Za-z0-9,-.]{0,30}"
-        placeholder="Masukkan alias instansi..." minlength="3" maxlength="30" title="Only letters, numbers, and - allowed"
-        value="{{ old('alias', $institution->alias ?? '') }}"
+        placeholder="Masukkan alias instansi..." minlength="3" maxlength="30"
+        title="Only letters, numbers, and - allowed" value="{{ old('alias', $institution->alias ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         {{ isset($institution) && $institution->exists ? 'bg-gray-100' : '' }}"
         {{ isset($institution) && $institution->exists ? 'disabled' : '' }} required>
@@ -22,7 +22,8 @@
     <label for="pemerintah" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pemerintah <span
             class="text-red-500">*</span></label>
     <input type="text" id="pemerintah" name="pemerintah" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan nama pemerintah..." minlength="6" maxlength="30" title="Only letters, numbers, and spaces allowed"
+        placeholder="Masukkan nama pemerintah..." minlength="6" maxlength="30"
+        title="Only letters, numbers, and spaces allowed"
         value="{{ old('pemerintah', $institution->pemerintah ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
         required>
@@ -48,8 +49,8 @@
 <div>
     <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat</label>
     <input type="text" id="alamat" name="alamat" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan alamat instansi..." minlength="6" maxlength="30" title="Only letters, numbers, and spaces allowed"
-        value="{{ old('alamat', $institution->alamat ?? '') }}"
+        placeholder="Masukkan alamat instansi..." minlength="6" maxlength="30"
+        title="Only letters, numbers, and spaces allowed" value="{{ old('alamat', $institution->alamat ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
 

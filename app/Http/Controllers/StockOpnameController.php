@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Models\StockOpnameDetail;
 use App\Models\Asset;
 use App\Models\Departement;
-use App\Models\CategoryGroup;
-use App\Models\User;
+use App\Models\StockOpnameDetail;
 use App\Models\StockOpnameSession;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StockOpnameController extends Controller
@@ -104,6 +102,7 @@ class StockOpnameController extends Controller
 
         return view('opname.institution.index', compact('sessions', 'departements', 'overview'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -138,18 +137,28 @@ class StockOpnameController extends Controller
         $user = auth()->user();
         $departement = Departement::find($request->department_id);
 
-        if ($departement->kepala == null) {
-            return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
-        }
-        if ($departement->kepala->user == null) {
-            return back()->with('info', 'Kepala Departemen ini belum memiliki akun.')->withInput();
+        // if ($departement->kepala == null) {
+        //     return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
+        // }
+        // if ($departement->user == null) {
+        //     return back()->with('info', 'Departemen ini belum memiliki admin.')->withInput();
+        // }
+
+        $hasSubadmin = User::where('role', 'subadmin')
+            ->whereHas('employee', function ($query) use ($departement) {
+                $query->where('department_id', $departement->id);
+            })
+            ->exists();
+
+        if (! $hasSubadmin) {
+            return back()->with('info', 'Departemen ini belum memiliki subadmin.')->withInput();
         }
 
         try {
             DB::transaction(function () use ($request, $departement, $user) {
                 // 1. Buat sesi opname
                 $session = StockOpnameSession::create([
-                    'nama' => 'Opname ' . $departement->nama . ' - ' . $request->jenis_aset . ' (' . $request->tanggal_dijadwalkan . ')',
+                    'nama' => 'Opname '.$departement->nama.' - '.$request->jenis_aset.' ('.$request->tanggal_dijadwalkan.')',
                     'scheduled_by' => $user->id,
                     'department_id' => $request->department_id,
                     'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
@@ -179,7 +188,7 @@ class StockOpnameController extends Controller
                         'status_lama' => $asset->status,
                         'status_fisik' => null,
                         // 'status_fisik' => $asset->status,
-                        'checked_by' => $departement->kepala->user->id,
+                        'checked_by' => $user->id,
                     ]);
                 }
             });
@@ -188,7 +197,7 @@ class StockOpnameController extends Controller
                 ->with('success', 'Jadwal stock opname berhasil dibuat.');
         } catch (\Exception $e) {
             return back()
-                ->with('error', 'Gagal membuat sesi stock opname: ' . $e->getMessage())
+                ->with('error', 'Gagal membuat sesi stock opname: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -200,6 +209,7 @@ class StockOpnameController extends Controller
     {
         // Gunakan $opname karena route model binding
         $opname->load(['details', 'scheduler']); // Eager load relasi untuk efisiensi
+
         return view('opname.institution.show', compact('opname'));
     }
 
@@ -210,6 +220,7 @@ class StockOpnameController extends Controller
     {
         $stockOpnameSession->load('scheduler');
         $users = User::all();
+
         return view('stock-opname-sessions.edit', compact('stockOpnameSession', 'users'));
     }
 
@@ -233,7 +244,7 @@ class StockOpnameController extends Controller
             return redirect(routeForRole('opname', 'index'))
                 ->with('success', 'Sesi stock opname berhasil diperbarui.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal memperbarui sesi: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memperbarui sesi: '.$e->getMessage());
         }
     }
 
@@ -249,7 +260,7 @@ class StockOpnameController extends Controller
                 ->with('success', 'Sesi stock opname berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect(routeForRole('opname', 'index'))
-                ->with('error', 'Gagal menghapus sesi stock opname: ' . $e->getMessage());
+                ->with('error', 'Gagal menghapus sesi stock opname: '.$e->getMessage());
         }
     }
 
@@ -267,13 +278,13 @@ class StockOpnameController extends Controller
             DB::transaction(function () use ($opname, $request) {
                 $opname->update([
                     'status' => 'dijadwalkan',
-                    'catatan' => $request->catatan ?? 'Stock opname untuk ' . $opname->departement->nama,
+                    'catatan' => $request->catatan ?? 'Stock opname untuk '.$opname->departement->nama,
                 ]);
             });
 
             return back()->with('success', 'Sesi stock opname berhasil dimulai.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal memulai sesi: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memulai sesi: '.$e->getMessage());
         }
     }
 
@@ -293,7 +304,7 @@ class StockOpnameController extends Controller
 
             return back()->with('success', 'Sesi stock opname berhasil diselesaikan.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal menyelesaikan sesi: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyelesaikan sesi: '.$e->getMessage());
         }
     }
 
@@ -306,16 +317,18 @@ class StockOpnameController extends Controller
                     $opname->delete();
                 } elseif ($opname->status === 'dijadwalkan') {
                     $opname->update(['status' => 'cancelled']);
+
                     // return back()->with('success', 'Sesi stock opname berhasil dibatalkan.');
                     // routeForRole('opname', 'show', $session->id) }}
                     return redirect(routeForRole('opname', 'show', $opname->id))
                         ->with('success', 'Sesi stock opname berhasil dibatalkan');
                 }
             });
+
             return redirect(routeForRole('opname', 'index'))
                 ->with('success', 'Sesi stock opname berhasil dibatalkan.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal membatalkan sesi: ' . $e->getMessage());
+            return back()->with('error', 'Gagal membatalkan sesi: '.$e->getMessage());
         }
     }
 }
