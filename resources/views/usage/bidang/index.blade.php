@@ -433,7 +433,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                    @forelse($usagesTidakBergerak as $index => $asset)
+                                    @forelse($usagesTidakBergerak as $index => $usage)
                                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                                 {{ $index + $usagesTidakBergerak->firstItem() }}
@@ -669,7 +669,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                        @forelse($usagesHabisPakai as $index => $asset)
+                                        @forelse($usagesHabisPakai as $index => $usage)
                                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                                 <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                                     {{ $index + $usagesHabisPakai->firstItem() }}
