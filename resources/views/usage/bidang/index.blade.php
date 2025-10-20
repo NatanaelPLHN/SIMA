@@ -102,23 +102,17 @@
                     <form method="GET" action="{{ route('subadmin.asset-usage.index') }}"
                         class="flex items-center space-x-2 sm:pl-4">
                         <input type="hidden" name="tab" value="bergerak">
-                        {{-- <div class="relative w-48 sm:w-64">
+                        <div class="relative w-48 sm:w-64">
                             <input type="text" name="search_bergerak" value="{{ request('search_bergerak') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, kode, dll...">
-                        </div> --}}
-                        <div class="flex items-center space-x-2">
-                            <label for="1-search" class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
-                            <input type="text" id="1-search"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Cari nama, email, dll...">
                         </div>
-                        {{-- @if (request('search_bergerak'))
+                        @if (request('search_bergerak'))
                             <a href="{{ route('subadmin.asset-usage.index', ['tab' => 'bergerak']) }}"
                                 class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                     dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                 Clear</a>
-                        @endif --}}
+                        @endif
                     </form>
                     {{-- @if (auth()->user()->role == 'subadmin') --}}
                     <a href="{{ routeForRole('asset-usage', 'create', 'bergerak') }}"
@@ -200,8 +194,7 @@
                                         Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="1-body"
-                                class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                 @forelse($usagesBergerak as $index => $usage)
                                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
@@ -335,25 +328,19 @@
                         <form method="GET" action="{{ route('subadmin.asset-usage.index') }}"
                             class="flex items-center space-x-2 sm:pl-4">
                             <input type="hidden" name="tab" value="tidakbergerak">
-                            {{-- <div class="relative w-48 sm:w-64">
+                            <div class="relative w-48 sm:w-64">
                                 <input type="text" name="search_tidak_bergerak"
                                     value="{{ request('search_tidak_bergerak') }}"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Cari nama, kode, dll...">
-                            </div> --}}
-                            <div class="flex items-center space-x-2">
-                                <label for="2-search"
-                                    class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
-                                <input type="text" id="2-search"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Cari nama, email, dll...">
                             </div>
-                            {{-- @if (request('search_tidak_bergerak'))
+
+                            @if (request('search_tidak_bergerak'))
                                 <a href="{{ route('subadmin.asset-usage.index', ['tab' => 'tidakbergerak']) }}"
                                     class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                     dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                     Clear</a>
-                            @endif --}}
+                            @endif
                         </form>
                         {{-- @if (auth()->user()->role == 'subadmin') --}}
                         <a href="{{ routeForRole('asset-usage', 'create', 'tidak_bergerak') }}"
@@ -445,8 +432,7 @@
                                             Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody id="2-body"
-                                    class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                     @forelse($usagesTidakBergerak as $index => $asset)
                                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
@@ -579,24 +565,17 @@
                             <form method="GET" action="{{ route('subadmin.asset-usage.index') }}"
                                 class="flex items-center space-x-2 sm:pl-4">
                                 <input type="hidden" name="tab" value="habispakai">
-                                {{-- <div class="relative w-48 sm:w-64">
+                                <div class="relative w-48 sm:w-64">
                                     <input type="text" name="search_habis_pakai" value="{{ request('search_habis_pakai') }}"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                         placeholder="Cari nama aset, kode, nama pengguna dll...">
-                                </div> --}}
-                                <div class="flex items-center space-x-2">
-                                    <label for="3-search"
-                                        class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
-                                    <input type="text" id="3-search"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                        placeholder="Cari nama, email, dll...">
                                 </div>
-                                {{-- @if (request('search_habis_pakai'))
+                                @if (request('search_habis_pakai'))
                                     <a href="{{ route('subadmin.asset-usage.index', ['tab' => 'habispakai']) }}"
                                         class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                     dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                         Clear</a>
-                                @endif --}}
+                                @endif
                             </form>
                             {{-- @if (auth()->user()->role == 'subadmin') --}}
                             <a href="{{ routeForRole('asset-usage', 'create', 'habis_pakai') }}"
@@ -689,8 +668,7 @@
                                                 Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="3-body"
-                                        class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                         @forelse($usagesHabisPakai as $index => $asset)
                                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                                 <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
@@ -873,28 +851,5 @@
                         switchTab(activeTab);
                     });
                 </script>
-                <script>
-                    document.getElementById('1-search').addEventListener('keyup', function() {
-                        const term = this.value.toLowerCase();
-                        document.querySelectorAll('#1-body tr').forEach(row => {
-                            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-                        });
-                    });
-                </script>
-                <script>
-                    document.getElementById('2-search').addEventListener('keyup', function() {
-                        const term = this.value.toLowerCase();
-                        document.querySelectorAll('#2-body tr').forEach(row => {
-                            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-                        });
-                    });
-                </script>
-                <script>
-                    document.getElementById('3-search').addEventListener('keyup', function() {
-                        const term = this.value.toLowerCase();
-                        document.querySelectorAll('#3-body tr').forEach(row => {
-                            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-                        });
-                    });
-                </script>
+
             @endsection
