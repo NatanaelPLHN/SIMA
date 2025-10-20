@@ -52,12 +52,6 @@ Route::post('verify-password', [StockOpnameDepartmentController::class, 'verifyP
 Route::get('/api/departements/{institutionId}', [UserController::class, 'getDepartements'])->name('api.departements');
 Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployees'])->name('api.employees');
 
-//import & export
-// Route::post('employees/import', [EmployeeController::class, 'import'])->name('employee.import');
-// Route::get('employees/export/', [EmployeeController::class, 'export'])->name('employee.export');;
-
-// untuk menyimpan progress opname bidang
-// Route::post('/opname/detail/{detail}/update-item', [StockOpnameDepartmentController::class, 'updateItem'])->name('opname.detail.update_item');
 
 Route::middleware(['auth', 'role:superadmin,admin,subadmin'])->group(function () {
     Route::prefix('users/ajax')->name('users.ajax.')->group(function () {
@@ -72,12 +66,10 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::get('in', [AuthController::class, 'login']);
     Route::get('dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
     Route::resource('profile', controller: ProfileController::class);
-    // Route::get('asset-usage', AssetUsageController::class);
-    // Route::get('asset-usage', [AssetUsageController::class, 'index'])->name('asset-usage.index');
-    // Route::get('asset-usage/{assetUsage}', [AssetUsageController::class, 'show'])->name('asset-usage.show');
     Route::resource('asset-usage', AssetUsageController::class)->except(['create', 'edit', 'delete', 'update']);
     Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
     Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
+    Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
 });
 
 // SubAdmin routes

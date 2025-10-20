@@ -20,27 +20,6 @@ class UserSeeder extends Seeder
         ]);
 
         // Admin Dinas Pendidikan (not every instansi has admin)
-        User::create([
-            'email' => 'admin.disdik@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'karyawan_id' => Employee::where('nama', 'Budi Santoso')->first()->id,
-        ]);
-
-        // Subadmin Dinas Kesehatan
-        User::create([
-            'email' => 'subadmin.dinkes@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'subadmin',
-            'karyawan_id' => Employee::where('nama', 'Siti Aminah')->first()->id,
-        ]);
-
-        // Admin Dinas Sosial
-        User::create([
-            'email' => 'admin.dinsos@gmail.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'karyawan_id' => Employee::where('nama', 'Dina Kartika')->first()->id,
-        ]);
+        
     }
 }
