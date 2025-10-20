@@ -114,7 +114,7 @@ class InstitutionController extends Controller
     public function edit(Institution $institution)
     {
         // $employees = $institution->employees;
-        $employees = $institution->employees()->whereNull('department_id')->get();
+        $employees = $institution->employees()->get();
         return view('institution.edit_institution', compact('institution', 'employees'));
     }
 
