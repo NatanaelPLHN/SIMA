@@ -45,14 +45,22 @@
                 <div class="flex items-center mb-4 sm:mb-0">
                     <form method="GET" action="{{ route('superadmin.category-groups.index') }}"
                         class="flex items-center space-x-2 sm:pl-4 mt-2 sm:mt-0">
-                        <div class="relative w-48 sm:w-64">
+                        {{-- <div class="relative w-48 sm:w-64">
                             <input type="text" name="search" id="Grup-kategori-search" value="{{ request('search') }}"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Cari nama, Deskripsi, dll...">
+                        </div> --}}
+                        {{-- live search --}}
+                        <div class="flex items-center space-x-2">
+                            <label for="category-search"
+                                class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
+                            <input type="text" id="category-search"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, Deskripsi, dll...">
                         </div>
                         @if (request('search'))
                             <a href="{{ route('superadmin.category-groups.index') }}"
-                               class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                             dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                 Clear
                             </a>
@@ -117,7 +125,7 @@
 
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                <tbody id="category-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                     @forelse($categoryGroups as $index => $categoryGroup)
                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
@@ -505,6 +513,14 @@
                         el.classList.remove('translate-x-0');
                     }
                 });
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('category-search').addEventListener('keyup', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('#category-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
             });
         });
     </script>

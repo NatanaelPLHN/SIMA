@@ -127,7 +127,7 @@
                                 class="text-red-500">*</span></label>
                         <input type="text" id="nomor_serial" name="nomor_serial" pattern="[0-9]{0,30}"
                             placeholder="Masukkan nomor serial aset..." minlength="0" maxlength="50"
-                            title="Only letters, numbers, and spaces allowed"
+                            title="Only numbers allowed"
                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 
                     </div>
