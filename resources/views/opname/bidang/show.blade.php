@@ -4,26 +4,26 @@
 
 @section('content')
 
-<form id="opname-form" action="{{ routeForRole('opname', 'update', $opname->id) }}" method="POST"
-    enctype="multipart/form-data" class="contents">
-    @method('PUT')
-    @csrf
-    <div class="px-4 py-6">
-        <div class="mb-6">
-            <a href="{{ route('subadmin.opname.index') }}"
-                class="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                        clip-rule="evenodd" />
-                </svg>
-                Kembali ke Daftar Stock Opname
-            </a>
-        </div>
+    <form id="opname-form" action="{{ routeForRole('opname', 'update', $opname->id) }}" method="POST"
+        enctype="multipart/form-data" class="contents">
+        @method('PUT')
+        @csrf
+        <div class="px-4 py-6">
+            <div class="mb-6">
+                <a href="{{ route('subadmin.opname.index') }}"
+                    class="inline-flex items-center text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Kembali ke Daftar Stock Opname
+                </a>
+            </div>
 
-        <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
-            <!-- Header Section -->
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+                <!-- Header Section -->
 
 
                 <div class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 p-5 " id="penanda">
@@ -72,34 +72,37 @@
                     </div>
                 </div>
 
-        </div>
-        <!-- Data Table -->
-        <div class="my-5 ml-5">
-                    <label for="search-aset" class="text-sm font-medium text-gray-700 dark:text-gray-300"></label>
-                    <form action="{{ routeForRole('opname', 'show', $opname->id) }}" method="GET" id="searchForm" class="flex items-center gap-2 mb-4 ml-5">
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            placeholder="Cari berdasarkan Nama Aset atau Kode..."
-                            class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-                        >
-                        @if (request('search'))
-                            <a href="{{ routeForRole('opname', 'show', $opname->id) }}"
-                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
+            </div>
+            <!-- Data Table -->
+            <div class="my-5 ml-5">
+                <label for="search-aset" class="text-sm font-medium text-gray-700 dark:text-gray-300"></label>
+                <form action="{{ routeForRole('opname', 'show', $opname->id) }}" method="GET" id="searchForm"
+                    class="flex items-center gap-2 mb-4 ml-5">
+                    {{-- <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari berdasarkan Nama Aset atau Kode..."
+                        class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"> --}}
+                    {{-- <div class="flex items-center space-x-2"> --}}
+                    <label for="opname-search" class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
+                    <input type="text" id="opname-search"
+                        class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                        placeholder="Cari nama, email, dll...">
+                    {{-- </div> --}}
+                    @if (request('search'))
+                        <a href="{{ routeForRole('opname', 'show', $opname->id) }}"
+                            class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                 dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                             Clear</a>
-                        @endif
+                    @endif
 
-                        @if ($opname->status == 'proses')
-                            <button type="button" id="scan-qr-button"
-                                class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
-                                Scan QR
-                            </button>
-                        @endif
-                    </form>
-                </div>
-                <script>
+                    @if ($opname->status == 'proses')
+                        <button type="button" id="scan-qr-button"
+                            class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
+                            Scan QR
+                        </button>
+                    @endif
+                </form>
+            </div>
+            <script>
                 document.addEventListener('keydown', function(e) {
                     const searchInput = document.querySelector('input[name="search"]');
                     // Jika Enter ditekan di dalam input search, cegah submit form utama
@@ -111,115 +114,117 @@
                         window.location.href = baseUrl + '?search=' + encodeURIComponent(searchValue);
                     }
                 });
-                </script>
+            </script>
 
-        <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-100 dark:bg-gray-700">
-                        <tr>
-                            <th
-                                class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                No</th>
-                            <th
-                                class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                Kode</th>
-                            <th
-                                class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                Nama Aset</th>
-                            <th
-                                class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                Sub Kategori</th>
-                            @if (
-                                $opname->details->first()?->asset->jenis_aset == 'bergerak' ||
-                                    $opname->details->first()?->asset->jenis_aset == 'tidak_bergerak')
+            <div
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
                                 <th
                                     class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                    Status Lama
-                                </th>
+                                    No</th>
                                 <th
                                     class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                    Status Baru
-                                </th>
-                            @else
+                                    Kode</th>
                                 <th
                                     class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                    Jumlah Sistem
-                                </th>
+                                    Nama Aset</th>
                                 <th
                                     class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-                                    Jumlah Fisik
-                                </th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse ($filteredDetails ?? $opname->details as $index => $detail)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                                data-asset-code="{{ $detail->asset->kode ?? '' }}"
-                                data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}">
-                                <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
-                                    {{ $index + 1 }}
-                                </td>
-                                <td class="px-4 py-3 text-center text-sm font-mono text-gray-900 dark:text-gray-100">
-                                    {{ $detail->asset->kode ?? '-' }}</td>
-                                <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
-                                    {{ $detail->asset->nama_aset ?? '-' }}</td>
-                                <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
-                                    {{ $detail->asset->category->nama ?? '-' }}</td>
-                                @if ($detail->asset->jenis_aset == 'bergerak' || $detail->asset->jenis_aset == 'tidak_bergerak')
-                                    <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
-                                        {{ ucfirst($detail->status_lama) ?? '-' }}</td>
-                                    <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
-                                        <div>
-                                            <select id="status_fisik_{{ $detail->id }}"
-                                                name="statuses[{{ $detail->id }}]"
-                                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-                                                {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
-                                                <option value="">Pilih Status</option>
-                                                <option value="tersedia"
-                                                    {{ $detail->status_fisik == 'tersedia' ? 'selected' : '' }}>Tersedia
-                                                </option>
-                                                <option value="dipakai"
-                                                    {{ $detail->status_fisik == 'dipakai' ? 'selected' : '' }}>Dipakai
-                                                </option>
-                                                <option value="rusak"
-                                                    {{ $detail->status_fisik == 'rusak' ? 'selected' : '' }}>Rusak</option>
-                                                <option value="hilang"
-                                                    {{ $detail->status_fisik == 'hilang' ? 'selected' : '' }}>Hilang
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </td>
+                                    Sub Kategori</th>
+                                @if (
+                                    $opname->details->first()?->asset->jenis_aset == 'bergerak' ||
+                                        $opname->details->first()?->asset->jenis_aset == 'tidak_bergerak')
+                                    <th
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                        Status Lama
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                        Status Baru
+                                    </th>
                                 @else
-                                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $detail->jumlah_sistem }}
-                                    </td>
-                                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                                        <input type="number" name="jumlah_fisik[{{ $detail->id }}]"
-                                            value="{{ $detail->jumlah_fisik ?? $detail->jumlah_sistem }}"
-                                            class="w-20 border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-                                            {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
-                                        <input type="hidden" name="statuses[{{ $detail->id }}]" value="">
-                                    </td>
+                                    <th
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                        Jumlah Sistem
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                        Jumlah Fisik
+                                    </th>
                                 @endif
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ $opname->status == 'selesai' ? 7 : 5 }}"
-                                    class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                                    Tidak ada data aset dalam sesi ini.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody id="opname-body" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse ($filteredDetails ?? $opname->details as $index => $detail)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                    data-asset-code="{{ $detail->asset->kode ?? '' }}"
+                                    data-update-url="{{ route('subadmin.opname.details.update', $detail->id) }}">
+                                    <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $index + 1 }}
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm font-mono text-gray-900 dark:text-gray-100">
+                                        {{ $detail->asset->kode ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $detail->asset->nama_aset ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $detail->asset->category->nama ?? '-' }}</td>
+                                    @if ($detail->asset->jenis_aset == 'bergerak' || $detail->asset->jenis_aset == 'tidak_bergerak')
+                                        <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
+                                            {{ ucfirst($detail->status_lama) ?? '-' }}</td>
+                                        <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
+                                            <div>
+                                                <select id="status_fisik_{{ $detail->id }}"
+                                                    name="statuses[{{ $detail->id }}]"
+                                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                                                    {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
+                                                    <option value="">Pilih Status</option>
+                                                    <option value="tersedia"
+                                                        {{ $detail->status_fisik == 'tersedia' ? 'selected' : '' }}>
+                                                        Tersedia
+                                                    </option>
+                                                    <option value="dipakai"
+                                                        {{ $detail->status_fisik == 'dipakai' ? 'selected' : '' }}>Dipakai
+                                                    </option>
+                                                    <option value="rusak"
+                                                        {{ $detail->status_fisik == 'rusak' ? 'selected' : '' }}>Rusak
+                                                    </option>
+                                                    <option value="hilang"
+                                                        {{ $detail->status_fisik == 'hilang' ? 'selected' : '' }}>Hilang
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    @else
+                                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                                            {{ $detail->jumlah_sistem }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                                            <input type="number" name="jumlah_fisik[{{ $detail->id }}]"
+                                                value="{{ $detail->jumlah_fisik ?? $detail->jumlah_sistem }}"
+                                                class="w-20 border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                                                {{ $opname->status == 'selesai' ? 'disabled' : '' }}>
+                                            <input type="hidden" name="statuses[{{ $detail->id }}]" value="">
+                                        </td>
+                                    @endif
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ $opname->status == 'selesai' ? 7 : 5 }}"
+                                        class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        Tidak ada data aset dalam sesi ini.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-</form>
+    </form>
 
 
     <!-- QR Scanner Modal -->
@@ -814,5 +819,13 @@ transition-colors">
                 // You can call attachAutoSaveListeners() after rows update
             });
         })();
+    </script>
+    <script>
+        document.getElementById('opname-search').addEventListener('keyup', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('#opname-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
+            });
+        });
     </script>
 @endpush
