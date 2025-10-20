@@ -118,51 +118,6 @@ class InstitutionController extends Controller
         return view('institution.edit_institution', compact('institution', 'employees'));
     }
 
-    // public function update(Request $request, Institution $institution)
-    // {
-    //     $validated = $request->validate([
-    //         'nama' => 'required|string|max:255',
-    //         'pemerintah' => 'required|string|max:255',
-    //         'telepon' => 'nullable|string|max:20',
-    //         'email' => 'nullable|email|max:255',
-    //         'alamat' => 'nullable|string',
-    //         'kepala_instansi_id' => 'nullable|exists:employees,id',
-    //     ], [
-    //         'nama.required' => 'Nama instansi wajib diisi.',
-    //         'pemerintah.required' => 'Nama pemerintah wajib diisi.',
-    //         'email.email' => 'Format email tidak valid.',
-    //         'kepala_instansi_id.exists' => 'Kepala instansi tidak ditemukan.',
-    //     ]);
-
-    //     // Validasi: kepala instansi harus dari instansi yang sama
-    //     if ($request->kepala_instansi_id) {
-    //         $employee = Employee::find($request->kepala_instansi_id);
-    //         if ($employee && $employee->institution?->id != $institution->id) {
-    //             return back()->withInput()
-    //                 ->withErrors(['kepala_instansi_id' => 'Kepala instansi harus merupakan anggota instansi ini.']);
-    //         }
-    //     }
-
-    //     // Cek duplikasi nama
-    //     if (Institution::where('nama', $validated['nama'])->where('id', '!=', $institution->id)->exists()) {
-    //         return back()->withInput()->withErrors(['nama' => 'Nama institusi sudah ada.']);
-    //     }
-
-    //     try {
-    //         DB::transaction(function () use ($institution, $validated) {
-    //             $institution->fill($validated);
-
-    //             if ($institution->isDirty()) {
-    //                 $institution->save();
-    //             }
-    //         });
-
-    //         return redirect(routeForRole('institution', 'index'))
-    //             ->with('success', 'Instansi berhasil diperbarui.');
-    //     } catch (\Exception $e) {
-    //         return back()->with('error', 'Gagal memperbarui instansi: ' . $e->getMessage())->withInput();
-    //     }
-    // }
     public function update(Request $request, Institution $institution)
      {
          $validated = $request->validate([

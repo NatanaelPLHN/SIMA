@@ -194,7 +194,7 @@
                                 @elseif ($user->role === 'admin')
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                        Admin Instansi: {{ $user->employee->institution?->nama ?? '–' }}
+                                        Admin OPD: {{ $user->employee->institution?->nama ?? '–' }}
                                     </span>
                                 @elseif ($user->role === 'subadmin')
                                     <span
