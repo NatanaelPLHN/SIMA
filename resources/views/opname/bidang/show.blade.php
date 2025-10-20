@@ -71,26 +71,26 @@
                         </div>
                     </div>
                 </div>
-                
+
         </div>
         <!-- Data Table -->
         <div class="my-5 ml-5">
                     <label for="search-aset" class="text-sm font-medium text-gray-700 dark:text-gray-300"></label>
                     <form action="{{ routeForRole('opname', 'show', $opname->id) }}" method="GET" id="searchForm" class="flex items-center gap-2 mb-4 ml-5">
-                        <input 
+                        <input
                             type="text"
-                            name="search" 
-                            value="{{ request('search') }}" 
+                            name="search"
+                            value="{{ request('search') }}"
                             placeholder="Cari berdasarkan Nama Aset atau Kode..."
                             class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                         >
                         @if (request('search'))
                             <a href="{{ routeForRole('opname', 'show', $opname->id) }}"
-                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300 
+                                class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                                 dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                             Clear</a>
                         @endif
-                
+
                         @if ($opname->status == 'proses')
                             <button type="button" id="scan-qr-button"
                                 class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors">
@@ -170,7 +170,7 @@
                                     {{ $detail->asset->category->nama ?? '-' }}</td>
                                 @if ($detail->asset->jenis_aset == 'bergerak' || $detail->asset->jenis_aset == 'tidak_bergerak')
                                     <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $detail->status_lama ?? '-' }}</td>
+                                        {{ ucfirst($detail->status_lama) ?? '-' }}</td>
                                     <td class="px-4 py-3 text-center text-sm text-gray-900 dark:text-gray-100">
                                         <div>
                                             <select id="status_fisik_{{ $detail->id }}"

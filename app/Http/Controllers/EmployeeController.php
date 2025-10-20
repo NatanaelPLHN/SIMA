@@ -124,7 +124,7 @@ class EmployeeController extends Controller
             'telepon' => 'nullable|string|max:20',
             'institution_id' => 'nullable|exists:institutions,id',
             'department_id' => 'nullable|exists:departements,id',
-        ],[
+        ], [
             'nip.required' => 'NIP wajib diisi.',
             'nip.unique' => 'NIP sudah terdaftar.',
             'nama.required' => 'Nama wajib diisi.',
@@ -201,6 +201,7 @@ class EmployeeController extends Controller
     public function update(Request $request, Employee $employee)
     {
         $oldDepartmentId = $employee->department_id;
+        $oldInstitutionId = $employee->institution_id;
         $validated = $request->validate([
             'nip' => 'required|unique:employees,nip,' . $employee->id,
             'nama' => 'required|string|max:255',
@@ -221,7 +222,7 @@ class EmployeeController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($employee, $validated, $oldDepartmentId, $request) {
+            DB::transaction(function () use ($employee, $validated, $oldInstitutionId, $oldDepartmentId, $request) {
                 // If department changed, and employee was head of old one — remove them
                 if ($oldDepartmentId && $oldDepartmentId != $request->department_id) {
                     $oldDepartment = Departement::find($oldDepartmentId);
@@ -231,6 +232,17 @@ class EmployeeController extends Controller
                 }
 
                 $employee->fill($validated);
+                // Cek apakah instansi atau departemen berubah
+                $institutionChanged = $employee->institution_id != $oldInstitutionId;
+                $departmentChanged = $employee->department_id != $oldDepartmentId;
+                if (($institutionChanged || $departmentChanged) && $employee->user) {
+                    // Jika ada perubahan dan pegawai punya akun, reset rolenya ke 'user'
+                    // Hanya reset jika role saat ini adalah admin atau subadmin
+                    if (in_array($employee->user->role, ['admin', 'subadmin'])) {
+                        $employee->user->role = 'user';
+                        $employee->user->save();
+                    }
+                }
                 if ($employee->isDirty()) {
                     $employee->save();
                 }
