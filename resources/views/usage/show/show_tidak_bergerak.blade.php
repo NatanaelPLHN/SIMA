@@ -57,7 +57,7 @@
                             </a>
                             @break
                         @endswitch
-                            
+
                             </svg>
                         </li>
                         <li>
@@ -135,7 +135,7 @@
                                 {{ $assetUsage->asset->lokasi_terakhir ?? '?' }}
                             </div>
                         </div>
-                        
+
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -160,19 +160,19 @@
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">PIC</label>
                         <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 break-words whitespace-normal text-gray-900 dark:text-white">
-                            {{ $assetUsage->department->kepala->nama }}
+                            {{ $assetUsage->department->kepala->nama ?? '-'  }}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Peminjam</label>
                         <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 break-words whitespace-normal text-gray-900 dark:text-white">
-                            {{ $assetUsage->user->nama }}
+                            {{ $assetUsage->user->nama ?? '-' }}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Penggunaan</label>
                         <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 break-words whitespace-normal text-gray-900 dark:text-white">
-                            {{ $assetUsage->start_date }}
+                            {{ $assetUsage->start_date ?? '-' }}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
