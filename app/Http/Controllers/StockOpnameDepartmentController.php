@@ -370,84 +370,46 @@ class StockOpnameDepartmentController extends Controller
 
 
 
-public function updateItem(Request $request, StockOpnameDetail $detail)
-{
-    // Log::info('Fungsi updateItem DIPANGGIL. Detail ID: ' . $detail->id);
+    public function updateItem(Request $request, StockOpnameDetail $detail)
+    {
+        Log::info('Fungsi updateItem DIPANGGIL. Detail ID: ' . $detail->id);
+        // Optional: policy/authorize
+        // $this->authorize('update', $detail);
+        activity()->disableLogging();
+        $user = auth()->user();
+        if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
-    activity()->disableLogging();
-    $user = auth()->user();
-    if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
-        return response()->json(['message' => 'Unauthorized'], 403);
-    }
+        if ($detail->stockOpname->status !== 'proses') {
+            return response()->json(['message' => 'Sesi opname tidak aktif'], 400);
+        }
 
-    if ($detail->stockOpname->status !== 'proses') {
-        return response()->json(['message' => 'Sesi opname tidak aktif'], 400);
-    }
+        $asset = $detail->asset;
+        if (!$asset) {
+            return response()->json(['message' => 'Aset tidak ditemukan'], 404);
+        }
 
-    $asset = $detail->asset;
-    if (!$asset) {
-        return response()->json(['message' => 'Aset tidak ditemukan'], 404);
-    }
-
-    try {
-        DB::transaction(function () use ($request, $detail, $asset) {
-            if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
-                // Validasi input status_fisik dan file surat kehilangan (multipart/form-data)
-                $validatedData = $request->validate([
-                    'status_fisik' => 'required|string', // Pastikan status diisi
-                    'surat_kehilangan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Validasi file
-                ]);
-
-                $statusFisikBaru = $validatedData['status_fisik'];
-                $suratKehilanganBaru = $request->file('surat_kehilangan');
-
-                // Jika status baru adalah 'hilang', pastikan file surat kehilangan diupload
-                if ($statusFisikBaru === 'hilang') {
-                    if (!$suratKehilanganBaru) {
-                        return response()->json(['message' => 'Surat kehilangan wajib diupload jika status aset adalah hilang.'], 422);
-                    }
-
-                    // Upload file
-                    $path = $suratKehilanganBaru->store('surat_kehilangan_opname', 'public');
-                    $detail->surat_kehilangan_path = $path;
-                } else {
-                    // Jika status bukan 'hilang', hapus file lama jika ada
-                    if ($detail->surat_kehilangan_path) {
-                        Storage::disk('public')->delete($detail->surat_kehilangan_path);
-                        $detail->surat_kehilangan_path = null;
-                    }
+        try {
+            DB::transaction(function () use ($request, $detail, $asset) {
+                if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
+                    $validated = $request->validate(['status_fisik' => 'required|string']);
+                    $detail->status_fisik = $validated['status_fisik'];
+                    $detail->jumlah_fisik = ($validated['status_fisik'] === 'hilang') ? 0 : 1;
+                } elseif ($asset->jenis_aset === 'habis_pakai') {
+                    $validated = $request->validate(['jumlah_fisik' => 'required|integer|min:0']);
+                    $detail->jumlah_fisik = $validated['jumlah_fisik'];
+                    $detail->status_fisik = ($validated['jumlah_fisik'] == 0) ? 'habis' : 'tersedia';
                 }
+                $detail->save();
+            });
+            activity()->enableLogging();
 
-                $detail->status_fisik = $statusFisikBaru;
-                $detail->jumlah_fisik = ($statusFisikBaru === 'hilang') ? 0 : 1; // Atur jumlah sesuai status
-
-                $asset->status = $statusFisikBaru;
-                $asset->jumlah = ($statusFisikBaru === 'hilang') ? 0 : 1; // Atur jumlah aset utama juga
-
-            } elseif ($asset->jenis_aset === 'habis_pakai') {
-                // Validasi untuk aset habis pakai tetap sama
-                $validatedData = $request->validate(['jumlah_fisik' => 'required|integer|min:0']);
-                $detail->jumlah_fisik = $validatedData['jumlah_fisik'];
-                $detail->status_fisik = ($validatedData['jumlah_fisik'] == 0) ? 'habis' : 'tersedia';
-
-                $asset->jumlah = $validatedData['jumlah_fisik'];
-                $asset->status = ($validatedData['jumlah_fisik'] == 0) ? 'habis' : 'tersedia';
-            }
-
-            $detail->save();
-            $asset->save();
-        });
-        activity()->enableLogging();
-
-        return response()->json(['message' => 'Data berhasil disimpan.', 'timestamp' => now()->toTimeString()]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        // Tangani error validasi secara spesifik
-        return response()->json(['message' => 'Validasi gagal: ' . $e->errors()], 422);
-    } catch (\Exception $e) {
-        // Tangani error lainnya
-        return response()->json(['message' => 'Gagal menyimpan  ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Data berhasil disimpan.', 'timestamp' => now()->toTimeString()]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
+        }
     }
-}
     public function validateCompletion(StockOpnameSession $opname)
     {
         $isIncomplete = $opname->details()->where(function ($query) {
