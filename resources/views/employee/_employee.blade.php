@@ -15,7 +15,7 @@
     <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama <span
             class="text-red-500">*</span></label>
     <input type="text" id="nama" name="nama" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan nama pegawai..." minlength="4" maxlength="30"
+        placeholder="Masukkan nama pegawai..." minlength="4"
         title="Only letters, numbers, and spaces allowed" value="{{ old('nama', $employee->nama ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>
@@ -24,7 +24,7 @@
 <div>
     <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat</label>
     <input type="text" id="alamat" name="alamat" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan alamat pegawai..." minlength="6" maxlength="30"
+        placeholder="Masukkan alamat pegawai..." minlength="6" 
         title="Only letters, numbers, and spaces allowed" value="{{ old('alamat', $employee->alamat ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"">
 </div>
