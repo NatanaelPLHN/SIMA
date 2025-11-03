@@ -78,21 +78,7 @@
                 <label for="search-aset" class="text-sm font-medium text-gray-700 dark:text-gray-300"></label>
                 <form action="{{ routeForRole('opname', 'show', $opname->id) }}" method="GET" id="searchForm"
                     class="flex items-center gap-2 mb-4 ml-5">
-                    {{-- <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari berdasarkan Nama Aset atau Kode..."
-                        class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"> --}}
-                    {{-- <div class="flex items-center space-x-2"> --}}
-                    <label for="opname-search" class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
-                    <input type="text" id="opname-search"
-                        class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-                        placeholder="Cari nama, email, dll...">
-                    {{-- </div> --}}
-                    @if (request('search'))
-                        <a href="{{ routeForRole('opname', 'show', $opname->id) }}"
-                            class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
-                                dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
-                            Clear</a>
-                    @endif
+
 
                     @if ($opname->status == 'proses')
                         <button type="button" id="scan-qr-button"

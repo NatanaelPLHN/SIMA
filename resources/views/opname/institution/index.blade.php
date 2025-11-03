@@ -288,29 +288,29 @@
                 </div>
             </div>
 
-    <!-- Drawer (Form Tambah Stock Opname) -->
-    <div x-show="openDrawer" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 dark:bg-gray-900/80 bg-gray-300/80" @click="openDrawer = false"></div>
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div x-show="openDrawer" 
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 scale-100"
-                 x-transition:leave-end="opacity-0 scale-95"
-                 class="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                
-                <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Tambah Stock Opname</h3>
-                        <button @click="openDrawer = false" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+            <!-- Drawer (Form Tambah Stock Opname) -->
+            <div x-show="openDrawer" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
+                <div class="fixed inset-0 dark:bg-gray-900/80 bg-gray-300/80" @click="openDrawer = false"></div>
+                <div class="relative min-h-screen flex items-center justify-center p-4">
+                    <div x-show="openDrawer" x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+                        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Tambah Stock Opname</h3>
+                                <button @click="openDrawer = false"
+                                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
 
                         <form id="opname-form" action="{{ routeForRole('opname', 'store') }}" method="POST"
                             enctype="multipart/form-data" class="p-5">
@@ -318,27 +318,28 @@
                             <input type="hidden" name="status" value="dijadwalkan">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <!-- Tanggal Dijadwalkan -->
+                                <!-- Tanggal & Jam Dijadwalkan -->
                                 <div>
                                     <label for="tanggal_dijadwalkan"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Tanggal Dijadwalkan
+                                        Tanggal & Jam Dijadwalkan
                                     </label>
-                                    <input type="date" id="tanggal_dijadwalkan" name="tanggal_dijadwalkan"
-                                        min="{{ date('Y-m-d') }}"
-                                        class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400">
+                                    <input type="datetime-local" id="tanggal_dijadwalkan" name="tanggal_dijadwalkan"
+                                        min="{{ date('Y-m-d\TH:i') }}" {{-- Menyesuaikan format untuk datetime-local dan set minimum ke waktu sekarang --}}
+                                        class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                                        value="{{ old('tanggal_dijadwalkan') }}"> {{-- Tambahkan value untuk persistensi data jika error --}}
                                 </div>
 
-
-                                <!-- Tanggal Deadline -->
+                                <!-- Tanggal & Jam Deadline -->
                                 <div>
                                     <label for="tanggal_deadline"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Tanggal Deadline
+                                        Tanggal & Jam Deadline
                                     </label>
-                                    <input type="date" id="tanggal_deadline" name="tanggal_deadline"
-                                        min="{{ date('Y-m-d') }}"
-                                        class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400">
+                                    <input type="datetime-local" id="tanggal_deadline" name="tanggal_deadline"
+                                        min="{{ date('Y-m-d\TH:i') }}" {{-- Menyesuaikan format untuk datetime-local dan set minimum ke waktu sekarang --}}
+                                        class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                                        value="{{ old('tanggal_deadline') }}"> {{-- Tambahkan value untuk persistensi data jika error --}}
                                 </div>
 
                                 <!-- Bidang -->

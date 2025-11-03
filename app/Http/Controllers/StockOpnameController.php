@@ -111,96 +111,191 @@ class StockOpnameController extends Controller
         //
     }
 
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'tanggal_dijadwalkan' => 'required|date',
+    //         'tanggal_deadline' => 'required|date|after_or_equal:tanggal_dijadwalkan',
+    //         'department_id' => 'required|exists:departements,id',
+    //         'jenis_aset' => 'required|string',
+    //         'catatan' => 'nullable|string',
+    //     ]);
+
+    //     $existingSession = StockOpnameSession::where('department_id', $request->department_id)
+    //         ->whereNotIn('status', ['selesai', 'cancelled'])
+    //         ->whereHas('details.asset', function ($query) use ($request) {
+    //             $query->where('jenis_aset', $request->jenis_aset);
+    //         })
+    //         ->exists();
+
+    //     if ($existingSession) {
+    //         return back()
+    //             ->with('error', 'Sesi opname aktif untuk departemen dan jenis aset ini sudah ada.')
+    //             ->withInput();
+    //     }
+
+    //     $user = auth()->user();
+    //     $departement = Departement::find($request->department_id);
+
+    //     // if ($departement->kepala == null) {
+    //     //     return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
+    //     // }
+    //     // if ($departement->user == null) {
+    //     //     return back()->with('info', 'Departemen ini belum memiliki admin.')->withInput();
+    //     // }
+
+    //     $hasSubadmin = User::where('role', 'subadmin')
+    //         ->whereHas('employee', function ($query) use ($departement) {
+    //             $query->where('department_id', $departement->id);
+    //         })
+    //         ->exists();
+
+    //     if (! $hasSubadmin) {
+    //         return back()->with('info', 'Departemen ini belum memiliki subadmin.')->withInput();
+    //     }
+
+    //     try {
+    //         DB::transaction(function () use ($request, $departement, $user) {
+    //             // 1. Buat sesi opname
+    //             $session = StockOpnameSession::create([
+    //                 'nama' => 'Opname '.$departement->nama.' - '.$request->jenis_aset.' ('.$request->tanggal_dijadwalkan.')',
+    //                 'scheduled_by' => $user->id,
+    //                 'department_id' => $request->department_id,
+    //                 'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
+    //                 'tanggal_deadline' => $request->tanggal_deadline,
+    //                 'status' => 'draft',
+    //                 'catatan' => $request->catatan ?? '',
+    //             ]);
+
+    //             // 2. Ambil semua aset yang cocok
+    //             $assetsToOpname = Asset::where('department_id', $request->department_id)
+    //                 ->where('jenis_aset', $request->jenis_aset)
+    //                 ->get();
+
+    //             if ($assetsToOpname->isEmpty()) {
+    //                 // Batalkan sesi karena tidak ada aset
+    //                 $session->delete();
+    //                 throw new \Exception('Tidak ada aset yang ditemukan untuk departemen dan jenis aset yang dipilih.');
+    //             }
+
+    //             // 3. Buat detail untuk setiap aset
+    //             foreach ($assetsToOpname as $asset) {
+    //                 StockOpnameDetail::create([
+    //                     'stock_opname_id' => $session->id,
+    //                     'aset_id' => $asset->id,
+    //                     'jumlah_sistem' => $asset->jumlah,
+    //                     'jumlah_fisik' => null,
+    //                     'status_lama' => $asset->status,
+    //                     'status_fisik' => null,
+    //                     // 'status_fisik' => $asset->status,
+    //                     'checked_by' => $user->id,
+    //                 ]);
+    //             }
+    //         });
+
+    //         return redirect(routeForRole('opname', 'index'))
+    //             ->with('success', 'Jadwal stock opname berhasil dibuat.');
+    //     } catch (\Exception $e) {
+    //         return back()
+    //             ->with('error', 'Gagal membuat sesi stock opname: '.$e->getMessage())
+    //             ->withInput();
+    //     }
+    // }
     public function store(Request $request)
-    {
-        $request->validate([
-            'tanggal_dijadwalkan' => 'required|date',
-            'tanggal_deadline' => 'required|date|after_or_equal:tanggal_dijadwalkan',
-            'department_id' => 'required|exists:departements,id',
-            'jenis_aset' => 'required|string',
-            'catatan' => 'nullable|string',
-        ]);
+{
+    // Validasi input datetime-local
+    $request->validate([
+        'tanggal_dijadwalkan' => 'required|date_format:Y-m-d\TH:i', // Format dari datetime-local
+        'tanggal_deadline'    => 'required|date_format:Y-m-d\TH:i|after_or_equal:tanggal_dijadwalkan',
+        'department_id'       => 'required|exists:departements,id',
+        'jenis_aset'          => 'required|string',
+        'catatan'             => 'nullable|string',
+    ]);
 
-        $existingSession = StockOpnameSession::where('department_id', $request->department_id)
-            ->whereNotIn('status', ['selesai', 'cancelled'])
-            ->whereHas('details.asset', function ($query) use ($request) {
-                $query->where('jenis_aset', $request->jenis_aset);
-            })
-            ->exists();
+    $existingSession = StockOpnameSession::where('department_id', $request->department_id)
+        ->whereNotIn('status', ['selesai', 'cancelled'])
+        ->whereHas('details.asset', function ($query) use ($request) {
+            $query->where('jenis_aset', $request->jenis_aset);
+        })
+        ->exists();
 
-        if ($existingSession) {
-            return back()
-                ->with('error', 'Sesi opname aktif untuk departemen dan jenis aset ini sudah ada.')
-                ->withInput();
-        }
-
-        $user = auth()->user();
-        $departement = Departement::find($request->department_id);
-
-        // if ($departement->kepala == null) {
-        //     return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
-        // }
-        // if ($departement->user == null) {
-        //     return back()->with('info', 'Departemen ini belum memiliki admin.')->withInput();
-        // }
-
-        $hasSubadmin = User::where('role', 'subadmin')
-            ->whereHas('employee', function ($query) use ($departement) {
-                $query->where('department_id', $departement->id);
-            })
-            ->exists();
-
-        if (! $hasSubadmin) {
-            return back()->with('info', 'Departemen ini belum memiliki subadmin.')->withInput();
-        }
-
-        try {
-            DB::transaction(function () use ($request, $departement, $user) {
-                // 1. Buat sesi opname
-                $session = StockOpnameSession::create([
-                    'nama' => 'Opname '.$departement->nama.' - '.$request->jenis_aset.' ('.$request->tanggal_dijadwalkan.')',
-                    'scheduled_by' => $user->id,
-                    'department_id' => $request->department_id,
-                    'tanggal_dijadwalkan' => $request->tanggal_dijadwalkan,
-                    'tanggal_deadline' => $request->tanggal_deadline,
-                    'status' => 'draft',
-                    'catatan' => $request->catatan ?? '',
-                ]);
-
-                // 2. Ambil semua aset yang cocok
-                $assetsToOpname = Asset::where('department_id', $request->department_id)
-                    ->where('jenis_aset', $request->jenis_aset)
-                    ->get();
-
-                if ($assetsToOpname->isEmpty()) {
-                    // Batalkan sesi karena tidak ada aset
-                    $session->delete();
-                    throw new \Exception('Tidak ada aset yang ditemukan untuk departemen dan jenis aset yang dipilih.');
-                }
-
-                // 3. Buat detail untuk setiap aset
-                foreach ($assetsToOpname as $asset) {
-                    StockOpnameDetail::create([
-                        'stock_opname_id' => $session->id,
-                        'aset_id' => $asset->id,
-                        'jumlah_sistem' => $asset->jumlah,
-                        'jumlah_fisik' => null,
-                        'status_lama' => $asset->status,
-                        'status_fisik' => null,
-                        // 'status_fisik' => $asset->status,
-                        'checked_by' => $user->id,
-                    ]);
-                }
-            });
-
-            return redirect(routeForRole('opname', 'index'))
-                ->with('success', 'Jadwal stock opname berhasil dibuat.');
-        } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Gagal membuat sesi stock opname: '.$e->getMessage())
-                ->withInput();
-        }
+    if ($existingSession) {
+        return back()
+            ->with('error', 'Sesi opname aktif untuk departemen dan jenis aset ini sudah ada.')
+            ->withInput();
     }
+
+    $user = auth()->user();
+    $departement = Departement::find($request->department_id);
+
+    // if ($departement->kepala == null) {
+    //     return back()->with('info', 'Departemen ini belum memiliki kepala.')->withInput();
+    // }
+    // if ($departement->user == null) {
+    //     return back()->with('info', 'Departemen ini belum memiliki admin.')->withInput();
+    // }
+
+    $hasSubadmin = User::where('role', 'subadmin')
+        ->whereHas('employee', function ($query) use ($departement) {
+            $query->where('department_id', $departement->id);
+        })
+        ->exists();
+
+    if (! $hasSubadmin) {
+        return back()->with('info', 'Departemen ini belum memiliki subadmin.')->withInput();
+    }
+
+    try {
+        DB::transaction(function () use ($request, $departement, $user) {
+            // 1. Konversi format dari datetime-local (Y-m-d\TH:i) ke format database (Y-m-d H:i:s)
+            $tanggalDijadwalkan = date('Y-m-d H:i:s', strtotime($request->tanggal_dijadwalkan));
+            $tanggalDeadline    = date('Y-m-d H:i:s', strtotime($request->tanggal_deadline));
+
+            // 2. Buat sesi opname
+            $session = StockOpnameSession::create([
+                'nama' => 'Opname ' . $departement->nama . ' - ' . $request->jenis_aset . ' (' . $tanggalDijadwalkan . ')', // Gunakan variabel yang sudah dikonversi
+                'scheduled_by' => $user->id,
+                'department_id' => $request->department_id,
+                'tanggal_dijadwalkan' => $tanggalDijadwalkan, // Gunakan variabel yang sudah dikonversi
+                'tanggal_deadline' => $tanggalDeadline,    // Gunakan variabel yang sudah dikonversi
+                'status' => 'draft',
+                'catatan' => $request->catatan ?? '',
+            ]);
+
+            // 3. Ambil semua aset yang cocok
+            $assetsToOpname = Asset::where('department_id', $request->department_id)
+                ->where('jenis_aset', $request->jenis_aset)
+                ->get();
+
+            if ($assetsToOpname->isEmpty()) {
+                // Batalkan sesi karena tidak ada aset
+                $session->delete();
+                throw new \Exception('Tidak ada aset yang ditemukan untuk departemen dan jenis aset yang dipilih.');
+            }
+
+            // 4. Buat detail untuk setiap aset
+            foreach ($assetsToOpname as $asset) {
+                StockOpnameDetail::create([
+                    'stock_opname_id' => $session->id,
+                    'aset_id' => $asset->id,
+                    'jumlah_sistem' => $asset->jumlah,
+                    'jumlah_fisik' => null,
+                    'status_lama' => $asset->status,
+                    'status_fisik' => null,
+                    // 'status_fisik' => $asset->status,
+                    'checked_by' => $user->id,
+                ]);
+            }
+        });
+
+        return redirect(routeForRole('opname', 'index'))
+            ->with('success', 'Jadwal stock opname berhasil dibuat.');
+    } catch (\Exception $e) {
+        return back()
+            ->with('error', 'Gagal membuat sesi stock opname: ' . $e->getMessage())
+            ->withInput(); // Pastikan input lama dikembalikan jika error
+    }
+}
 
     /**
      * Display the specified resource.

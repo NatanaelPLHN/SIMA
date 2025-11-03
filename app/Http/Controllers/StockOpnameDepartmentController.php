@@ -349,27 +349,33 @@ public function show(Request $request, StockOpnameSession $opname)
         ]);
     }
 
-    public function startOpname(StockOpnameSession $session)
-    {
-        if (Carbon::today()->lt($session->tanggal_dijadwalkan)) {
-            return response()->json([
-                'message' => 'Belum saatnya, opname dijadwalkan pada ' .
-                    $session->tanggal_dijadwalkan->format('d-m-Y') . '.'
-            ], 403);
-        }
+public function startOpname(StockOpnameSession $session)
+{
+    // Ambil tanggal dari kolom datetime 'tanggal_dijadwalkan' dan bandingkan dengan tanggal hari ini
+    // ->startOfDay() mengatur waktu ke 00:00:00, ->endOfDay() ke 23:59:59.999999
+    // Kita bisa membandingkan tanggal secara langsung.
+    $tanggalJadwal = $session->tanggal_dijadwalkan->toDateString(); // Ambil hanya bagian tanggal
+    $tanggalHariIni = Carbon::today()->toDateString(); // Ambil hanya bagian tanggal hari ini
 
-        if ($session->status === 'dijadwalkan') {
-            DB::transaction(function () use ($session) {
-                $session->status = 'proses';
-                $session->tanggal_dimulai = now();
-                $session->save();
-            });
-
-            return response()->json(['message' => 'Sesi opname berhasil dimulai.']);
-        }
-
-        return response()->json(['message' => 'Sesi opname sudah berjalan atau telah selesai.'], 409);
+    if ($tanggalHariIni < $tanggalJadwal) {
+        return response()->json([
+            'message' => 'Belum saatnya, opname dijadwalkan pada ' .
+                         $session->tanggal_dijadwalkan->format('d-m-Y') . '.' // Format tetap menampilkan tanggal
+        ], 403);
     }
+
+    if ($session->status === 'dijadwalkan') {
+        DB::transaction(function () use ($session) {
+            $session->status = 'proses';
+            $session->tanggal_dimulai = now(); // `now()` mengambil waktu sekarang (tanggal dan jam)
+            $session->save();
+        });
+
+        return response()->json(['message' => 'Sesi opname berhasil dimulai.']);
+    }
+
+    return response()->json(['message' => 'Sesi opname sudah berjalan atau telah selesai.'], 409);
+}
 
     public function verifyPassword(Request $request)
     {
