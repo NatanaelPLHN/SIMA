@@ -26,15 +26,17 @@ class UpdateStockOpnameStatusCommand extends Command
     /**
      * Execute the console command.
      */
+
     public function handle()
     {
         $this->info('Checking for overdue stock opname sessions...');
 
-        $today = Carbon::today();
+        // Gunakan Carbon::now() untuk membandingkan waktu lengkap
+        $currentTime = Carbon::now();
 
-        // Ambil sesi yang statusnya masih berjalan dan sudah melewati deadline
+        // Ambil sesi yang statusnya masih berjalan dan sudah melewati deadline (waktu lengkap)
         $overdueSessions = StockOpnameSession::whereIn('status', ['dijadwalkan', 'proses'])
-            ->where('tanggal_deadline', '<', $today)
+            ->where('tanggal_deadline', '<', $currentTime) // Bandingkan dengan waktu lengkap saat ini
             ->get();
 
         if ($overdueSessions->isEmpty()) {
@@ -54,7 +56,7 @@ class UpdateStockOpnameStatusCommand extends Command
                     $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
                     $session->save();
 
-                    // Langkah 2: Proses Aset Bergerak & Tidak Bergerak yang belum dicek
+                    // Langkah 2: Proses Aset BERGERAK & TIDAK BERGERAK yang belum dicek (status_fisik null)
                     $unprocessedMovable = $session->details()
                         ->whereNull('status_fisik')
                         ->whereHas('asset', fn($q) => $q->whereIn('jenis_aset', ['bergerak', 'tidak_bergerak']))
@@ -62,20 +64,23 @@ class UpdateStockOpnameStatusCommand extends Command
                         ->get();
 
                     foreach ($unprocessedMovable as $detail) {
-                        $asset = $detail->asset;
-                        $detail->status_fisik = 'hilang';
-                        $detail->jumlah_fisik = 0;
+                        $statusLama = $detail->status_lama;
+                        $jumlahSistem = $detail->jumlah_sistem;
+
+                        $detail->status_fisik = $statusLama;
+                        $detail->jumlah_fisik = $jumlahSistem;
                         $detail->save();
 
+                        $asset = $detail->asset;
                         if ($asset) {
-                            $asset->status = 'hilang';
-                            $asset->jumlah = 0;
+                            $asset->status = $statusLama;
+                            $asset->jumlah = $jumlahSistem;
                             $asset->save();
                         }
                     }
-                    $this->info("- Processed {$unprocessedMovable->count()} movable/immovable assets.");
+                    $this->info("- Processed {$unprocessedMovable->count()} movable/immovable assets (status/jumlah preserved).");
 
-                    // Langkah 3: Proses Aset Habis Pakai yang belum dihitung
+                    // Langkah 3: Proses Aset HABIS PAKAI yang belum dihitung (jumlah_fisik null)
                     $unprocessedConsumable = $session->details()
                         ->whereNull('jumlah_fisik')
                         ->whereHas('asset', fn($q) => $q->where('jenis_aset', 'habis_pakai'))
@@ -83,18 +88,21 @@ class UpdateStockOpnameStatusCommand extends Command
                         ->get();
 
                     foreach ($unprocessedConsumable as $detail) {
-                        $asset = $detail->asset;
-                        $detail->jumlah_fisik = 0;
-                        $detail->status_fisik = 'habis';
+                        $jumlahSistem = $detail->jumlah_sistem;
+                        $statusLama = $detail->status_lama;
+
+                        $detail->jumlah_fisik = $jumlahSistem;
+                        $detail->status_fisik = $statusLama;
                         $detail->save();
 
+                        $asset = $detail->asset;
                         if ($asset) {
-                            $asset->jumlah = 0;
-                            $asset->status = 'habis';
+                            $asset->jumlah = $jumlahSistem;
+                            $asset->status = $statusLama;
                             $asset->save();
                         }
                     }
-                    $this->info("- Processed {$unprocessedConsumable->count()} consumable assets.");
+                    $this->info("- Processed {$unprocessedConsumable->count()} consumable assets (jumlah/status preserved).");
                 });
                 $this->info("Session #{$session->id} ('{$session->nama}') has been successfully marked as 'selesai'.");
             } catch (\Exception $e) {

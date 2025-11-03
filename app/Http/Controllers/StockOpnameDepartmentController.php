@@ -19,12 +19,16 @@ use Carbon\Carbon;
 
 class StockOpnameDepartmentController extends Controller
 {
+
+
     public function index()
     {
-        $today = Carbon::today();
+        // Gunakan Carbon::now() untuk membandingkan waktu lengkap
+        $currentTime = Carbon::now();
+
         $overdueSessions = StockOpnameSession::where('department_id', auth()->user()->employee?->department_id)
             ->whereIn('status', ['dijadwalkan', 'proses'])
-            ->where('tanggal_deadline', '<', $today)
+            ->where('tanggal_deadline', '<', $currentTime) // Bandingkan dengan waktu lengkap saat ini
             ->get();
 
         foreach ($overdueSessions as $session) {
@@ -35,44 +39,48 @@ class StockOpnameDepartmentController extends Controller
                 $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
                 $session->save();
 
-                // **PERBAIKAN LOGIKA**
-
-                // Langkah 2: Proses Aset Bergerak & Tidak Bergerak yang belum dicek
+                // Langkah 2: Proses Aset BERGERAK & TIDAK BERGERAK yang belum dicek (status_fisik null)
                 $unprocessedMovable = $session->details()
-                    ->whereNull('status_fisik') // Kondisi yang benar untuk jenis ini
+                    ->whereNull('status_fisik')
                     ->whereHas('asset', fn($q) => $q->whereIn('jenis_aset', ['bergerak', 'tidak_bergerak']))
                     ->with('asset')
                     ->get();
 
                 foreach ($unprocessedMovable as $detail) {
-                    $asset = $detail->asset;
-                    $detail->status_fisik = 'hilang';
-                    $detail->jumlah_fisik = 0;
+                    $statusLama = $detail->status_lama;
+                    $jumlahSistem = $detail->jumlah_sistem;
+
+                    $detail->status_fisik = $statusLama;
+                    $detail->jumlah_fisik = $jumlahSistem;
                     $detail->save();
 
+                    $asset = $detail->asset;
                     if ($asset) {
-                        $asset->status = 'hilang';
-                        $asset->jumlah = 0;
+                        $asset->status = $statusLama;
+                        $asset->jumlah = $jumlahSistem;
                         $asset->save();
                     }
                 }
 
-                // Langkah 3: Proses Aset Habis Pakai yang belum dihitung
+                // Langkah 3: Proses Aset HABIS PAKAI yang belum dihitung (jumlah_fisik null)
                 $unprocessedConsumable = $session->details()
-                    ->whereNull('jumlah_fisik') // Kondisi yang benar untuk jenis ini
+                    ->whereNull('jumlah_fisik')
                     ->whereHas('asset', fn($q) => $q->where('jenis_aset', 'habis_pakai'))
                     ->with('asset')
                     ->get();
 
                 foreach ($unprocessedConsumable as $detail) {
-                    $asset = $detail->asset;
-                    $detail->jumlah_fisik = 0;       // Anggap jumlahnya 0
-                    $detail->status_fisik = 'habis'; // Statusnya menjadi 'habis'
+                    $jumlahSistem = $detail->jumlah_sistem;
+                    $statusLama = $detail->status_lama;
+
+                    $detail->jumlah_fisik = $jumlahSistem;
+                    $detail->status_fisik = $statusLama;
                     $detail->save();
 
+                    $asset = $detail->asset;
                     if ($asset) {
-                        $asset->jumlah = 0;
-                        $asset->status = 'habis';
+                        $asset->jumlah = $jumlahSistem;
+                        $asset->status = $statusLama;
                         $asset->save();
                     }
                 }
@@ -81,81 +89,49 @@ class StockOpnameDepartmentController extends Controller
 
         // Kode untuk menampilkan daftar sesi (tidak berubah)
         $user = auth()->user();
-        $sessions = StockOpnameSession::with(['scheduler', 'details'])
+        $sessions = StockOpnameSession::with(['scheduler', 'departement', 'details.asset'])
             ->where('department_id', $user->employee?->department_id)
-            ->whereIn('status', ['dijadwalkan', 'proses','selesai'])
+            ->whereIn('status', ['dijadwalkan', 'proses', 'selesai'])
             ->latest()
             ->paginate(10);
 
         return view('opname.bidang.index', compact('sessions', 'user'));
     }
-    // public function index()
-    // {
-    //     $today = Carbon::today();
-    //     $overdueSessions = StockOpnameSession::where('department_id', auth()->user()->employee?->department_id)
-    //         ->whereIn('status', ['dijadwalkan', 'proses'])
-    //         ->where('tanggal_deadline', '<', $today)
-    //         ->get();
 
-    //     foreach ($overdueSessions as $session) {
-    //         $session->status = 'selesai';
-    //         $session->tanggal_selesai = now();
-    //         $session->catatan = trim(($session->catatan ?? '') . ' Sesi ditutup otomatis karena melewati batas waktu.');
-    //         $session->save();
-    //     }
 
-    //     $user = auth()->user();
-    //     $sessions = StockOpnameSession::with(['scheduler', 'details'])
-    //         ->latest()
-    //         ->paginate(10);
+    public function show(Request $request, StockOpnameSession $opname)
+    {
+        if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
+            abort(404);
+        }
 
-    //     return view('opname.bidang.index', compact('sessions', 'user'));
-    // }
-// 11111
-    // public function show(StockOpnameSession $opname)
-    // {
-    //     if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
-    //         abort(404);
-    //     }
+        // Ambil keyword pencarian dari form (GET)
+        $search = $request->input('search');
 
-    //     $opname->load(['details', 'scheduler']);
-    //     return view('opname.bidang.show', compact('opname'));
-    // }
-// 1111
+        // Ambil semua detail, tapi kalau ada pencarian, filter berdasarkan nama_aset / kode
+        $detailsQuery = $opname->details()->with('asset');
 
-public function show(Request $request, StockOpnameSession $opname)
-{
-    if (in_array($opname->status, ['draft', 'cancelled', 'dijadwalkan'])) {
-        abort(404);
+        if (!empty($search)) {
+            $detailsQuery->whereHas('asset', function ($q) use ($search) {
+                $q->where('nama_aset', 'like', '%' . $search . '%')
+                    ->orWhere('kode', 'like', '%' . $search . '%')
+                    ->orWhereHas('category', function ($qc) use ($search) {
+                        $qc->where('nama', 'like', '%' . $search . '%');
+                    });
+            });
+        }
+
+        $filteredDetails = $detailsQuery->get();
+
+        // Load juga relasi scheduler agar view tetap utuh
+        $opname->load('scheduler');
+
+        return view('opname.bidang.show', [
+            'opname' => $opname,
+            'filteredDetails' => $filteredDetails,
+            'search' => $search,
+        ]);
     }
-
-    // Ambil keyword pencarian dari form (GET)
-    $search = $request->input('search');
-
-    // Ambil semua detail, tapi kalau ada pencarian, filter berdasarkan nama_aset / kode
-    $detailsQuery = $opname->details()->with('asset');
-
-    if (!empty($search)) {
-        $detailsQuery->whereHas('asset', function ($q) use ($search) {
-            $q->where('nama_aset', 'like', '%' . $search . '%')
-              ->orWhere('kode', 'like', '%' . $search . '%')
-                ->orWhereHas('category', function ($qc) use ($search) {
-              $qc->where('nama', 'like', '%' . $search . '%');
-          });
-        });
-    }
-
-    $filteredDetails = $detailsQuery->get();
-
-    // Load juga relasi scheduler agar view tetap utuh
-    $opname->load('scheduler');
-
-    return view('opname.bidang.show', [
-        'opname' => $opname,
-        'filteredDetails' => $filteredDetails,
-        'search' => $search,
-    ]);
-}
 
 
     public function update(Request $request, StockOpnameSession $opname)
@@ -349,33 +325,33 @@ public function show(Request $request, StockOpnameSession $opname)
         ]);
     }
 
-public function startOpname(StockOpnameSession $session)
-{
-    // Ambil tanggal dari kolom datetime 'tanggal_dijadwalkan' dan bandingkan dengan tanggal hari ini
-    // ->startOfDay() mengatur waktu ke 00:00:00, ->endOfDay() ke 23:59:59.999999
-    // Kita bisa membandingkan tanggal secara langsung.
-    $tanggalJadwal = $session->tanggal_dijadwalkan->toDateString(); // Ambil hanya bagian tanggal
-    $tanggalHariIni = Carbon::today()->toDateString(); // Ambil hanya bagian tanggal hari ini
+    public function startOpname(StockOpnameSession $session)
+    {
+        // Ambil tanggal dari kolom datetime 'tanggal_dijadwalkan' dan bandingkan dengan tanggal hari ini
+        // ->startOfDay() mengatur waktu ke 00:00:00, ->endOfDay() ke 23:59:59.999999
+        // Kita bisa membandingkan tanggal secara langsung.
+        $tanggalJadwal = $session->tanggal_dijadwalkan->toDateString(); // Ambil hanya bagian tanggal
+        $tanggalHariIni = Carbon::today()->toDateString(); // Ambil hanya bagian tanggal hari ini
 
-    if ($tanggalHariIni < $tanggalJadwal) {
-        return response()->json([
-            'message' => 'Belum saatnya, opname dijadwalkan pada ' .
-                         $session->tanggal_dijadwalkan->format('d-m-Y') . '.' // Format tetap menampilkan tanggal
-        ], 403);
+        if ($tanggalHariIni < $tanggalJadwal) {
+            return response()->json([
+                'message' => 'Belum saatnya, opname dijadwalkan pada ' .
+                    $session->tanggal_dijadwalkan->format('d-m-Y') . '.' // Format tetap menampilkan tanggal
+            ], 403);
+        }
+
+        if ($session->status === 'dijadwalkan') {
+            DB::transaction(function () use ($session) {
+                $session->status = 'proses';
+                $session->tanggal_dimulai = now(); // `now()` mengambil waktu sekarang (tanggal dan jam)
+                $session->save();
+            });
+
+            return response()->json(['message' => 'Sesi opname berhasil dimulai.']);
+        }
+
+        return response()->json(['message' => 'Sesi opname sudah berjalan atau telah selesai.'], 409);
     }
-
-    if ($session->status === 'dijadwalkan') {
-        DB::transaction(function () use ($session) {
-            $session->status = 'proses';
-            $session->tanggal_dimulai = now(); // `now()` mengambil waktu sekarang (tanggal dan jam)
-            $session->save();
-        });
-
-        return response()->json(['message' => 'Sesi opname berhasil dimulai.']);
-    }
-
-    return response()->json(['message' => 'Sesi opname sudah berjalan atau telah selesai.'], 409);
-}
 
     public function verifyPassword(Request $request)
     {
