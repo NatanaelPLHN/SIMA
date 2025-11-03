@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Models\StockOpnameSession;
 use App\Models\Departement;
+use App\Models\User; // Tambahkan model User
 
 class NotificationComposer
 {
@@ -21,19 +22,24 @@ class NotificationComposer
         $notifications = collect(); // Defaultnya, notifikasi kosong
 
         // Pastikan ada user yang login dan rolenya adalah 'subadmin'
-        if ($user && $user->role === 'subadmin' && $user->employee) {
+        // serta merupakan subadmin dari department tertentu
+        if ($user && $user->role === 'subadmin' && $user->employee && $user->employee->department) {
 
-            // Cari departemen yang dikepalai oleh user ini
-            $department = Departement::where('kepala_bidang_id', $user->employee->id)->first();
+            // Ambil department_id dari data employee user yang login
+            $departmentId = $user->employee->department->id;
 
-            if ($department) {
-                // Ambil sesi opname yang dijadwalkan untuk departemen tersebut
-                $notifications = StockOpnameSession::where('department_id', $department
-                    ->id)
-                    ->where('status', 'dijadwalkan')
-                    ->latest('tanggal_dijadwalkan')
-                    ->get();
-            }
+            // Pastikan department ini memiliki subadmin aktif (yaitu user yang login)
+            // Ini sebenarnya sudah dipastikan oleh kondisi di atas, jadi query tambahan seperti
+            // $hasSubadmin mungkin tidak diperlukan di sini kecuali ada logika tambahan.
+            // Kita asumsikan bahwa jika user adalah subadmin dan terikat ke departemen, maka dia adalah subadmin dari departemen tersebut.
+
+            // Ambil sesi opname yang dijadwalkan untuk departemen tersebut
+            $notifications = StockOpnameSession::where('department_id', $departmentId)
+                // ->where('status', 'dijadwalkan') // Sesuaikan dengan nama kolom status yang benar, misalnya 'scheduled'
+                ->whereIn('status', ['proses', 'dijadwalkan'])
+
+                ->latest('tanggal_dijadwalkan') // Sesuaikan dengan nama kolom tanggal yang benar
+                ->get();
         }
 
         // Kirim variabel $notifications ke view yang memanggil composer ini

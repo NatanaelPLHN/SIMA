@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Departement;
 use App\Models\Institution;
+use App\Models\StockOpnameSession;
 use App\Observers\DepartementObserver;
 use App\Observers\InstitutionObserver;
+use App\Observers\StockOpnameSessionObserver;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\View;
@@ -29,5 +31,7 @@ class AppServiceProvider extends ServiceProvider
         Departement::observe(DepartementObserver::class);
         Institution::observe(InstitutionObserver::class);
         View::composer('layouts.header', NotificationComposer::class);
+        StockOpnameSession::observe(StockOpnameSessionObserver::class);
+
     }
 }
