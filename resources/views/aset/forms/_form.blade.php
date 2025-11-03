@@ -11,7 +11,7 @@
             Nama Aset <span class="text-red-500">*</span>
         </label>
         <input type="text" id="nama_aset" name="nama_aset" pattern="[A-Z a-z0-9,.]{0,30}"
-            placeholder="Masukkan nama aset..." minlength="4" maxlength="20"
+            placeholder="Masukkan nama aset..." minlength="4"
             title="Only letters, numbers, and spaces allowed" value="{{ old('nama_aset', $asset->nama_aset ?? '') }}"
             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             required>
@@ -187,7 +187,7 @@
     <label for="lokasi_terakhir" class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Lokasi
         Terakhir<span class="text-red-500">*</span></label>
     <input type="text" id="lokasi_terakhir" name="lokasi_terakhir" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan lokasi terakhir aset..." minlength="4" maxlength="30"
+        placeholder="Masukkan lokasi terakhir aset..." minlength="4" 
         title="Only letters, numbers, and spaces allowed"
         value="{{ old('lokasi_terakhir', $asset->lokasi_terakhir ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('lokasi_terakhir') ? 'border-red-500' : '' }}">
