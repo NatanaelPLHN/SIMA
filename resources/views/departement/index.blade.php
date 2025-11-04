@@ -142,6 +142,9 @@
                         <th
                             class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
                             No</th>
+                        <th
+                            class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
+                            Alias</th>
                         <th scope="col"
                             class="px-4 py-3 text-center text-xs font-medium text-gray-900 uppercase tracking-wider dark:text-white">
                             <a
@@ -186,6 +189,8 @@
                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                 {{ $index + $departements->firstItem() }}</td>
+                            <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 break-words text-center">
+                                {{ $departement->alias }}</td>
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 break-words text-center">
                                 {{ $departement->nama }}</td>
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 break-words text-center">
