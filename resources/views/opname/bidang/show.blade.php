@@ -195,6 +195,26 @@
                                                         {{ $detail->status_fisik == 'hilang' ? 'selected' : '' }}>Hilang
                                                     </option>
                                                 </select>
+                                                <!-- Tambahkan input file surat kehilangan di sini -->
+                                                <div id="surat-kehilangan-section-{{ $detail->id }}"
+                                                    class="surat-kehilangan-section mt-2" style="display: none;">
+                                                    <label for="surat_kehilangan_{{ $detail->id }}"
+                                                        class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Upload
+                                                        Surat Kehilangan:</label>
+                                                    <input type="file" id="surat_kehilangan_{{ $detail->id }}"
+                                                        name="surat_kehilangan[{{ $detail->id }}]"
+                                                        accept=".pdf,.jpg,.jpeg,.png"
+                                                        class="block w-full text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:text-indigo-300 dark:file:bg-indigo-900/30 dark:hover:file:bg-indigo-800/50">
+                                                    @if ($detail->surat_kehilangan_path)
+                                                        <small class="block mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                            File saat ini: <a
+                                                                href="{{ Storage::url($detail->surat_kehilangan_path) }}"
+                                                                target="_blank"
+                                                                class="text-indigo-600 dark:text-indigo-400 hover:underline">Lihat
+                                                                File</a>
+                                                        </small>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </td>
                                     @else
@@ -319,20 +339,46 @@ transition-colors">
                         }, 1800);
                     }
                 }
-
+                // Fungsi untuk menampilkan/menyembunyikan input surat kehilangan
+                function toggleSuratKehilangan(detailId, selectedStatus) {
+                    const suratSection = document.getElementById(`surat-kehilangan-section-${detailId}`);
+                    if (suratSection) {
+                        if (selectedStatus === 'hilang') {
+                            suratSection.style.display = 'block';
+                        } else {
+                            suratSection.style.display = 'none';
+                        }
+                    }
+                }
                 async function sendPatch(url, payload, opts = {
                     keepalive: false
                 }) {
-                    console.log('[DEBUG] Sending PATCH to:', url, 'with payload:', payload);
+                    console.log('[DEBUG] Sending PATCH/POST to:', url, 'with payload:', payload);
+
+                    const formData = new FormData();
+                    // spoof method supaya PHP mem-parse multipart
+                    formData.append('_method', 'PATCH');
+
+                    Object.keys(payload).forEach(key => {
+                        if (key === 'surat_kehilangan_file' && payload[key] instanceof File) {
+                            // nama field di server: 'surat_kehilangan'
+                            formData.append('surat_kehilangan', payload[key]);
+                        } else {
+                            // FormData hanya menerima string/Blob; konversi primitive
+                            formData.append(key, payload[key] == null ? '' : String(payload[key]));
+                        }
+                    });
+
                     return await fetch(url, {
-                        method: 'PATCH',
+                        method: 'POST', // <-- GANTI: pakai POST supaya PHP parse multipart
                         headers: {
-                            'Content-Type': 'application/json',
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            // jangan set Content-Type (biarkan browser set boundary)
+                            // optional: 'X-HTTP-Method-Override': 'PATCH' // alternatif
                         },
-                        body: JSON.stringify(payload),
+                        body: formData,
                         credentials: 'same-origin',
                         keepalive: opts.keepalive === true
                     });
@@ -392,42 +438,50 @@ transition-colors">
                 }
 
                 // Attach auto-save change handler
+                // Attach auto-save change handler (DIPERBARUI)
                 function handleChangeEvent(e) {
                     console.log('[DEBUG] Event triggered on:', e.target.name);
-
                     const inputElement = e.target;
                     if (!inputElement.closest('#opname-form')) return;
-                    console.log('[DEBUG] Lolos cek 1: Form ditemukan'); // <-- LOG 1
-
                     const row = inputElement.closest('tr');
                     if (!row) return;
-                    console.log('[DEBUG] Lolos cek 2: TR ditemukan'); // <-- LOG 2
-
                     const url = row.dataset.updateUrl;
                     if (!url) return;
-                    console.log('[DEBUG] Lolos cek 3: URL ditemukan', url); // <-- LOG 3
-
 
                     const inputName = inputElement.name || '';
                     const detailIdMatch = inputName.match(/\d+/);
-                    console.log('[DEBUG] Variabel:', {
-                        url: url,
-                        inputName: inputName,
-                        detailIdMatch: detailIdMatch
-                    });
                     if (!detailIdMatch) return;
                     const detailId = detailIdMatch[0];
-
                     const payload = {};
+
+                    // Logika untuk menangani perubahan status_fisik
                     if (inputName.includes('statuses')) {
-                        payload.status_fisik = inputElement.value;
-                    } else if (inputName.includes('jumlah_fisik')) {
+                        const selectedStatus = inputElement.value;
+                        payload.status_fisik = selectedStatus;
+
+                        // Panggil fungsi toggle untuk menampilkan/sembunyikan input file
+                        toggleSuratKehilangan(detailId, selectedStatus);
+
+                        // Cek apakah status hilang dan file diupload
+                        if (selectedStatus === 'hilang') {
+                            const fileInput = document.getElementById(`surat_kehilangan_${detailId}`);
+                            if (fileInput && fileInput.files.length > 0) {
+                                payload.surat_kehilangan_file = fileInput.files[0]; // Simpan file object
+                            }
+                            // Jika status hilang tapi file tidak diupload, validasi akan dihandle di controller
+                            // Script ini akan menunggu respons dari server untuk menampilkan error.
+                        }
+                    }
+                    // Logika untuk menangani perubahan jumlah_fisik
+                    else if (inputName.includes('jumlah_fisik')) {
                         payload.jumlah_fisik = Number(inputElement.value);
                     } else {
-                        return;
+                        return; // Jika bukan status atau jumlah, keluar
                     }
+
                     console.log('[DEBUG] Preparing to save. URL:', url, 'Detail ID:', detailId, 'Payload:',
                         payload);
+
                     // debounce per detail
                     if (debounceTimerMap[detailId]) clearTimeout(debounceTimerMap[detailId]);
                     debounceTimerMap[detailId] = setTimeout(async () => {
@@ -435,38 +489,90 @@ transition-colors">
                         try {
                             const res = await sendPatch(url, payload);
                             if (!res.ok) {
-                                const body = await res.json().catch(() => ({
-                                    message: res.statusText
-                                }));
-                                console.warn('Server error autosave:', body);
+                                const errorText = await res.text(); // Ambil teks error
+                                let errorMessage = `Server error: ${res.status} ${res.statusText}`;
+                                try {
+                                    // Coba parse sebagai JSON untuk mendapatkan pesan spesifik
+                                    const errorJson = JSON.parse(errorText);
+                                    errorMessage = errorJson.message || errorMessage;
+                                } catch (e) {
+                                    // Jika bukan JSON, gunakan teks mentah
+                                    console.warn("Error response bukan JSON:", errorText);
+                                }
+                                console.warn('Server error autosave:', errorMessage);
+                                // Tampilkan pesan error spesifik
+                                showAutoSave(`Gagal: ${errorMessage}`, false,
+                                    true); // Tandai sebagai error
                                 savePending(detailId, url, payload);
-                                showAutoSave('Gagal tersimpan — disimpan sementara');
+                                // Tandai baris sebagai error
+                                row.classList.add('bg-red-200');
                                 return;
                             }
                             const data = await res.json().catch(() => ({}));
                             removePending(detailId);
+                            // Hapus warna error jika sebelumnya gagal
+                            row.classList.remove('bg-red-200');
                             showAutoSave(
                                 `Tersimpan (${data.timestamp || new Date().toLocaleTimeString()})`
                             );
                         } catch (err) {
                             console.error('Autosave network error', err);
+                            // Tampilkan error jaringan
+                            showAutoSave(`Gagal jaringan: ${err.message}`, false,
+                                true); // Tandai sebagai error
                             savePending(detailId, url, payload);
-                            showAutoSave('Gagal tersimpan — disimpan sementara');
+                            // Tandai baris sebagai error
+                            row.classList.add('bg-red-200');
                         }
                     }, 800);
                 }
 
                 // Attach listeners to inputs/selects
+                // Attach listeners to inputs/selects (DIPERBARUI)
                 function attachAutoSaveListeners() {
-                    document.querySelectorAll('select[name^="statuses"], input[name^="jumlah_fisik"]').forEach(
+                    // Hapus listener lama dari semua input yang relevan
+                    document.querySelectorAll(
+                        'select[name^="statuses"], input[name^="jumlah_fisik"], input[name^="surat_kehilangan"]'
+                    ).forEach(
                         el => {
-                            // remove previous to avoid duplicate listeners
                             el.removeEventListener('change', handleChangeEvent);
+                            el.removeEventListener('blur',
+                                handleChangeEvent); // Hanya untuk input jumlah_fisik
+                        });
+
+                    // Tambahkan listener baru ke select status fisik
+                    document.querySelectorAll('select[name^="statuses"]').forEach(
+                        el => {
                             el.addEventListener('change', handleChangeEvent);
-                            if (el.tagName.toLowerCase() === 'input') {
-                                el.removeEventListener('blur', handleChangeEvent);
-                                el.addEventListener('blur', handleChangeEvent);
-                            }
+                            // Panggil toggle saat halaman dimuat jika status awalnya 'hilang' (untuk UI)
+                            const detailId = el.name.match(/\d+/)[0];
+                            toggleSuratKehilangan(detailId, el.value);
+                        });
+
+                    // Tambahkan listener baru ke input jumlah fisik
+                    document.querySelectorAll('input[name^="jumlah_fisik"]').forEach(
+                        el => {
+                            el.addEventListener('change', handleChangeEvent);
+                            el.addEventListener('blur', handleChangeEvent);
+                        });
+
+                    // Tambahkan listener baru ke input file surat kehilangan
+                    document.querySelectorAll('input[name^="surat_kehilangan"]').forEach(
+                        el => {
+                            el.addEventListener('change', function(e) {
+                                const inputElement = e.target;
+                                const detailId = inputElement.name.match(/\d+/)[0];
+                                const statusSelect = document.getElementById(
+                                    `status_fisik_${detailId}`);
+                                // Hanya picu autosave jika status saat ini 'hilang' dan file dipilih
+                                if (statusSelect && statusSelect.value === 'hilang' && inputElement
+                                    .files.length > 0) {
+                                    // Trigger change pada select untuk memicu autosave dengan file
+                                    statusSelect.dispatchEvent(new Event('change', {
+                                        bubbles: true
+                                    }));
+                                }
+                            });
                         });
                 }
 
