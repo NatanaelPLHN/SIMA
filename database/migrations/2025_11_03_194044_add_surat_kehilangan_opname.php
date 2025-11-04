@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('stock_opname_details', function (Blueprint $table) {
-            $table->string('surat_kehilangan_path')->nullable(); // Atau text jika file path panjang
+            $table->string('surat_kehilangan_path')->nullable();
         });
     }
 
