@@ -160,7 +160,7 @@
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">PIC</label>
                         <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 break-words whitespace-normal text-gray-900 dark:text-white">
-                            {{ $assetUsage->department->kepala->nama ?? '-'  }}
+                            {{ $assetUsage->pic->nama ?? '-' }}
                         </div>
                     </div>
                     <div class="sm:col-span-2">
