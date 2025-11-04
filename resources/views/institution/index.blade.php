@@ -89,6 +89,10 @@
                             No</th>
                         <th scope="col"
                             class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-400">
+                           Alias
+                        </th>
+                        <th scope="col"
+                            class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-400">
                             <a
                                 href="{{ request()->fullUrlWithQuery(['sort' => 'nama', 'direction' => request('sort') === 'nama' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">
                                 Nama Instansi
@@ -148,6 +152,8 @@
                         <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center">
                                 {{ $index + $institutions->firstItem() }}</td>
+                            <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center break-words">
+                                {{ $institution->alias }}</td>
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center break-words">
                                 {{ $institution->nama }}</td>
                             <td class="p-4 text-sm font-normal text-gray-900 dark:text-gray-400 text-center break-words">
