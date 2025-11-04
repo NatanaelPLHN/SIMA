@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Asset;
 use App\Models\AssetUsage;
 use App\Models\Institution;
+use App\Models\Departement;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Models\Activity;

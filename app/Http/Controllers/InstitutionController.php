@@ -34,6 +34,7 @@ class InstitutionController extends Controller
                     ->orWhere('alamat', 'like', "%{$search}%")
                     ->orWhere('telepon', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('alias', 'like', "%{$search}%")
                     ->orWhereHas('kepala', fn($k) => $k->where('nama', 'like', "%{$search}%"));
             });
         });

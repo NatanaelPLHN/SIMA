@@ -16,6 +16,9 @@ use App\Models\User;
 use App\Models\StockOpnameSession;
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException; // Pastikan ini diimpor
+
 
 class StockOpnameDepartmentController extends Controller
 {
@@ -369,13 +372,12 @@ class StockOpnameDepartmentController extends Controller
     }
 
 
-
     public function updateItem(Request $request, StockOpnameDetail $detail)
     {
         Log::info('Fungsi updateItem DIPANGGIL. Detail ID: ' . $detail->id);
-        // Optional: policy/authorize
-        // $this->authorize('update', $detail);
+
         activity()->disableLogging();
+
         $user = auth()->user();
         if ($detail->stockOpname->department_id !== $user->employee?->department_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -390,26 +392,113 @@ class StockOpnameDepartmentController extends Controller
             return response()->json(['message' => 'Aset tidak ditemukan'], 404);
         }
 
+        // Log request safely (context must be array)
+        Log::info('Request incoming for updateItem', [
+            'detail_id' => $detail->id,
+            'inputs' => $request->all(),
+            'files' => array_keys($request->files->all()),
+            'headers' => $request->headers->all(),
+        ]);
+
         try {
-            DB::transaction(function () use ($request, $detail, $asset) {
-                if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
-                    $validated = $request->validate(['status_fisik' => 'required|string']);
-                    $detail->status_fisik = $validated['status_fisik'];
-                    $detail->jumlah_fisik = ($validated['status_fisik'] === 'hilang') ? 0 : 1;
-                } elseif ($asset->jenis_aset === 'habis_pakai') {
-                    $validated = $request->validate(['jumlah_fisik' => 'required|integer|min:0']);
-                    $detail->jumlah_fisik = $validated['jumlah_fisik'];
-                    $detail->status_fisik = ($validated['jumlah_fisik'] == 0) ? 'habis' : 'tersedia';
+            // VALIDASI SEBELUM TRANSACTION
+            if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
+                $validated = $request->validate([
+                    'status_fisik' => 'required|string',
+                    'surat_kehilangan' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // 2MB contoh
+                ]);
+
+                // enforce presence of file if status is 'hilang'
+                if (($validated['status_fisik'] ?? null) === 'hilang' && !$request->hasFile('surat_kehilangan')) {
+                    return response()->json(['message' => 'Surat kehilangan wajib diupload jika status aset adalah hilang.'], 422);
                 }
+            } else {
+                // jenis 'habis_pakai'
+                $validated = $request->validate([
+                    'jumlah_fisik' => 'required|integer|min:0',
+                ]);
+            }
+
+            // Semua validasi lulus -> mulai transaction
+            DB::transaction(function () use ($validated, $request, $detail, $asset) {
+                if (in_array($asset->jenis_aset, ['bergerak', 'tidak_bergerak'])) {
+                    $statusFisikBaru = $validated['status_fisik'];
+
+                    // jika ada file yang diupload, ambil file tersebut
+                    $suratKehilanganFile = $request->file('surat_kehilangan');
+
+                    if ($statusFisikBaru === 'hilang') {
+                        // simpan file baru (jika ada)
+                        if ($suratKehilanganFile) {
+                            // hapus file lama jika ada
+                            if ($detail->surat_kehilangan_path) {
+                                Storage::disk('public')->delete($detail->surat_kehilangan_path);
+                            }
+                            $path = $suratKehilanganFile->store('surat_kehilangan_opname', 'public');
+                            $detail->surat_kehilangan_path = $path;
+                        }
+                        $detail->jumlah_fisik = 0;
+                    } else {
+                        // status bukan hilang -> hapus file lama kalau ada
+                        if ($detail->surat_kehilangan_path) {
+                            Storage::disk('public')->delete($detail->surat_kehilangan_path);
+                            $detail->surat_kehilangan_path = null;
+                        }
+                        $detail->jumlah_fisik = 1;
+                    }
+
+                    $detail->status_fisik = $statusFisikBaru;
+
+                    // juga update asset utama
+                    $asset->status = $statusFisikBaru;
+                    $asset->jumlah = ($statusFisikBaru === 'hilang') ? 0 : 1;
+
+                } elseif ($asset->jenis_aset === 'habis_pakai') {
+                    $jumlahBaru = $validated['jumlah_fisik'];
+                    $detail->jumlah_fisik = $jumlahBaru;
+                    $detail->status_fisik = ($jumlahBaru == 0) ? 'habis' : 'tersedia';
+
+                    $asset->jumlah = $jumlahBaru;
+                    $asset->status = ($jumlahBaru == 0) ? 'habis' : 'tersedia';
+                }
+
                 $detail->save();
+                $asset->save();
             });
+
             activity()->enableLogging();
 
-            return response()->json(['message' => 'Data berhasil disimpan.', 'timestamp' => now()->toTimeString()]);
+            return response()->json([
+                'message' => 'Data berhasil disimpan.',
+                'timestamp' => now()->toTimeString()
+            ], 200);
+
+        } catch (ValidationException $e) {
+            // Ambil pesan error pertama setiap field
+            $errorMessages = [];
+            foreach ($e->errors() as $field => $messages) {
+                $errorMessages[$field] = $messages[0] ?? 'Error tidak diketahui';
+            }
+            $errorMessageString = implode(', ', $errorMessages);
+
+            Log::warning('Validasi gagal pada updateItem', [
+                'detail_id' => $detail->id,
+                'errors' => $errorMessages,
+            ]);
+
+            return response()->json(['message' => 'Validasi gagal: ' . $errorMessageString], 422);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Gagal menyimpan data: ' . $e->getMessage()], 500);
+            Log::error('updateItem error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'detail_id' => $detail->id,
+                'inputs' => $request->all()
+            ]);
+
+            // kalau Anda mau, untuk debugging sementara bisa kembalikan $e->getMessage() di response saat dev
+            return response()->json(['message' => 'Gagal menyimpan data. Silakan coba lagi.'], 500);
         }
     }
+
     public function validateCompletion(StockOpnameSession $opname)
     {
         $isIncomplete = $opname->details()->where(function ($query) {

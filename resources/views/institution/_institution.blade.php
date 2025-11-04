@@ -2,11 +2,14 @@
 <div>
     <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama instansi<span
             class="text-red-500">*</span></label>
-    <input type="text" id="nama" name="nama" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan nama instansi..." minlength="6"
-        title="Only letters, numbers, and spaces allowed" value="{{ old('nama', $institution->nama ?? '') }}"
-        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        required autofocus>
+            <input type="text" id="nama" name="nama"
+            pattern="[A-Za-z0-9 ]+"
+            placeholder="Masukkan nama instansi..."
+            title="Hanya huruf, angka, dan spasi yang diizinkan"
+            value="{{ old('nama', $institution->nama ?? '') }}"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required autofocus>
+
 </div>
 <div>
     <label for="alias" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alias <span
@@ -49,7 +52,7 @@
 <div>
     <label for="alamat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat</label>
     <input type="text" id="alamat" name="alamat" pattern="[A-Z a-z0-9,.]{0,30}"
-        placeholder="Masukkan alamat instansi..." minlength="6" 
+        placeholder="Masukkan alamat instansi..." minlength="6"
         title="Only letters, numbers, and spaces allowed" value="{{ old('alamat', $institution->alamat ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 </div>

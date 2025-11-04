@@ -23,6 +23,7 @@ class AssetUsage extends Model
         'status',
         'keterangan',
         'end_date',
+        'pic_id',
     ];
 
     protected $casts = [
@@ -97,4 +98,11 @@ class AssetUsage extends Model
     {
         return $query->where('status', 'dikembalikan');
     }
+    public function pic()
+    {
+        return $this->belongsTo(Employee::class, 'pic_id')->withDefault([
+            'nama' => 'PIC tidak tersedia'
+        ]);
+    }
 }
+

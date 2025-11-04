@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
+
 
 class StockOpnameDetail extends Model
 {
@@ -19,7 +21,7 @@ class StockOpnameDetail extends Model
         'status_fisik',
         'checked_by',
         'stock_opname_id',
-        // 'user_id',
+        'surat_kehilangan_path',
     ];
 
     // Belongs to a stock opname session
@@ -40,4 +42,13 @@ class StockOpnameDetail extends Model
     {
         return $this->belongsTo(User::class, 'checked_by');
     }
+    public function getSuratKehilanganUrlAttribute()
+    {
+        if (!$this->surat_kehilangan_path) {
+            return null;
+        }
+        // pastikan Anda menyimpan di disk 'public' atau sesuaikan disknya
+        return Storage::disk('public')->url($this->surat_kehilangan_path);
+    }
+
 }

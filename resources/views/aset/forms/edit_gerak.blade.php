@@ -121,20 +121,13 @@
 
                         </div>
 
-                        <div>
-                            <label for="tahun_produksi"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
+                       <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
                                 Tahun Produksi
                             </label>
-                            <select id="tahun_produksi" name="tahun_produksi"
-                                class="js-select2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="">Pilih Tahun</option>
-                                @for ($year = date('Y'); $year >= 1900; $year--)
-                                    <option value="{{ $year }}" {{ old('tahun_produksi', $asset->bergerak->tahun_produksi ?? '') == $year ? 'selected' : '' }}>
-                                        {{ $year }}
-                                    </option>
-                                @endfor
-                            </select>
+                            <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
+                                {{ $asset->bergerak->tahun_produksi ?? '–' }}
+                            </div>
                         </div>
                     <div class="md:col-span-2 mt-6 flex justify-end space-x-3">
                         <a href="{{ routeForRole('assets', 'index') }}"
