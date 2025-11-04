@@ -45,7 +45,7 @@
                 <div class="flex items-center mb-4 sm:mb-0">
                     <form method="GET" action="{{ route('superadmin.institution.index') }}"
                         class="flex items-center space-x-2 sm:pl-4 mt-2 sm:mt-0">
-                        {{-- <div class="relative w-48 sm:w-64">
+                        <div class="relative w-48 sm:w-64">
                         <input
                             type="text"
                             name="search"
@@ -53,22 +53,21 @@
                             value="{{ request('search') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Cari nama, Pemerintah, dll...">
-                    </div> --}}
-                        {{-- live search --}}
-                        <div class="flex items-center space-x-2">
-                            <label for="institution-search"
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
-                            <input type="text" id="institution-search"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Cari nama, email, dll...">
-                        </div>
-                        {{-- @if (request('search'))
+                        </div> 
+                        @if (request('search'))
                             <a href="{{ route('superadmin.institution.index') }}"
                                 class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
                             dark:bg-red-900/80 dark:text-red-300 dark:hover:bg-red-800/100 transition-colors">
                                 Clear
                             </a>
-                        @endif --}}
+                        @endif
+                        {{-- <div class="flex items-center space-x-2">
+                            <label for="institution-search"
+                                class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
+                            <input type="text" id="institution-search"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Cari nama, email, dll...">
+                        </div> --}}
                     </form>
                 </div>
                 <a href="{{ routeForRole('institution', 'create') }}"
@@ -218,12 +217,12 @@
             </div>
         @endif
     </div>
-    <script>
+    {{-- <script>
         document.getElementById('institution-search').addEventListener('keyup', function() {
             const term = this.value.toLowerCase();
             document.querySelectorAll('#institution-body tr').forEach(row => {
                 row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
             });
         });
-    </script>
+    </script> --}}
 @endsection

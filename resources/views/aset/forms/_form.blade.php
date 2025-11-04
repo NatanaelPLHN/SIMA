@@ -4,47 +4,6 @@
     // Menentukan jenis aset saat ini, baik dari mode edit ($asset) atau mode create ($jenis_aset)
     $current_jenis_aset = $asset->jenis_aset ?? ($jenis_aset ?? '');
 @endphp
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {{-- Nama Aset --}}
-    <div>
-        <label for="nama_aset" class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
-            Nama Aset <span class="text-red-500">*</span>
-        </label>
-        <input type="text" id="nama_aset" name="nama_aset" pattern="[A-Z a-z0-9,.]{0,30}"
-            placeholder="Masukkan nama aset..." minlength="4"
-            title="Only letters, numbers, and spaces allowed" value="{{ old('nama_aset', $asset->nama_aset ?? '') }}"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required>
-        @error('nama_aset')
-            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-        @enderror
-    </div>
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
-            Nilai Pembelian <span class="text-red-500">*</span>
-        </label>
-
-        @if (Route::is('subadmin.assets.edit'))
-            {{-- Mode Edit: Tampilkan sebagai teks + hidden input --}}
-            <div
-                class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
-                {{ number_format($asset->nilai_pembelian ?? 0, 2, ',', '.') }}
-            </div>
-            <input type="hidden" name="nilai_pembelian" value="{{ $asset->nilai_pembelian }}">
-        @else
-            {{-- Mode Create: Input normal --}}
-            <input type="number" id="nilai_pembelian" name="nilai_pembelian" min="0" step="1"
-                placeholder="Masukkan nilai pembelian..." title="Only numbers allowed"
-                value="{{ old('nilai_pembelian') }}"
-                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('nilai_pembelian') ? 'border-red-500' : '' }}"
-                required>
-            @error('nilai_pembelian')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        @endif
-    </div>
-</div>
-
 {{-- Grup Kategori & Kategori --}}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     {{-- Grup Kategori --}}
@@ -95,6 +54,48 @@
 
     </div>
 </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {{-- Nama Aset --}}
+    <div>
+        <label for="nama_aset" class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
+            Nama Aset <span class="text-red-500">*</span>
+        </label>
+        <input type="text" id="nama_aset" name="nama_aset" pattern="[A-Z a-z0-9,.]{0,30}"
+            placeholder="Masukkan nama aset..." minlength="4"
+            title="Only letters, numbers, and spaces allowed" value="{{ old('nama_aset', $asset->nama_aset ?? '') }}"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            required>
+        @error('nama_aset')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">
+            Nilai Pembelian <span class="text-red-500">*</span>
+        </label>
+
+        @if (Route::is('subadmin.assets.edit'))
+            {{-- Mode Edit: Tampilkan sebagai teks + hidden input --}}
+            <div
+                class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
+                {{ number_format($asset->nilai_pembelian ?? 0, 2, ',', '.') }}
+            </div>
+            <input type="hidden" name="nilai_pembelian" value="{{ $asset->nilai_pembelian }}">
+        @else
+            {{-- Mode Create: Input normal --}}
+            <input type="number" id="nilai_pembelian" name="nilai_pembelian" min="0" step="1"
+                placeholder="Masukkan nilai pembelian..." title="Only numbers allowed"
+                value="{{ old('nilai_pembelian') }}"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 {{ $errors->has('nilai_pembelian') ? 'border-red-500' : '' }}"
+                required>
+            @error('nilai_pembelian')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        @endif
+    </div>
+</div>
+
+
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     @if (in_array($current_jenis_aset, ['bergerak', 'tidak_bergerak']))
         {{-- <div>
@@ -169,17 +170,34 @@
     @endif
 
     <div>
-        <label for="tgl_pembelian" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-            Tanggal Pembelian<span class="text-red-500">*</span>
-        </label>
-        <input type="text" id="tgl_pembelian" name="tgl_pembelian" data-datepicker
-            data-max-date="{{ date('Y-m-d') }}" value="{{ old('tgl_pembelian', $asset->tgl_pembelian ?? '') }}"
+    <label for="tgl_pembelian" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+        Tanggal Pembelian<span class="text-red-500">*</span>
+    </label>
+
+    @if (Route::is('subadmin.assets.edit'))
+        {{-- Mode Edit: Tampilkan sebagai teks + hidden input --}}
+        <div class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
+            {{ \Carbon\Carbon::parse($asset->tgl_pembelian)->format('d-m-Y') ?? '-' }}
+        </div>
+        <input type="hidden" name="tgl_pembelian" value="{{ $asset->tgl_pembelian ?? '' }}">
+    @else
+        {{-- Mode Create: Input datepicker normal --}}
+        <input 
+            type="text" 
+            id="tgl_pembelian" 
+            name="tgl_pembelian" 
+            data-datepicker
+            data-max-date="{{ date('Y-m-d') }}" 
+            value="{{ old('tgl_pembelian', $asset->tgl_pembelian ?? '') }}"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white {{ $errors->has('tgl_pembelian') ? 'border-red-500' : '' }}"
-            placeholder="Pilih tanggal..." required>
+            placeholder="Pilih tanggal..." 
+            required
+        >
         @error('tgl_pembelian')
             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
         @enderror
-    </div>
+    @endif
+</div>
 
 </div>
 

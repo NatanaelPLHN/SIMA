@@ -92,7 +92,7 @@
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Tambah Aset</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Tambah Aset Bergerak</h1>
             </div>
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-lg p-6">
                 <form action="{{ routeForRole('assets', 'store') }}" method="POST" enctype="multipart/form-data"
