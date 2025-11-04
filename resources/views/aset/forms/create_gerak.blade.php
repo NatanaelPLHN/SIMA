@@ -87,12 +87,12 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">
-                                    Tambah Aset</span>
+                                    Tambah Aset Bergerak</span>
                             </div>
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Tambah Aset</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Tambah Aset Bergerak</h1>
             </div>
             <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-lg p-6">
                 <form action="{{ routeForRole('assets', 'store') }}" method="POST" enctype="multipart/form-data"
@@ -126,7 +126,7 @@
                             class="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-1">Nomor Serial<span
                                 class="text-red-500">*</span></label>
                         <input type="text" id="nomor_serial" name="nomor_serial" pattern="[0-9]{0,30}"
-                            placeholder="Masukkan nomor serial aset..." minlength="0" 
+                            placeholder="Masukkan nomor serial aset..." minlength="0"
                             title="Only numbers allowed"
                             class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 

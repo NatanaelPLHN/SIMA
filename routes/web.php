@@ -1,24 +1,24 @@
 <?php
 
-use App\Http\Controllers\AssetsController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\BorrowingController;
-use App\Http\Controllers\InstitutionController;
-use App\Http\Controllers\DepartementController;
-use App\Http\Controllers\CategoryGroupController;
 use App\Http\Controllers\ActivityLogController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\SuperAdminDashboardController;
-use App\Http\Controllers\SubAdminDashboardController;
+use App\Http\Controllers\AssetsController;
+use App\Http\Controllers\AssetUsageController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BorrowingController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryGroupController;
+use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StockOpnameController;
 use App\Http\Controllers\StockOpnameDepartmentController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AssetUsageController;
+use App\Http\Controllers\SubAdminDashboardController;
+use App\Http\Controllers\SuperAdminDashboardController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserDashboardController;
+use Illuminate\Support\Facades\Route;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -52,7 +52,6 @@ Route::post('verify-password', [StockOpnameDepartmentController::class, 'verifyP
 Route::get('/api/departements/{institutionId}', [UserController::class, 'getDepartements'])->name('api.departements');
 Route::get('/api/employees/{departmentId}', [UserController::class, 'getEmployees'])->name('api.employees');
 
-
 Route::middleware(['auth', 'role:superadmin,admin,subadmin'])->group(function () {
     Route::prefix('users/ajax')->name('users.ajax.')->group(function () {
         Route::get('/get-institutions', [UserController::class, 'getInstitutionsForRole'])->name('get-institutions');
@@ -67,8 +66,9 @@ Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(f
     Route::get('dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
     Route::resource('profile', controller: ProfileController::class);
     Route::resource('asset-usage', AssetUsageController::class)->except(['create', 'edit', 'delete', 'update']);
-    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
+    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);
     Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
+    Route::post('borrowing-log/export', [ActivityLogController::class, 'exportBorrowingLog'])->name('borrowinglog.export');
     Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
 });
 
@@ -79,8 +79,9 @@ Route::middleware(['auth', 'role:subadmin'])->prefix('subadmin')->name('subadmin
     Route::resource('employee', controller: EmployeeController::class);
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employee.import');
     Route::post('employees/export', [EmployeeController::class, 'export'])->name('employee.export');
-    Route::post('users/export/', [UserController::class, 'export'])->name('user.export');;
+    Route::post('users/export/', [UserController::class, 'export'])->name('user.export');
     Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
+    Route::post('borrowing-log/export', [ActivityLogController::class, 'exportBorrowingLog'])->name('borrowinglog.export');
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
     Route::resource('profile', controller: ProfileController::class);
@@ -131,6 +132,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('employees/export', [EmployeeController::class, 'export'])->name('employee.export');
     Route::post('users/export/', [UserController::class, 'export'])->name('user.export');
     Route::post('activity/export', [ActivityLogController::class, 'export'])->name('activity.export');
+    Route::post('borrowing-log/export', [ActivityLogController::class, 'exportBorrowingLog'])->name('borrowinglog.export');
     Route::resource('user', controller: UserController::class);
     Route::resource('profile', controller: ProfileController::class);
 
@@ -142,7 +144,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('opname', controller: StockOpnameController::class);
     Route::post('opname/{opname}/start', [StockOpnameController::class, 'start'])->name('opname.start');
     Route::post('opname/{opname}/cancel', [StockOpnameController::class, 'cancel'])->name('opname.cancel');
-    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);;
+    Route::resource('assets', controller: AssetsController::class)->except(['create', 'edit', 'destroy', 'update']);
     Route::get('assets/{asset}/export-log', [AssetsController::class, 'exportAssetLog'])->name('asset.export');
 });
 
@@ -157,8 +159,8 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('user', controller: UserController::class);
     Route::resource('employee', controller: EmployeeController::class);
     Route::post('employees/import', [EmployeeController::class, 'import'])->name('employee.import');
-    Route::post('employees/export/', [EmployeeController::class, 'export'])->name('employee.export');;
-    Route::post('users/export/', [UserController::class, 'export'])->name('user.export');;
+    Route::post('employees/export/', [EmployeeController::class, 'export'])->name('employee.export');
+    Route::post('users/export/', [UserController::class, 'export'])->name('user.export');
     Route::resource('profile', controller: ProfileController::class);
 
     // routes category-groups (grup kategori)

@@ -1,15 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\AssetUsage;
 use App\Models\Asset;
 use App\Models\Departement;
 use App\Models\Employee;
 use App\Models\StockOpnameSession;
-
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-
 use Spatie\Activitylog\Models\Activity;
 
 class AdminDashboardController extends Controller
@@ -22,16 +20,25 @@ class AdminDashboardController extends Controller
         // 🔹 Query dasar yang difilter berdasarkan instansi
         $departements = Departement::where('instansi_id', $institutionId);
         $employees = Employee::where('institution_id', $institutionId);
-        $users = User::whereHas('employee', fn($q) => $q->where('institution_id', $institutionId));
-        $assets = Asset::whereHas('departement', fn($q) => $q->where('instansi_id', $institutionId));
-        $stockOpnameSessions = StockOpnameSession::whereHas('departement', fn($q) => $q->where('instansi_id', $institutionId));
-        // $activities = Activity::whereHas('causer.employee', fn($q) => $q->where('institution_id', $institutionId));
+        $users = User::whereHas('employee', fn ($q) => $q->where('institution_id', $institutionId));
+        $assets = Asset::whereHas('departement', fn ($q) => $q->where('instansi_id', $institutionId));
+        $stockOpnameSessions = StockOpnameSession::whereHas('departement', fn ($q) => $q->where('instansi_id', $institutionId));
         $activities = Activity::where('subject_type', Asset::class)
             ->whereHasMorph('subject', [Asset::class], function ($query) use ($institutionId) {
                 $query->whereHas('departement', function ($q) use ($institutionId) {
                     $q->where('instansi_id', $institutionId);
                 });
             });
+        $borrowingLogs = Activity::where('log_name', 'asset_activity')
+            ->where('subject_type', AssetUsage::class)
+            ->whereHasMorph('subject', [AssetUsage::class], function ($query) use ($institutionId) {
+                $query->whereHas('department', function ($q) use ($institutionId) {
+                    $q->where('instansi_id', $institutionId);
+                });
+            })
+            ->with(['causer', 'subject.asset', 'subject.user'])
+            ->latest();
+
         return view('admin.dashboard', [
             'stats' => [
                 'bidang' => $departements->count(),
@@ -67,6 +74,7 @@ class AdminDashboardController extends Controller
 
             'recentActivities' => $activities->clone()->latest()->limit(5)->get(),
             'activities' => $activities->clone()->latest()->paginate(10),
+            'borrowingLogs' => $borrowingLogs->clone()->latest()->paginate(10),
         ]);
     }
     // public function dashboard()
@@ -132,10 +140,12 @@ class AdminDashboardController extends Controller
     {
         return view('admin.peminjaman');
     }
+
     public function pinjam()
     {
         return view('admin.Forms.pinjam');
     }
+
     public function profil()
     {
         return view('layouts.profil');

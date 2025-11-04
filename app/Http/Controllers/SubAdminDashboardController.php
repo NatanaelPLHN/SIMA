@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssetUsage;
 use App\Models\Asset;
 use App\Models\Departement;
 use App\Models\Employee;
 use App\Models\StockOpnameSession;
-
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-
 use Spatie\Activitylog\Models\Activity;
 
 class SubAdminDashboardController extends Controller
 {
-
     public function dashboard()
     {
         $user = auth()->user();
         $departmentId = $user->employee->department_id;
 
         // Jika user tidak punya department_id, tampilkan halaman kosong atau error
-        if (!$departmentId) {
+        if (! $departmentId) {
             // Anda bisa memilih untuk menampilkan view kosong atau redirect dengan pesan error
             return view('subadmin.dashboard_empty'); // Contoh view kosong
         }
@@ -29,13 +27,21 @@ class SubAdminDashboardController extends Controller
         // --- Query Dasar ---
         $assets = Asset::where('department_id', $departmentId);
         $employees = Employee::where('department_id', $departmentId);
-        $users = User::whereHas('employee', fn($q) => $q->where('department_id', $departmentId));
+        $users = User::whereHas('employee', fn ($q) => $q->where('department_id', $departmentId));
         $stockOpnameSessions = StockOpnameSession::where('department_id', $departmentId);
 
         $activities = Activity::where('subject_type', Asset::class)
             ->whereHasMorph('subject', [Asset::class], function ($query) use ($departmentId) {
                 $query->where('department_id', $departmentId);
             });
+
+        $borrowingLogs = Activity::where('log_name', 'asset_activity')
+            ->where('subject_type', AssetUsage::class)
+            ->whereHasMorph('subject', [AssetUsage::class], function ($query) use ($departmentId) {
+                $query->where('department_id', $departmentId);
+            })
+            ->with(['causer', 'subject.asset', 'subject.user'])
+            ->latest();
 
         // --- Data untuk View ---
         return view('subadmin.dashboard', [
@@ -71,6 +77,7 @@ class SubAdminDashboardController extends Controller
 
             'recentActivities' => $activities->clone()->latest()->limit(5)->get(),
             'activities' => $activities->clone()->latest()->paginate(10),
+            'borrowingLogs' => $borrowingLogs->clone()->latest()->paginate(10),
         ]);
     }
 
@@ -165,10 +172,12 @@ class SubAdminDashboardController extends Controller
     {
         return view('subadmin.admin.peminjaman');
     }
+
     public function pinjam()
     {
         return view('subadmin.admin.Forms.pinjam');
     }
+
     public function profil()
     {
         return view('layouts.profil');
