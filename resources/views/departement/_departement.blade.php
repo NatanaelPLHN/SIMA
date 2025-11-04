@@ -2,17 +2,21 @@
 <!-- Nama -->
 <div>
     <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Bidang<span
-            class="text-red-500">*</span></label>
-    <input type="text" id="nama" name="nama" pattern="[A-Z a-z0-9,.]{0,30}" minlength="4"
-        placeholder="Masukkan nama bidang..." title="Only letters, numbers, and spaces allowed"
+        class="text-red-500">*</span>
+    </label>
+    <input type="text" id="nama" name="nama"
+        pattern="[A-Za-z0-9,. -]+"
+        placeholder="Masukkan nama bidang..."
+        title="Hanya huruf, angka, spasi, koma, titik, dan tanda hubung yang diizinkan"
         value="{{ old('nama', $departement->nama ?? '') }}"
-        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        required>
 </div>
 
 <!-- Alamat -->
 <div>
     <label for="lokasi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lokasi</label>
-    <input type="text" id="lokasi" name="lokasi" pattern="[A-Z a-z0-9,.]{0,30}" minlength="4" 
+    <input type="text" id="lokasi" name="lokasi" pattern="[A-Z a-z0-9,.]{0,30}" minlength="4"
         placeholder="Masukkan lokasi bidang..." title="Only letters, numbers, and spaces allowed"
         value="{{ old('lokasi', $departement->lokasi ?? '') }}"
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
