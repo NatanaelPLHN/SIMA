@@ -156,19 +156,19 @@
                     class="flex items-center space-x-2 sm:pl-4">
                     {{-- <input type="hidden" name="tab" value="bergerak"> --}}
                     <input type="hidden" name="tab" value="bergerak">
-                    {{-- <div class="relative w-48 sm:w-64">
+                    <div class="relative w-48 sm:w-64">
                         <input type="text" name="search_bergerak" value="{{ request('search_bergerak') }}"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Cari nama, serial number, dll...">
-                    </div> --}}
+                    </div>
                     {{-- live search --}}
-                    <div class="flex items-center space-x-2">
+                    {{-- <div class="flex items-center space-x-2">
                         <label for="bergerak-search"
                             class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
                         <input type="text" id="bergerak-search"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Cari nama, serial number, dll...">
-                    </div>
+                    </div> --}}
                     @if (request('search_bergerak'))
                         <a href="{{ routeForRole('assets', 'index', ['tab' => 'bergerak']) }}"
                             class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
@@ -403,20 +403,20 @@
                     <form method="GET" action="{{ routeForRole('assets', 'index') }}"
                         class="flex items-center space-x-2 sm:pl-4">
                         <input type="hidden" name="tab" value="tidakbergerak">
-                        {{-- <div class="relative w-48 sm:w-64">
+                        <div class="relative w-48 sm:w-64">
                             <input type="text" name="search_tidak_bergerak"
                                 value="{{ request('search_tidak_bergerak') }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Cari nama, kode, dll...">
-                        </div> --}}
+                        </div>
                         {{-- live search --}}
-                        <div class="flex items-center space-x-2">
+                        {{-- <div class="flex items-center space-x-2">
                             <label for="tidak-bergerak-search"
                                 class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
                             <input type="text" id="tidak-bergerak-search"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="Cari nama, serial number, dll...">
-                        </div>
+                        </div> --}}
                         @if (request('search_tidak_bergerak'))
                             <a href="{{ routeForRole('assets', 'index', ['tab' => 'tidakbergerak']) }}"
                                 class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
@@ -636,19 +636,19 @@
                         <form method="GET" action="{{ routeForRole('assets', 'index') }}"
                             class="flex items-center space-x-2 sm:pl-4">
                             <input type="hidden" name="tab" value="habispakai">
-                            {{-- <div class="relative w-48 sm:w-64">
+                            <div class="relative w-48 sm:w-64">
                                 <input type="text" name="search_habis_pakai" value="{{ request('search_habis_pakai') }}"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                     placeholder="Cari nama, kode, dll...">
-                            </div> --}}
+                            </div>
                             {{-- live search --}}
-                            <div class="flex items-center space-x-2">
+                            {{-- <div class="flex items-center space-x-2">
                                 <label for="habis-search"
                                     class="text-sm font-medium text-gray-700 dark:text-gray-300">Cari:</label>
                                 <input type="text" id="habis-search"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                     placeholder="Cari nama, serial number, dll...">
-                            </div>
+                            </div> --}}
                             @if (request('search_habis_pakai'))
                                 <a href="{{ routeForRole('assets', 'index', ['tab' => 'habispakai']) }}"
                                     class="text-sm font-medium px-2.5 py-1 rounded-md bg-red-200 text-red-700 hover:bg-red-300
@@ -918,31 +918,6 @@
 
                         // Aktifkan tab berdasarkan URL
                         switchTab(activeTab);
-                    });
-                </script>
-
-                <script>
-                    document.getElementById('bergerak-search').addEventListener('keyup', function() {
-                        const term = this.value.toLowerCase();
-                        document.querySelectorAll('#bergerak-body tr').forEach(row => {
-                            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-                        });
-                    });
-                </script>
-                <script>
-                    document.getElementById('tidak-bergerak-search').addEventListener('keyup', function() {
-                        const term = this.value.toLowerCase();
-                        document.querySelectorAll('#tidak-bergerak-body tr').forEach(row => {
-                            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-                        });
-                    });
-                </script>
-                <script>
-                    document.getElementById('habis-search').addEventListener('keyup', function() {
-                        const term = this.value.toLowerCase();
-                        document.querySelectorAll('#habis-body tr').forEach(row => {
-                            row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
-                        });
                     });
                 </script>
 
