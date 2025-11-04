@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Asset;
 use Spatie\Activitylog\Models\Activity;
 use App\Models\Institution;
+use App\Models\Departement;
 use App\Models\User;
 
 
